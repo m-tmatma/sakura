@@ -3,21 +3,26 @@ image: Visual Studio 2017
 init:
 - ps: >-
     Set-WinSystemLocale ja-JP
-    Start-Sleep -s 5
-    Restart-Computer
 
+    Start-Sleep -s 5
+
+    Restart-Computer
 build_script:
 - cmd: >-
     set SLN_FILE=sakura\sakura_vc2017.sln
+
+
     set EXTRA_CMD=/verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
     set MSBUILD_EXE="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
+
 
     echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Debug_Unicode      /t:"Clean","Rebuild"  %EXTRA_CMD%
          %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Debug_Unicode      /t:"Clean","Rebuild"  %EXTRA_CMD%
 
     echo %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Release_Unicode    /t:"Clean","Rebuild"  %EXTRA_CMD%
          %MSBUILD_EXE% %SLN_FILE% /p:Platform=x86 /p:Configuration=Release_Unicode    /t:"Clean","Rebuild"  %EXTRA_CMD%
-         
+
     echo appveyor_yml
 
 artifacts:
