@@ -25,4 +25,6 @@ build_script:
 
 artifacts:
 - path: sakura\Debug_Unicode\sakura.exe
+- path: sakura\Debug_Unicode\sakura.pdb
 - path: sakura\Release_Unicode\sakura.exe
+- path: sakura\Release_Unicode\sakura.pdb
