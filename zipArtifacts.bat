@@ -15,6 +15,7 @@ mkdir %WORKDIR%
 copy %platform%\%configuration%\*.exe %WORKDIR%\
 copy %platform%\%configuration%\*.dll %WORKDIR%\
 copy %platform%\%configuration%\*.pdb %WORKDIR%\
+copy msbuild-%platform%-%configuration%.log %WORKDIR%\
 
 copy help\macro\macro.chm    %WORKDIR%\
 copy help\plugin\plugin.chm  %WORKDIR%\
