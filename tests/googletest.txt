@@ -1,0 +1,11 @@
+﻿googletest を取り込み
+https://github.com/google/googletest/commits/release-1.8.0
+
+mkdir tests
+git add tests
+git submodule add https://github.com/google/googletest.git tests/googletest
+
+cd tests\googletest
+git checkout release-1.8.0
+cd ..\..
+git add tests\googletest
