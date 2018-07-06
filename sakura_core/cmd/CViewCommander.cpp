@@ -657,7 +657,7 @@ BOOL CViewCommander::HandleCommand(
 /*!
 	@date 2014.07.11 新規追加
 */
-void CViewCommander::Sub_BoxSelectLock( int flags )
+void CViewCommander::Sub_BoxSelectLock(LPARAM flags )
 {
 	bool bSelLock;
 	if( flags == 0x00 ){
