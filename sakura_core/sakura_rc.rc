@@ -268,7 +268,9 @@ BEGIN
                     185,85,56,10
     CONTROL         "否該当行(&1)",IDC_RADIO_NOHIT,"Button",BS_AUTORADIOBUTTON,
                     185,97,56,10
-    GROUPBOX        "結果出力",IDC_STATIC,180,63,65,47,WS_GROUP
+    GROUPBOX        "結果出力",IDC_STATIC,
+                    180,63,65,47,
+                    WS_GROUP
     CONTROL         "ノーマル(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,
                     185,124,54,10
     CONTROL         "ファイル毎（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",BS_AUTORADIOBUTTON,
@@ -331,14 +333,16 @@ BEGIN
                     5,100,116,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,
                     5,111,55,10
-    LTEXT           "",IDC_STATIC_JRE32VER,18,120,159,8
+    LTEXT           "",IDC_STATIC_JRE32VER,
+                    18,120,159,8
     CONTROL         "ファイル毎最初のみ検索(&G)",IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
                     5,131,119,10
     CONTROL         "ベースフォルダ表示(&V)",IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
                     5,142,85,10
     CONTROL         "フォルダ毎に表示(&Y)",IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
                     92,142,85,10
-    LTEXT           "文字コードセット(&A)",IDC_STATIC,16,156,62,8
+    LTEXT           "文字コードセット(&A)",IDC_STATIC,
+                    16,156,62,8
     COMBOBOX        IDC_COMBO_CHARSET,
                     80,154,65,101,
                     CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
@@ -352,7 +356,9 @@ BEGIN
                     185,91,56,10
     CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",BS_AUTORADIOBUTTON,
                     185,101,56,10
-    GROUPBOX        "結果出力",IDC_STATIC,180,79,65,35,WS_GROUP
+    GROUPBOX        "結果出力",IDC_STATIC,
+                    180,79,65,35,
+                    WS_GROUP
     CONTROL         "ノーマル(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,
                     185,128,54,10
     CONTROL         "ファイル毎（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",BS_AUTORADIOBUTTON,
