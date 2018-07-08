@@ -206,7 +206,7 @@ BEGIN
                     CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_GREP DIALOGEX 0, 0, 308, 171
+IDD_GREP DIALOGEX 0, 0, 362, 203
 STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CONTEXTHELP
 CAPTION "Grep条件入力"
@@ -215,78 +215,93 @@ BEGIN
     LTEXT           "条件(&N)",IDC_STATIC,
                     5,6,26,8
     COMBOBOX        IDC_COMBO_TEXT,
-                    46,4,257,120,
+                    64,4,293,120,
                     CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     LTEXT           "ファイル(&T)",IDC_STATIC,
                     5,21,36,8,
                     NOT WS_GROUP
     COMBOBOX        IDC_COMBO_FILE,
-                    46,19,257,120,
+                    64,19,293,120,
                     CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
     LTEXT           "フォルダ(&O)",IDC_STATIC,
                     5,36,38,8
     COMBOBOX        IDC_COMBO_FOLDER,
-                    46,34,246,120,
+                    64,34,282,120,
                     CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+
     PUSHBUTTON      "&...",IDC_BUTTON_FOLDER,
-                    293,34,9,13
+                    348,34,9,13
+
+    LTEXT           "除外ファイル",IDC_STATIC,
+                    5,53,47,9,
+                    NOT WS_GROUP
+    LTEXT           "除外フォルダ",IDC_STATIC,
+                    5,68,47,9,
+                    NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_EXCLUDE_FOLDER,
+                    64,67,293,14,
+                    ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_EXCLUDE_FILE,
+                    64,50,293,14,
+                    ES_AUTOHSCROLL
+
     PUSHBUTTON      "上(&B)",IDC_BUTTON_FOLDER_UP,
-                    225,49,25,14
+                    276,83,25,14
     PUSHBUTTON      "現フォルダ(&U)",IDC_BUTTON_CURRENTFOLDER,
-                    253,49,49,14,
+                    308,83,49,14,
                     BS_MULTILINE
     CONTROL         "単語単位で探す(&W)",IDC_CHK_WORD,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,
-                    5,52,73,10
+                    5,86,73,10
     CONTROL         "サブフォルダからも検索する(&S)",IDC_CHK_SUBFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    5,63,113,10
+                    5,97,113,10
     CONTROL         "現在編集中のファイルから検索(&Q)",IDC_CHK_FROMTHISTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    5,74,125,10
+                    5,108,125,10
     CONTROL         "英大文字と小文字を区別する(&C)",IDC_CHK_LOHICASE,"Button",BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,
-                    5,85,119,10
+                    5,119,119,10
     CONTROL         "正規表現(&E)",IDC_CHK_REGULAREXP,"Button",BS_AUTOCHECKBOX | BS_LEFT | WS_TABSTOP,
-                    5,96,55,10
+                    5,130,55,10
     LTEXT           "",IDC_STATIC_JRE32VER,
-                    18,105,159,8
+                    18,139,159,8
     CONTROL         "ファイル毎最初のみ検索(&G)",IDC_CHECK_FILE_ONLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    5,116,119,10
+                    5,150,119,10
     CONTROL         "ベースフォルダ表示(&V)",IDC_CHECK_BASE_PATH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    5,128,83,10
+                    5,162,83,10
     CONTROL         "フォルダ毎に表示(&Y)",IDC_CHECK_SEP_FOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    90,128,83,10
+                    90,162,83,10
     LTEXT           "文字コードセット(&A)",IDC_STATIC,
-                    16,142,62,8
+                    16,176,62,8
     COMBOBOX        IDC_COMBO_CHARSET,
-                    80,140,65,101,
+                    80,174,65,101,
                     CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "CP(&2)",IDC_CHECK_CP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    148,142,30,10
+                    148,176,30,10
     CONTROL         "フォルダの初期値をカレントフォルダにする(&D)",IDC_CHK_DEFAULTFOLDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
-                    5,156,164,10
+                    5,190,164,10
     CONTROL         "該当行(&L)",IDC_RADIO_OUTPUTLINE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,
-                    185,73,48,10
+                    185,92,48,10
     CONTROL         "該当部分(&P)",IDC_RADIO_OUTPUTMARKED,"Button",BS_AUTORADIOBUTTON,
-                    185,85,56,10
+                    185,104,56,10
     CONTROL         "否該当行(&1)",IDC_RADIO_NOHIT,"Button",BS_AUTORADIOBUTTON,
-                    185,97,56,10
+                    185,180,56,10
     GROUPBOX        "結果出力",IDC_STATIC,
-                    180,63,65,47,
+                    180,82,65,47,
                     WS_GROUP
     CONTROL         "ノーマル(&M)",IDC_RADIO_OUTPUTSTYLE1,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,
-                    185,124,54,10
+                    185,143,54,10
     CONTROL         "ファイル毎（&I）",IDC_RADIO_OUTPUTSTYLE2,"Button",BS_AUTORADIOBUTTON,
-                    185,136,59,10
+                    185,155,59,10
     CONTROL         "結果のみ(&R）",IDC_RADIO_OUTPUTSTYLE3,"Button",BS_AUTORADIOBUTTON,
-                    185,148,59,10
+                    185,167,59,10
     GROUPBOX        "結果出力形式",IDC_STATIC,
-                    180,114,65,47,
+                    180,133,65,47,
                     WS_GROUP
     DEFPUSHBUTTON   "検索(&F)",IDOK,
-                    253,88,49,14,
+                    308,107,49,14,
                     WS_GROUP
     PUSHBUTTON      "キャンセル(&X)",IDCANCEL,
-                    253,130,49,14
+                    308,130,49,14
     PUSHBUTTON      "ヘルプ(&H)",IDC_BUTTON_HELP,
-                    253,147,49,14
+                    308,150,49,14
 END
 
 IDD_GREP_REPLACE DIALOGEX 0, 0, 308, 193
