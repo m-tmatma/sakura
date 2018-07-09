@@ -235,14 +235,15 @@ BEGIN
     LTEXT           "除外ファイル",IDC_STATIC,
                     5,53,47,9,
                     NOT WS_GROUP
+    EDITTEXT        IDC_EDIT_EXCLUDE_FILE,
+                    64,50,293,14,
+                    ES_AUTOHSCROLL
+
     LTEXT           "除外フォルダ",IDC_STATIC,
                     5,68,47,9,
                     NOT WS_GROUP
     EDITTEXT        IDC_EDIT_EXCLUDE_FOLDER,
                     64,67,293,14,
-                    ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_EXCLUDE_FILE,
-                    64,50,293,14,
                     ES_AUTOHSCROLL
 
     PUSHBUTTON      "上(&B)",IDC_BUTTON_FOLDER_UP,
