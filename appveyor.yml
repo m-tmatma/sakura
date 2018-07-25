@@ -17,6 +17,7 @@ platform:
 build_script:
 - cmd: >-
     call build-all.bat %PLATFORM% %CONFIGURATION%
+    call tests\build-by-cmake.bat %PLATFORM% %CONFIGURATION%
 
     echo appveyor_yml
 
