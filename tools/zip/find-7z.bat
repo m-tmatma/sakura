@@ -1,7 +1,12 @@
 @rem see readme.md
 @echo off
-set REAL_CMD_7Z=
 if "%FORCE_POWERSHELL_ZIP%" == "1" (
+	set REAL_CMD_7Z=
+	exit /b 0
+)
+
+if not "%CMD_7Z%" == "" (
+	set REAL_CMD_7Z=%CMD_7Z%
 	exit /b 0
 )
 set PATH_7Z_1=
