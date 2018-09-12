@@ -1,6 +1,9 @@
 @rem see readme.md
 @echo off
-set CMD_HHC=
+if not "%CMD_HHC%" == "" (
+	@echo CMD_HHC "%CMD_HHC%"
+	exit /b 0
+)
 set PATH_HHC_1=
 set PATH_HHC_2=
 set PATH_HHC_3=
