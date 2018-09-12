@@ -7,7 +7,6 @@ if exist "%DSTZIP%" del "%DSTZIP%"
 call %~dp0find-7z.bat
 
 @echo archiving %SRCZIP%.
-@rem REAL_CMD_7Z contains double quotes.
 if "%REAL_CMD_7Z%" == "" (
 	@echo -------------------------------------------------------
 	@echo ---- you can make this faster by installing 7-zip. ----
