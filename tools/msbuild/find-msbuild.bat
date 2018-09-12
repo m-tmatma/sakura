@@ -1,6 +1,10 @@
 @rem see readme.md
 @echo off
-set CMD_MSBUILD=
+@echo off
+if not "%CMD_MSBUILD%" == "" (
+	@echo CMD_MSBUILD "%CMD_MSBUILD%"
+	exit /b 0
+)
 set PATH_MSBUILD_1=
 set PATH_MSBUILD_2=
 set PATH_MSBUILD_3=
