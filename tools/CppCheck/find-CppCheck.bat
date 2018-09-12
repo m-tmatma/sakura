@@ -1,6 +1,9 @@
 @rem see readme.md
 @echo off
-set CMD_CPPCHECK=
+if not "%CMD_CPPCHECK%" == "" (
+	@echo CMD_CPPCHECK "%CMD_CPPCHECK%"
+	exit /b 0
+)
 set PATH_CPPCHECK_1=
 set PATH_CPPCHECK_2=
 set PATH_CPPCHECK_3=
