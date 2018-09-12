@@ -1,6 +1,9 @@
 @rem see readme.md
 @echo off
-set CMD_ISCC=
+if not "%CMD_ISCC%" == "" (
+	@echo CMD_ISCC "%CMD_ISCC%"
+	exit /b 0
+)
 set PATH_ISCC_1=
 set PATH_ISCC_2=
 set PATH_ISCC_3=
