@@ -1,6 +1,6 @@
 @rem see readme.md
 @echo off
-set CMD_7Z=
+set REAL_CMD_7Z=
 if "%FORCE_POWERSHELL_ZIP%" == "1" (
 	exit /b 0
 )
@@ -20,16 +20,16 @@ set RESULT_PATH_7Z_3=--
 where 7z 1>nul 2>&1
 if "%ERRORLEVEL%" == "0" (
 	set RESULT_PATH_7Z_0=OK
-	set CMD_7Z=7z
+	set REAL_CMD_7Z=7z
 ) else if exist "%PATH_7Z_1%" (
 	set RESULT_PATH_7Z_1=OK
-	set "CMD_7Z=%PATH_7Z_1%"
+	set "REAL_CMD_7Z=%PATH_7Z_1%"
 ) else if exist "%PATH_7Z_2%" (
 	set RESULT_PATH_7Z_2=OK
-	set "CMD_7Z=%PATH_7Z_2%"
+	set "REAL_CMD_7Z=%PATH_7Z_2%"
 ) else if exist "%PATH_7Z_3%" (
 	set RESULT_PATH_7Z_3=OK
-	set "CMD_7Z=%PATH_7Z_3%"
+	set "REAL_CMD_7Z=%PATH_7Z_3%"
 )
 
 @echo %RESULT_PATH_7Z_0% 7z.exe
@@ -37,5 +37,5 @@ if "%ERRORLEVEL%" == "0" (
 @echo %RESULT_PATH_7Z_2% %PATH_7Z_2%
 @echo %RESULT_PATH_7Z_3% %PATH_7Z_3%
 @echo.
-@echo CMD_7Z "%CMD_7Z%"
+@echo CMD_7Z "%REAL_CMD_7Z%"
 @echo.
