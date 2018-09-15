@@ -1,6 +1,6 @@
 set CONF=%1
 set MINGW=%2
-set PATH=%MINGW%;%PATH%
+set MINGW32MAKE=%MINGW%\mingw32-make.exe
 
 if "%CONF%" == "Debug" (
 	set MYDEFINES=-D_DEBUG
@@ -16,7 +16,7 @@ cd /d %~dp0
 pushd sakura_core
 
 @rem mingw32-make githash stdafx Funccode_enum.h Funccode_define.h
-mingw32-make clean
-mingw32-make MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash stdafx Funccode_enum.h Funccode_define.h
-mingw32-make MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" -j4
+%MINGW32MAKE% clean
+%MINGW32MAKE% MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" githash stdafx Funccode_enum.h Funccode_define.h
+%MINGW32MAKE% MYDEFINES="%MYDEFINES%" MYCFLAGS="%MYCFLAGS%" MYLIBS="%MYLIBS%" -j4
 popd
