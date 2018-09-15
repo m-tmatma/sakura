@@ -11,6 +11,10 @@ if "%CONF%" == "Debug" (
 	set MYLIBS=-s
 )
 
+if not exist "%MINGW32MAKE%" (
+	@echo %MINGW32MAKE% does not exist. skip.
+	exit /b 0
+)
 cd /d %~dp0
 
 pushd sakura_core
