@@ -16,6 +16,8 @@ platform:
 
 build_script:
 - cmd: >-
+    call build-mingw-appveyor.bat %PLATFORM% %CONFIGURATION%
+
     call build-all.bat %PLATFORM% %CONFIGURATION%
 
     call tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
