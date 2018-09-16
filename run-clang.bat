@@ -3,3 +3,7 @@ for %%i in (sakura_core\*.cpp) do (
 	git checkout -f                 %%i
 	"%CLANG_FORMAT%" -style=file -i %%i
 )
+for %%i in (sakura_core\*.h) do (
+	git checkout -f                 %%i
+	"%CLANG_FORMAT%" -style=file -i %%i
+)
