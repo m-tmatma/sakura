@@ -118,6 +118,12 @@ const DWORD p_helpids[] = {	//12900
 #pragma message("APPVEYOR_BUILD_NUMBER_LABEL: " APPVEYOR_BUILD_NUMBER_LABEL)
 #endif
 
+#if defined(APPVEYOR_BUILD_URL)
+#define APPVEYOR_BUILD_TEXT_URL APPVEYOR_BUILD_URL
+#elif defined(GIT_URL)
+#define APPVEYOR_BUILD_TEXT_URL GIT_URL
+#endif
+
 //	From Here Nov. 7, 2000 genta
 /*!
 	標準以外のメッセージを捕捉する
@@ -136,6 +142,19 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 			::SetTextColor( (HDC)wParam, RGB( 0, 0, 0 ) );
         }
 		return (INT_PTR)GetStockObject( WHITE_BRUSH );
+	case WM_NOTIFY:
+		switch (((LPNMHDR)lParam)->code)
+		{
+		case NM_CLICK:	// Fall through to the next case.
+		case NM_RETURN:
+			{
+				PNMLINK pNMLink = (PNMLINK)lParam;
+				LITEM   item    = pNMLink->item;
+				ShellExecute(NULL, L"open", item.szUrl, NULL, NULL, SW_SHOW);
+			}
+			break;
+		}
+		break;
 	}
 	return result;
 }
@@ -145,6 +164,20 @@ INT_PTR CDlgAbout::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lP
 int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 {
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
+}
+
+/*  SysLink のタイトルを設定する (URL とタイトルが異なるバージョン) */
+void CDlgAbout::SetSysLinkText(int nID, LPCWSTR pTitle, LPCWSTR pLink)
+{
+	CNativeW title;
+	title.AppendStringF(L"<a href=\"%s\">%s</a>", pLink, pTitle);
+	::SetWindowTextW(GetItemHwnd(nID), title.GetStringPtr());
+}
+
+/*  SysLink のタイトルを設定する (URL とタイトルが同じバージョン) */
+void CDlgAbout::SetSysLinkText(int nID, LPCWSTR pLink)
+{
+	SetSysLinkText(nID, pLink, pLink);
 }
 
 /*! 初期化処理
@@ -273,19 +306,51 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
+#if 0
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
-#ifdef GIT_REMOTE_ORIGIN_URL
-	m_UrlGitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GIT ) );
+	m_UrlGitWnd.SetSubclassWindow(GetItemHwnd( IDC_STATIC_URL_GIT));
+	m_UrlBuildLinkWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD));
+#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
+	m_UrlGitHubCommitWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT));
 #endif
-#ifdef APPVEYOR_BUILD_NUMBER_LABEL
-	m_UrlBuildLinkWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_APPVEYOR_BUILD ) );
+#if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
+	m_UrlGitHubPRWnd.SetSubclassWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR));
 #endif
-#ifdef APPVEYOR_SHORTHASH
-	m_UrlGitHubCommitWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_COMMIT ) );
 #endif
-#ifdef APPVEYOR_PR_NUMBER_LABEL
-	m_UrlGitHubPRWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_GITHUB_PR ) );
+
+	SetSysLinkText(IDC_STATIC_URL_UR, _T("https://sakura-editor.github.io/"));
+#ifdef GIT_URL
+	SetSysLinkText(IDC_STATIC_URL_GIT, _T(GIT_URL));
+#else
+	ShowWindow(GetItemHwnd(IDC_STATIC_GIT_CAPTION), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GIT), SW_HIDE);
+#endif
+
+#if defined(APPVEYOR_BUILD_TEXT) && defined(APPVEYOR_BUILD_TEXT_URL)
+	SetSysLinkText(IDC_STATIC_URL_APPVEYOR_BUILD, _T(APPVEYOR_BUILD_TEXT), _T(APPVEYOR_BUILD_TEXT_URL));
+#else
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_CAPTION), SW_HIDE);
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_APPVEYOR_BUILD), SW_HIDE);
+#endif
+
+	// GitHub の Commit のリンク
+#if defined(GITHUB_COMMIT_URL) && defined(APPVEYOR_SHORTHASH)
+	SetSysLinkText(IDC_STATIC_URL_GITHUB_COMMIT, _T(APPVEYOR_SHORTHASH), _T(GITHUB_COMMIT_URL));
+#else
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_COMMIT), SW_HIDE);
+#endif
+
+	// GitHub の PR のリンク
+#if defined(GITHUB_COMMIT_URL_PR_HEAD) && defined(APPVEYOR_PULL_REQUEST_NUMBER)
+	SetSysLinkText(IDC_STATIC_URL_GITHUB_PR, _T("PR ") _T(APPVEYOR_PULL_REQUEST_NUMBER), _T(GITHUB_COMMIT_URL_PR_HEAD));
+#else
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_PR), SW_HIDE);
+#endif
+
+	// GitHub のリンクのテキスト
+#if !defined(GITHUB_COMMIT_URL) && !defined(GITHUB_COMMIT_URL_PR_HEAD)
+	ShowWindow(GetItemHwnd(IDC_STATIC_URL_GITHUB_CAPTION), SW_HIDE);
 #endif
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
