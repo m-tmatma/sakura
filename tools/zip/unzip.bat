@@ -11,5 +11,5 @@ if not defined CMD_7Z (
 	@echo ------------------------------------------------------- >&2
 	powershell -ExecutionPolicy RemoteSigned -File %~dp0unzip.ps1 %SRCZIP% %OUTDIR%
 ) else (
-	"%CMD_7Z%" x "%SRCZIP%" "-o%OUTDIR%"
+	"%CMD_7Z%" x "%SRCZIP%" "-o%OUTDIR%" -r
 )
