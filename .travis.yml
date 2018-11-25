@@ -1,0 +1,17 @@
+language: generic
+os: linux
+dist: xenial
+
+matrix:
+  include:
+    - env: platform=Win32 configuration=Release
+    - env: platform=x64   configuration=Release
+
+addons:
+  apt:
+    packages:
+      - cppcheck
+script:
+- cppcheck --version
+- bash ./run-cppcheck.sh ${platform} ${configuration}
+
