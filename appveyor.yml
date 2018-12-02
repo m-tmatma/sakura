@@ -27,6 +27,10 @@ install:
 - cmd: |
     pip install openpyxl --user
 
+    call externals\chocolatey\install-chocolatey.bat
+    
+    choco --version
+
 # to run our custom scripts instead of automatic MSBuild
 build_script:
   - cmd: cup vswhere
