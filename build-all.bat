@@ -32,9 +32,9 @@ if "%platform%" == "MinGW" (
 	exit /b 0
 )
 
-@echo ---- start build-sln.bat ----
-call build-sln.bat       %PLATFORM% %CONFIGURATION% || (echo error build-sln.bat       && exit /b 1)
-@echo ---- end   build-sln.bat ----
+@echo ---- start tests\build-and-test.bat ----
+call tests\build-and-test.bat  %PLATFORM% %CONFIGURATION% || (echo error tests\build-and-test.bat && exit /b 1)
+@echo ---- end   tests\build-and-test.bat ----
 @echo.
 
 @echo ---- start build-chm.bat ----

@@ -25,7 +25,6 @@ install:
 
 build_script:
 - cmd: |
-    build-all.bat %PLATFORM% %CONFIGURATION%
     tests\build-and-test.bat %PLATFORM% %CONFIGURATION%
 
 artifacts:
