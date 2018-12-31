@@ -26,16 +26,14 @@ if "%configuration%" == "Release" (
 @echo CONFIGURATION %CONFIGURATION%
 @echo.
 
-if "%platform%" == "MinGW" (
-	@echo call build-gnu.bat %PLATFORM% %CONFIGURATION%
-	call build-gnu.bat   %PLATFORM% %CONFIGURATION% || (echo error build-gnu.bat       && exit /b 1)
-	exit /b 0
-)
-
 @echo ---- start tests\build-and-test.bat ----
 call tests\build-and-test.bat  %PLATFORM% %CONFIGURATION% || (echo error tests\build-and-test.bat && exit /b 1)
 @echo ---- end   tests\build-and-test.bat ----
 @echo.
+
+if "%platform%" == "MinGW" (
+	exit /b 0
+)
 
 @echo ---- start build-chm.bat ----
 call build-chm.bat                                  || (echo error build-chm.bat       && exit /b 1)
