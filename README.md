@@ -7,6 +7,7 @@
 [![build sakura](https://github.com/sakura-editor/sakura/workflows/build%20sakura/badge.svg)](https://github.com/sakura-editor/sakura/actions?query=workflow%3A%22build+sakura%22)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sakura-editor_sakura&metric=alert_status)](https://sonarcloud.io/dashboard?id=sakura-editor_sakura)
 [![Star History](https://img.shields.io/badge/star-histroy-yellow.svg)](https://star-history.t9t.io/#sakura-editor/sakura)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f05f634ef9de6b371e9b/maintainability)](https://codeclimate.com/github/test-m-tmatma/test-sakura/maintainability)
 
 <!-- 以下は Markdownの参照形式によるリンク の定義です。 -->
 <!-- 参照 https://hail2u.net/blog/coding/markdown-reference-style-links.html -->
