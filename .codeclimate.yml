@@ -1,0 +1,8 @@
+version: "2"
+plugins:
+  cppcheck:
+    enabled: true
+    config:
+      check: all
+      project: sakura.sln
+      platform: win32W
