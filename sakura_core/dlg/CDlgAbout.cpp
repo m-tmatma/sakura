@@ -20,11 +20,13 @@
 
 #include "StdAfx.h"
 #include <ShellAPI.h>
+#include <shlwapi.h>
 #include "dlg/CDlgAbout.h"
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
 #include "util/module.h"
 #include "util/window.h"
+#include "util/os.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
 #include "sakura.hh"
@@ -143,6 +145,19 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
 }
 
+static CNativeT GetOSVersionByAPI(void)
+{
+	OSVERSIONINFOEXW osx;
+	GetVersionExWCustom(&osx);
+	CNativeT osInfo;
+	osInfo.AppendStringF(_T("%d.%d.%d"),
+		osx.dwMajorVersion,
+		osx.dwMinorVersion,
+		osx.dwBuildNumber
+	);
+	return osInfo;
+}
+
 /*! 初期化処理
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 	@date 2011.04.10 nasukoji	各国語メッセージリソース対応
@@ -212,6 +227,10 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 #ifdef GIT_REMOTE_ORIGIN_URL
 	cmemMsg.AppendString( L"(GitURL " _T(GIT_REMOTE_ORIGIN_URL) L")\r\n");
 #endif
+
+	CNativeT osInfo = GetOSVersionByAPI();
+	cmemMsg += osInfo;
+	cmemMsg.AppendString(_T("\r\n"));
 
 	// 段落区切り
 	cmemMsg.AppendString( L"\r\n" );

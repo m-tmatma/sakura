@@ -361,6 +361,41 @@ BOOL CheckSystemResources( const WCHAR* pszAppName )
 }
 #endif	// (WINVER < _WIN32_WINNT_WIN2K)
 
+
+typedef void (WINAPI *RtlGetVersion_FUNC)(OSVERSIONINFOEXW*);
+
+static BOOL GetVersionByRTL(OSVERSIONINFOEXW * pOSVEx)
+{
+	HMODULE hMod;
+	BOOL bReturn = FALSE;
+
+	RtlGetVersion_FUNC funcRtlGetVersion;
+	hMod = LoadLibrary(TEXT("ntdll.dll"));
+	if (hMod != NULL)
+	{
+		funcRtlGetVersion = (RtlGetVersion_FUNC)GetProcAddress(hMod,"RtlGetVersion");
+		if (funcRtlGetVersion)
+		{
+			funcRtlGetVersion(pOSVEx);
+			bReturn = TRUE;
+		}
+	}
+	FreeLibrary(hMod);
+	return bReturn;
+}
+
+BOOL GetVersionExWCustom(OSVERSIONINFOEXW * pOSVEx)
+{
+	ZeroMemory(pOSVEx, sizeof(*pOSVEx));
+	pOSVEx->dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW);
+
+	if (GetVersionByRTL(pOSVEx))
+	{
+		return TRUE;
+	}
+	return GetVersionExW((LPOSVERSIONINFOW)pOSVEx);
+}
+
 /*
 	https://docs.microsoft.com/en-us/windows/desktop/api/wow64apiset/nf-wow64apiset-iswow64process
 */
