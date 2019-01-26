@@ -145,6 +145,81 @@ int CDlgAbout::DoModal( HINSTANCE hInstance, HWND hwndParent )
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_ABOUT, (LPARAM)NULL );
 }
 
+static CNativeT GetOSVersionByReg(void)
+{
+#ifndef _WIN64
+	CDisableWow64FsRedirect wow64Redirect(TRUE);
+#endif
+	CNativeT osInfo;
+
+	TCHAR ProductName[1024] = {0};
+	DWORD cbData = sizeof(ProductName);
+	DWORD dwType = REG_NONE;
+	LSTATUS status = SHGetValue(
+		HKEY_LOCAL_MACHINE,
+		_T("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"),
+		_T("ProductName"),
+		&dwType,
+		ProductName,
+		&cbData
+	);
+
+	DWORD CurrentMajorVersionNumber = 0;
+	cbData = sizeof(DWORD);
+	dwType = REG_NONE;
+	status = SHGetValue(
+		HKEY_LOCAL_MACHINE,
+		_T("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"),
+		_T("CurrentMajorVersionNumber"),
+		&dwType,
+		&CurrentMajorVersionNumber,
+		&cbData
+	);
+
+	DWORD CurrentMinorVersionNumber = 0;
+	cbData = sizeof(DWORD);
+	dwType = REG_NONE;
+	status = SHGetValue(
+		HKEY_LOCAL_MACHINE,
+		_T("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"),
+		_T("CurrentMinorVersionNumber"),
+		&dwType,
+		&CurrentMinorVersionNumber,
+		&cbData
+	);
+
+	TCHAR CurrentBuildNumber[1024] = { 0 };
+	cbData = sizeof(CurrentBuildNumber);
+	dwType = REG_NONE;
+	status = SHGetValue(
+		HKEY_LOCAL_MACHINE,
+		_T("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"),
+		_T("CurrentBuildNumber"),
+		&dwType,
+		CurrentBuildNumber,
+		&cbData
+	);
+
+	TCHAR EditionID[1024] = { 0 };
+	cbData = sizeof(EditionID);
+	dwType = REG_NONE;
+	status = SHGetValue(
+		HKEY_LOCAL_MACHINE,
+		_T("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"),
+		_T("EditionID"),
+		&dwType,
+		EditionID,
+		&cbData
+	);
+	osInfo.AppendStringF(_T("%s %d.%d.%s"),
+		ProductName,
+		CurrentMajorVersionNumber,
+		CurrentMinorVersionNumber,
+		CurrentBuildNumber
+	);
+	return osInfo;
+}
+
 static CNativeT GetOSVersionByAPI(void)
 {
 	OSVERSIONINFOEXW osx;
