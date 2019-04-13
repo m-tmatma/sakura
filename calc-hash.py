@@ -23,8 +23,8 @@ def writeHash(hashFile, topdir, extensions):
 				if ext == extension or ext == "." + extension:
 					return True
 			return False
-			else:
-				return True
+		else:
+			return True
 
 	with open(hashFile, "w") as fout:
 		checksums = {}
