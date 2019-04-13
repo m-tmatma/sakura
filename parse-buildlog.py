@@ -162,8 +162,8 @@ def writeToXLSX(outfile, data):
 		from openpyxl.styles import Font, Color
 		from openpyxl.styles.fills import PatternFill
 
-		wb = openpyxl.Workbook()
-		ws = wb.active
+			wb = openpyxl.Workbook()
+			ws = wb.active
 
 		# 列幅に必要なサイズを保持する配列
 		maxWidths = []
