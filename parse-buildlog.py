@@ -162,6 +162,7 @@ def writeToXLSX(outfile, data):
 		from openpyxl.styles import Font, Color
 		from openpyxl.styles.fills import PatternFill
 
+		print ("raise Exception")
 		raise Exception
 		wb = openpyxl.Workbook()
 		ws = wb.active
