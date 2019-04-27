@@ -167,6 +167,11 @@ Visaul Studio 2019 で `sakura.sln` を開くと必要なコンポーネント�
    - ~~(すべて欲しい人向け) `All` がついてるのがバイナリ、インストーラ、ビルドログ、アセンブラ出力のフルセットです。~~ ([#514](https://github.com/sakura-editor/sakura/issues/514) の軽減のため無効化中) 
    - (開発者用) 末尾に `Log` がついてるのがビルドログのセットです。
    - (開発者用) 末尾に `Asm` がついてるのがアセンブラ出力セットです。
+   
+#### master の履歴
+
+以下から master の最新も含めた過去のビルドを参照できます。
+https://ci.appveyor.com/project/sakuraeditor/sakura/history/branch/master
 
 #### master の 最新以外
 
