@@ -31,7 +31,7 @@ int Divide(int a, int b)
 
 TEST(test, Append)
 {
-	EXPECT_EQ(Add(1, 2), 3);
+	EXPECT_EQ(Add(1, 2), 4);
 	ASSERT_EQ(Add(2, 3), 5);
 }
 
