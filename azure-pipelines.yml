@@ -48,6 +48,13 @@ pr:
 jobs:
 
 # サクラエディタのビルドを行う JOB (VS2017)
+- template: ci/azure-pipelines/template.job.htmlhelp.yml
+  parameters:
+    name: HTMLHelp
+    vmImage: 'VS2017-Win2016'
+    displayName: HTMLHelp
+
+# サクラエディタのビルドを行う JOB
 # * サクラエディタ本体
 # * HTML Help
 # * Installer

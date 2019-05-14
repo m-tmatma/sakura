@@ -7,6 +7,7 @@ parameters:
 jobs:
 - job: ${{ parameters.name }}
   displayName: ${{ parameters.displayName }}
+  dependsOn: HTMLHelp
   pool:
     vmImage: ${{ parameters.vmImage }}
 
@@ -45,13 +46,9 @@ jobs:
   - script: build-bmp-tools.bat $(Configuration)
     displayName: Bitmap Split/Mux
 
-#  # Build HTML Help
-#  - script: build-chm.bat
-#    displayName: Build HTML Help
-#
-#  # Build instaler with Inno Setup
-#  - script: build-installer.bat $(BuildPlatform) $(Configuration)
-#    displayName: Build instaler with Inno Setup
+  # Build instaler with Inno Setup
+  - script: build-installer.bat $(BuildPlatform) $(Configuration)
+    displayName: Build instaler with Inno Setup
 
   # zip files for artifacts
   - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)

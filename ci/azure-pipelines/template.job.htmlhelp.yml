@@ -1,0 +1,17 @@
+# see https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops&viewFallbackFrom=vsts#passing-parameters
+parameters:
+  name: ''
+  vmImage: ''
+  displayName: ''
+
+jobs:
+- job: ${{ parameters.name }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+
+  steps:
+
+  # Build HTML Help
+  - script: build-chm.bat
+    displayName: Build HTML Help
