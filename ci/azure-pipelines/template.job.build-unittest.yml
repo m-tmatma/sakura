@@ -54,6 +54,11 @@ jobs:
   - script: tools\zip\zip.bat sakura_$(BuildPlatform)_$(Configuration).zip $(BuildPlatform)\$(Configuration)
     displayName: Archive EXE
 
+  # これは一時的な処理です。
+  # Calculate the hash of ZIP file
+  - script: tools\zip\calc-md5.bat sakura_$(BuildPlatform)_$(Configuration).zip
+    displayName: Calculate the ZIP file
+
   # Unit tests
   - script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
     displayName: Unit test
