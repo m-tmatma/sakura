@@ -49,6 +49,11 @@ jobs:
 #  - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)
 #    displayName: Zip files for artifacts
 
+  # これは一時的な処理です。
+  # Archive EXE
+  - script: tools\zip\zip.bat sakura_$(BuildPlatform)_$(Configuration).zip $(BuildPlatform)\$(Configuration)
+    displayName: Archive EXE
+
   # Unit tests
   - script: tests\build-and-test.bat $(BuildPlatform) $(Configuration)
     displayName: Unit test
