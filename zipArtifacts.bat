@@ -2,6 +2,7 @@
 @setlocal enabledelayedexpansion
 set platform=%1
 set configuration=%2
+call %~dp0sakura\githash.bat .
 
 if "%platform%" == "Win32" (
 	@rem OK
