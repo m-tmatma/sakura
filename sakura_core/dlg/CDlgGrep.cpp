@@ -471,11 +471,11 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 		{
 			HWND hwnd = GetItemHwnd( IDC_COMBO_FOLDER );
 			const int nMaxPath = MAX_GREP_PATH;
-			TCHAR szFolder[nMaxPath];
-			TCHAR szTmpFolder[nMaxPath];
-			CNativeT gitFolder;
+			WCHAR szFolder[nMaxPath];
+			WCHAR szTmpFolder[nMaxPath];
+			CNativeW gitFolder;
 			::GetWindowText( hwnd, szFolder, _countof(szFolder) );
-			std::vector<std::tstring> vPaths;
+			std::vector<std::wstring> vPaths;
 			CGrepAgent::CreateFolders( szFolder, vPaths );
 
 			if (!vPaths.empty())
@@ -495,7 +495,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 						*(vPaths.rbegin()) = szTmpFolder;
 
 						// エディットボックスに設定するデータを作る
-						CNativeT folder;
+						CNativeW folder;
 						size_t index = 0;
 						for( auto iter = vPaths.begin(); iter != vPaths.end(); iter++, index++)
 						{
