@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: Visual Studio 2017
+image: Visual Studio 2019
 
 configuration:
   - Release
@@ -9,6 +9,9 @@ platform:
   - BuildChm
   - Win32
   - x64
+  
+environment:
+  ARG_VSVERSION: 16
 
 # set clone depth
 clone_depth: 5
