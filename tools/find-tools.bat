@@ -42,6 +42,9 @@ echo ^|- CMD_DOXYGEN=%CMD_DOXYGEN%
 echo ^|- CMD_VSWHERE=%CMD_VSWHERE%
 echo ^|- CMD_MSBUILD=%CMD_MSBUILD%
 echo ^|- CMD_CMAKE=%CMD_CMAKE%
+echo ^|- NUM_VSVERSION=%NUM_VSVERSION%
+echo ^|- PARAM_VSVERSION=%PARAM_VSVERSION%
+echo ^|- CMAKE_G_PARAM=%CMAKE_G_PARAM%
 endlocal ^
     && set "CMD_GIT=%CMD_GIT%"                  ^
     && set "CMD_7Z=%CMD_7Z%"                    ^
