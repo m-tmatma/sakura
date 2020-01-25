@@ -26,10 +26,10 @@
 #include "CIcu4cI18n.h"
 
 CIcu4cI18n::CIcu4cI18n() noexcept
-	: _ucsdet_open(nullptr)
-	, _ucsdet_setText(nullptr)
-	, _ucsdet_detect(nullptr)
-	, _ucsdet_close(nullptr)
+    : _ucsdet_open(nullptr)
+    , _ucsdet_setText(nullptr)
+    , _ucsdet_detect(nullptr)
+    , _ucsdet_close(nullptr)
 {
 }
 
@@ -42,8 +42,8 @@ CIcu4cI18n::~CIcu4cI18n() noexcept
  */
 LPCWSTR CIcu4cI18n::GetDllNameImp(int index)
 {
-	(void*)index;
-	return L"icuin66.dll"; //バージョンは固定
+    (void *)index;
+    return L"icuin66.dll"; //バージョンは固定
 }
 
 /*!
@@ -56,14 +56,13 @@ LPCWSTR CIcu4cI18n::GetDllNameImp(int index)
 */
 bool CIcu4cI18n::InitDllImp()
 {
-	//DLL内関数名リスト
-	const ImportTable table[] = {
-		{ &_ucsdet_open,		"ucsdet_open_66" },		//バージョンは固定
-		{ &_ucsdet_setText,		"ucsdet_setText_66" },	//バージョンは固定
-		{ &_ucsdet_detect,		"ucsdet_detect_66" },	//バージョンは固定
-		{ &_ucsdet_getName,		"ucsdet_getName_66" },	//バージョンは固定
-		{ &_ucsdet_close,		"ucsdet_close_66" },	//バージョンは固定
-		{ NULL, 0 }
-	};
-	return RegisterEntries(table);
+    //DLL内関数名リスト
+    const ImportTable table[] = {
+        {&_ucsdet_open, "ucsdet_open_66"}, //バージョンは固定
+        {&_ucsdet_setText, "ucsdet_setText_66"}, //バージョンは固定
+        {&_ucsdet_detect, "ucsdet_detect_66"}, //バージョンは固定
+        {&_ucsdet_getName, "ucsdet_getName_66"}, //バージョンは固定
+        {&_ucsdet_close, "ucsdet_close_66"}, //バージョンは固定
+        {NULL, 0}};
+    return RegisterEntries(table);
 }
