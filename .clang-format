@@ -4,6 +4,8 @@ Language:        Cpp
 
 # same as IndentWidth
 AccessModifierOffset: -4
+
+# https://www.pynote.info/entry/clang-format-settings#AlignAfterOpenBracket
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: false
 AlignConsecutiveAssignments: false
