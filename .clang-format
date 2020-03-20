@@ -10,7 +10,7 @@ AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: true
 # https://www.pynote.info/entry/clang-format-settings#AlignConsecutiveAssignments
 AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: false
+AlignConsecutiveDeclarations: true
 AlignEscapedNewlines: Right
 AlignOperands:   true
 AlignTrailingComments: true
