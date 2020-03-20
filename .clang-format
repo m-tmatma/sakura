@@ -7,7 +7,7 @@ AccessModifierOffset: -4
 
 # https://www.pynote.info/entry/clang-format-settings#AlignAfterOpenBracket
 AlignAfterOpenBracket: Align
-AlignConsecutiveMacros: false
+AlignConsecutiveMacros: true
 # https://www.pynote.info/entry/clang-format-settings#AlignConsecutiveAssignments
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
