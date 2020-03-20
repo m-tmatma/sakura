@@ -29,3 +29,4 @@ git checkout                    sakura_core\*.cpp
 "%CLANG_FORMAT%" -style=file -i sakura_core\CSearchAgent.cpp
 "%CLANG_FORMAT%" -style=file -i sakura_core\CSelectLang.cpp
 "%CLANG_FORMAT%" -style=file -i sakura_core\CSortedTagJumpList.cpp
+"%CLANG_FORMAT%" -style=file -i sakura_core\cmd\CViewCommander.cpp
