@@ -34,6 +34,12 @@ def fixupCode(fileName):
 					fout.write(line)
 					continue
 
+				# マクロ定義はそのまま出力
+				match = re.search(r'^\s*#define\s', line)
+				if match:
+					fout.write(line)
+					continue
+
 				# 一時バッファから行コメントを削除
 				tempdata = re.sub(r'//.*', r'', line)
 
