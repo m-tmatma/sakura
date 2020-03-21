@@ -38,7 +38,7 @@ public:
 	virtual wchar_t GetAlternateChar() const{ return L'･'; }
 	void DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans) const
 	{
-		assert(0);
+		//assert(0);
 	}
 	EColorIndexType GetColorIdx(void) const{ return COLORIDX_CTRLCODE; }
 };

@@ -109,6 +109,7 @@ const CKeyWordSetMgr& CKeyWordSetMgr::operator=( CKeyWordSetMgr& cKeyWordSetMgr 
 /*! @brief キーワードセットの追加
 
 	@date 2005.01.26 Moca 新規作成
+#line 1
 	@date 2005.01.29 genta サイズ0で作成→reallocするように
 */
 bool CKeyWordSetMgr::AddKeyWordSet(

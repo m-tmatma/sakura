@@ -27,6 +27,7 @@ void* operator new(
 	int const    line_number
 	)
 {
+#line 1
 	auto p = _malloc_dbg(size, block_use, file_name, line_number);
 	_fill_new_memory(p, size, "n_e_w_!_"); //確保されたばかりのメモリ状態は「n_e_w_!_....」となります
 	return p;
