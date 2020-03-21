@@ -28,6 +28,13 @@ def fixupCode(fileName):
 	with codecs.open(tmp_file, "w", "utf_8_sig") as fout:
 		with codecs.open(fileName, "r", "utf_8_sig") as fin:
 			for line in fin:
+				# すでにコメントアウトされているコードはそのまま出力
+				match = re.search(r'^\s*//', line)
+				if match:
+					fout.write(line)
+					continue
+
+				# 指定パターンの先頭に #line XXX を挿入する
 				for patternAndNo in regAndLine:
 					pattern = patternAndNo[0]
 					lineNo  = patternAndNo[1]
@@ -35,6 +42,11 @@ def fixupCode(fileName):
 					if match:
 						fout.write('#line ' + str(lineNo) + '\r\n')
 						break
+
+				# 正規表現の先読みを利用して assert をコメントアウトする
+				re.sub(r'\b(?=assert\s*\()'          , r'//', line)
+				re.sub(r'\b(?=assert_warning\s*\()'  , r'//', line)
+				re.sub(r'\b(?=static_assert\s*\()'   , r'//', line)
 
 				fout.write(line)
 
