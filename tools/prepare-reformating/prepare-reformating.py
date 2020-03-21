@@ -44,9 +44,9 @@ def fixupCode(fileName):
 						break
 
 				# 正規表現の先読みを利用して assert をコメントアウトする
-				re.sub(r'\b(?=assert\s*\()'          , r'//', line)
-				re.sub(r'\b(?=assert_warning\s*\()'  , r'//', line)
-				re.sub(r'\b(?=static_assert\s*\()'   , r'//', line)
+				line = re.sub(r'\b(?=assert\s*\()'          , r'//', line)
+				line = re.sub(r'\b(?=assert_warning\s*\()'  , r'//', line)
+				line = re.sub(r'\b(?=static_assert\s*\()'   , r'//', line)
 
 				fout.write(line)
 
