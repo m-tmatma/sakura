@@ -34,11 +34,14 @@ def fixupCode(fileName):
 					fout.write(line)
 					continue
 
-				# 指定パターンの先頭に #line XXX を挿入する
+				# 一時バッファから行コメントを削除
+				tempdata = re.sub(r'//.*', r'', line)
+
+				# 行コメントを削除した結果に対してパターンマッチして #line XXX を挿入する
 				for patternAndNo in regAndLine:
 					pattern = patternAndNo[0]
 					lineNo  = patternAndNo[1]
-					match = pattern.search(line)
+					match = pattern.search(tempdata)
 					if match:
 						fout.write('#line ' + str(lineNo) + '\r\n')
 						break
