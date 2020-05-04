@@ -135,7 +135,7 @@ public:
 	void swap( CNativeW& left ){
 		CNative::swap(left);
 	}
-	int capacity() const noexcept {
+	SSIZE_T capacity() const noexcept {
 		return CNative::capacity() / sizeof(wchar_t);
 	}
 
