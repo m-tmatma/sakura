@@ -44,7 +44,7 @@
 */
 #ifdef _MSC_VER
 #ifdef _DEBUG
-#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効.
+//#define USE_STRICT_INT //←これをコメントアウトすると厳格なintが無効になります。リリースビルドでは常に無効.
 #endif
 #endif
 
