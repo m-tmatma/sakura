@@ -72,7 +72,7 @@ struct CMacroParam{
 		m_eType = EMacroParamTypeNull;
 	}
 	void SetStringParam( const WCHAR* szParam, int nLength = -1 );
-	void SetIntParam( const int nParam );
+	void SetIntParam( const INT_PTR nParam );
 };
 
 /*! @brief キーボードマクロの1コマンド

@@ -335,7 +335,7 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 	m_eType = EMacroParamTypeStr;
 }
 
-void CMacroParam::SetIntParam( const int nParam )
+void CMacroParam::SetIntParam( const INT_PTR nParam )
 {
 	Clear();
 	m_pData = new WCHAR[16];	//	数値格納（最大16桁）用
