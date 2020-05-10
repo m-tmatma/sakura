@@ -261,7 +261,7 @@ void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
 		/* ドライブ名:\ */
 	}else{
 		/* フォルダの最後が半角かつ'\\'でない場合は、付加する */
-		int	nFolderLen;
+		size_t	nFolderLen;
 		nFolderLen = wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
@@ -282,7 +282,7 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	WCHAR	szDir[_MAX_DIR];
 	WCHAR	szFname[_MAX_FNAME];
 	WCHAR	szExt[_MAX_EXT];
-	int		nFolderLen;
+	size_t	nFolderLen;
 	int		nCharChars;
 	_wsplitpath( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( NULL != pszFolder ){
