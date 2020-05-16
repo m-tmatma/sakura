@@ -286,6 +286,8 @@ pushd %WORKDIR_ASM%  && call %ZIP_CMD%       %OUTFILE_ASM%  .  && popd
 
 @echo end   zip asm
 
+calc-hash.py chm-hash.txt . chm
+
 if exist "%WORKDIR%" (
 	rmdir /s /q "%WORKDIR%"
 )
