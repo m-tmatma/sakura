@@ -45,6 +45,8 @@ call :BuildChm %HHP_MACRO%  %CHM_MACRO%   || (echo error && exit /b 1)
 call :BuildChm %HHP_PLUGIN% %CHM_PLUGIN%  || (echo error && exit /b 1)
 call :BuildChm %HHP_SAKURA% %CHM_SAKURA%  || (echo error && exit /b 1)
 
+python calc-hash.py    chmhash-original.txt %TMP_HELP%  chm
+
 copy /Y %TMP_HELP%\macro\*.chm   %SRC_HELP%\macro\   || (echo error && exit /b 1)
 copy /Y %TMP_HELP%\plugin\*.chm  %SRC_HELP%\plugin\  || (echo error && exit /b 1)
 copy /Y %TMP_HELP%\sakura\*.chm  %SRC_HELP%\sakura\  || (echo error && exit /b 1)
@@ -52,6 +54,8 @@ copy /Y %TMP_HELP%\sakura\*.chm  %SRC_HELP%\sakura\  || (echo error && exit /b 1
 copy /Y %TMP_HELP%\macro\*.Log   %SRC_HELP%\macro\   || (echo error && exit /b 1)
 copy /Y %TMP_HELP%\plugin\*.Log  %SRC_HELP%\plugin\  || (echo error && exit /b 1)
 copy /Y %TMP_HELP%\sakura\*.Log  %SRC_HELP%\sakura\  || (echo error && exit /b 1)
+
+python calc-hash.py    chmhash-copied.txt   %TMP_HELP%  chm
 
 rmdir /s /q %TMP_HELP%
 exit /b 0
