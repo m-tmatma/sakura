@@ -73,12 +73,16 @@ exit /b 0
 		set CI_REPO_NAME=%APPVEYOR_REPO_NAME%
 	) else if defined BUILD_REPOSITORY_NAME (
 		set CI_REPO_NAME=%BUILD_REPOSITORY_NAME%
+	) else if defined GITHUB_REPOSITORY (
+		set CI_REPO_NAME=%GITHUB_REPOSITORY%
 	)
 
 	if defined APPVEYOR_ACCOUNT_NAME (
 		set CI_ACCOUNT_NAME=%APPVEYOR_ACCOUNT_NAME%
 	) else if defined BUILD_DEFINITIONNAME (
 		set CI_ACCOUNT_NAME=%BUILD_DEFINITIONNAME%
+	) else if defined GITHUB_REPOSITORY_OWNER (
+		set CI_ACCOUNT_NAME=%GITHUB_REPOSITORY_OWNER%
 	)
 
 	@rem ----------------------------------------------------------------------------------------------------------
