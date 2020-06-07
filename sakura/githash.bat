@@ -99,7 +99,6 @@ exit /b 0
 	) else if defined BUILD_BUILDID (
 		@rem example BUILD_BUILDID=672
 		set CI_BUILD_NUMBER=%BUILD_BUILDID%
-	)
 	) else if defined GITHUB_RUN_NUMBER (
 		@rem example GITHUB_RUN_NUMBER=4
 		set CI_BUILD_NUMBER=%GITHUB_RUN_NUMBER%
