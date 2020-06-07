@@ -125,14 +125,19 @@ exit /b 0
 		@rem GITHUB_EVENT_NAME=pull_request
 		@rem GITHUB_REF=refs/pull/4/merge
 
-		set TEMP_PR=%GITHUB_REF%
-		set TEMP_PR=%TEMP_PR:refs/pull/=%
-		set TEMP_PR=%TEMP_PR:/merge=%
+		setlocal enabledelayedexpansion
+		set TEMP_PR1=!GITHUB_REF!
+		set TEMP_PR2=!TEMP_PR1:refs/pull/=!
+		set TEMP_PR=!TEMP_PR2:/merge=!
 
-		set GITHUB_PR_NUMBER=%TEMP_PR%
+		set GITHUB_PR_NUMBER=!TEMP_PR!
 		
-		echo "GITHUB_REF       = %GITHUB_REF%"
-		echo "GITHUB_PR_NUMBER = %GITHUB_PR_NUMBER%"
+		@rem echo "TEMP_PR1 = !TEMP_PR1!"
+		@rem echo "TEMP_PR2 = !TEMP_PR2!"
+		@rem echo "TEMP_PR  = !TEMP_PR!"
+		@rem echo "GITHUB_REF       = %GITHUB_REF%"
+		@rem echo "GITHUB_PR_NUMBER = !GITHUB_PR_NUMBER!"
+		endlocal && set GITHUB_PR_NUMBER=%GITHUB_PR_NUMBER%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
