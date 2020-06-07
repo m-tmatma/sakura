@@ -121,6 +121,15 @@ exit /b 0
 		set GITHUB_PR_NUMBER=%APPVEYOR_PULL_REQUEST_NUMBER%
 	) else if defined SYSTEM_PULLREQUEST_PULLREQUESTNUMBER (
 		set GITHUB_PR_NUMBER=%SYSTEM_PULLREQUEST_PULLREQUESTNUMBER%
+	) else if "%GITHUB_EVENT_NAME%" == "pull_request" (
+		@rem GITHUB_EVENT_NAME=pull_request
+		@rem GITHUB_REF=refs/pull/4/merge
+
+		set TEMP_PR=%GITHUB_REF%
+		set TEMP_PR=%TEMP_PR:refs/pull/=%
+		set TEMP_PR=%TEMP_PR:/merge=%
+
+		set GITHUB_PR_NUMBER=%TEMP_PR%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
