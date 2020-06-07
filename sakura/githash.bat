@@ -178,6 +178,7 @@ exit /b 0
 
 :set_ci_build_url_for_github_actions
 	if not defined GITHUB_REPOSITORY_OWNER        exit /b 0
+	if not defined GITHUB_RUN_ID                  exit /b 0
 	set CI_BUILD_URL=https://github.com/%GITHUB_REPOSITORY%/actions/runs/%GITHUB_RUN_ID%
 	exit /b 0
 
