@@ -136,6 +136,8 @@ exit /b 0
 		set GITHUB_PR_HEAD_COMMIT=%APPVEYOR_PULL_REQUEST_HEAD_COMMIT%
 	) else if defined SYSTEM_PULLREQUEST_SOURCECOMMITID (
 		set GITHUB_PR_HEAD_COMMIT=%SYSTEM_PULLREQUEST_SOURCECOMMITID%
+	) else if "%GITHUB_EVENT_NAME%" == "pull_request" (
+		call :getPR_HEAD %GITHUB_PR_NUMBER%
 	)
 
 	if not "%GITHUB_PR_HEAD_COMMIT%" == "" (
@@ -362,3 +364,11 @@ exit /b 0
 	echo //
 
 	exit /b 0
+
+:getPR_HEAD
+	set PR_NUMBER=%1
+	set PR_HEAD=refs/pull/%PR_NUMBER%/head
+	
+	for /f "usebackq" %%s in (`"%CMD_GIT%" show -s --format^=%%H %PR_HEAD%`) do (
+		set GITHUB_PR_HEAD_COMMIT=%%s
+	)
