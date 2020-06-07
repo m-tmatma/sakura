@@ -96,6 +96,10 @@ exit /b 0
 		@rem example BUILD_BUILDID=672
 		set CI_BUILD_NUMBER=%BUILD_BUILDID%
 	)
+	) else if defined GITHUB_RUN_NUMBER (
+		@rem example GITHUB_RUN_NUMBER=4
+		set CI_BUILD_NUMBER=%GITHUB_RUN_NUMBER%
+	)
 
 	if defined APPVEYOR_BUILD_VERSION (
 		@rem APPVEYOR_BUILD_VERSION=1.0.1624
@@ -103,6 +107,10 @@ exit /b 0
 	) else if defined BUILD_BUILDNUMBER (
 		@rem example BUILD_BUILDNUMBER=20200205.4
 		set CI_BUILD_VERSION=%BUILD_BUILDNUMBER%
+	)
+	) else if defined GITHUB_RUN_ID (
+		@rem example GITHUB_RUN_ID=127246022
+		set CI_BUILD_VERSION=%GITHUB_RUN_ID%
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_NUMBER (
@@ -129,6 +137,9 @@ exit /b 0
 	if "%APPVEYOR_REPO_PROVIDER%"=="gitHub" (
 		set GITHUB_ON=1
 	)
+	if "%GITHUB_ACTIONS%"=="true" (
+		set GITHUB_ON=1
+	)
 
 	set PREFIX_GITHUB=https://github.com
 	if "%GITHUB_ON%" == "1" (
@@ -146,6 +157,7 @@ exit /b 0
 :set_ci_build_url
 	call :set_ci_build_url_for_appveyor
 	call :set_ci_build_url_for_azurepipelines
+	call :set_ci_build_url_for_github_actions
 	exit /b 0
 
 :set_ci_build_url_for_appveyor
@@ -163,6 +175,12 @@ exit /b 0
 	if not defined BUILD_BUILDID                  exit /b 0
 	set CI_BUILD_URL=%SYSTEM_TEAMFOUNDATIONSERVERURI%%SYSTEM_TEAMPROJECT%/_build/results?buildId=%BUILD_BUILDID%
 	exit /b 0
+
+:set_ci_build_url_for_github_actions
+	if not defined GITHUB_REPOSITORY_OWNER        exit /b 0
+	set CI_BUILD_URL=https://github.com/%GITHUB_REPOSITORY%/actions/runs/%GITHUB_RUN_ID%
+	exit /b 0
+
 
 :update_output_githash
 	@rem update githash.h if necessary
