@@ -130,6 +130,9 @@ exit /b 0
 		set TEMP_PR=%TEMP_PR:/merge=%
 
 		set GITHUB_PR_NUMBER=%TEMP_PR%
+		
+		echo "GITHUB_REF       = %GITHUB_REF%"
+		echo "GITHUB_PR_NUMBER = %GITHUB_PR_NUMBER%"
 	)
 
 	if defined APPVEYOR_PULL_REQUEST_HEAD_COMMIT (
