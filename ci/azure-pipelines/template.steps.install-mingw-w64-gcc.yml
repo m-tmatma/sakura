@@ -8,6 +8,15 @@ steps:
   - script: cinst msys2 --params "/InstallDir=C:/msys64" --no-progress
     displayName: install msys2
 
+  - script: C:\msys64\usr\bin\bash --login -c "pacman -Sy archlinux-keyring"
+    displayName: install MinGW-w64-gcc
+
+  - script: C:\msys64\usr\bin\bash --login -c "pacman-key --populate archlinux"
+    displayName: install MinGW-w64-gcc
+
+  - script: C:\msys64\usr\bin\bash --login -c "pacman-key --refresh-keys"
+    displayName: install MinGW-w64-gcc
+
   - script: C:\msys64\usr\bin\bash --login -c "pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-gcc-libs"
     displayName: install MinGW-w64-gcc
 
