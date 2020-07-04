@@ -31,6 +31,7 @@ jobs:
     ARG_VSVERSION: ${{ parameters.ARG_VSVERSION }}
 
   steps:
+  # specify python version
   # https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
   - task: UsePythonVersion@0
     displayName: UsePythonVersion '2.7'
