@@ -211,9 +211,14 @@ next:
 	sprintf_s(in_file2,_countof(in_file2),PREPROCESSOR,in_file);
 	FILE* in = _popen(in_file2, "rt");
 	if (!in) { printf("Error: Failed to open process[%s]\n", in_file2); return 1; }
-	
+
 	// 出力ファイルオープン
-	FILE* out = NULL; fopen_s(&out, out_file, "wt");
+	FILE* out = NULL;
+	errno_t error = fopen_s(&out, out_file, "wt");
+
+	char message[100];
+	strerror_s(message, 100, error);
+	printf("%s: %s %s\n", __FUNCTION__, out_file, message);
 	if (!out) { printf("Error: Failed to open OutputFile[%s] as write mode\n", out_file); return 1; }
 
 	//処理
