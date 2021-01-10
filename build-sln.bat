@@ -85,7 +85,7 @@ exit /b 0
 @echo    %~nx1 platform configuration
 @echo.
 @echo parameter
-@echo    platform      : Win32   or x64
+@echo    platform      : Win32   or x64 or ARM or ARM64
 @echo    configuration : Release or Debug
 @echo.
 @echo example
@@ -93,4 +93,8 @@ exit /b 0
 @echo    %~nx1 Win32 Debug
 @echo    %~nx1 x64   Release
 @echo    %~nx1 x64   Debug
+@echo    %~nx1 ARM   Release
+@echo    %~nx1 ARM   Debug
+@echo    %~nx1 ARM64 Release
+@echo    %~nx1 ARM64 Debug
 exit /b 0
