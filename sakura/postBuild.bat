@@ -43,6 +43,10 @@ if "%PLATFORM%" == "Win32" (
 	set CTAGS_PREFIX=x86
 ) else if "%PLATFORM%" == "x64" (
 	set CTAGS_PREFIX=x64
+) else if "%PLATFORM%" == "ARM" (
+	set CTAGS_PREFIX=ARM
+) else if "%PLATFORM%" == "ARM64" (
+	set CTAGS_PREFIX=ARM64
 ) else (
 	echo unknown PLATFORM %PLATFORM%
 	exit /b 1
