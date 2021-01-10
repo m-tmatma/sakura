@@ -8,6 +8,10 @@ if "%platform%" == "Win32" (
 	@rem OK
 ) else if "%platform%" == "MinGW" (
 	@rem OK
+) else if "%platform%" == "ARM" (
+	@rem OK
+) else if "%platform%" == "ARM64" (
+	@rem OK
 ) else (
 	call :showhelp %0
 	exit /b 1
