@@ -25,12 +25,12 @@ jobs:
       Win64_Release:
         BuildPlatform: 'x64'
         Configuration: 'Release'
-      ARM_Debug:
-        BuildPlatform: 'ARM'
-        Configuration: 'Debug'
-      ARM_Release:
-        BuildPlatform: 'ARM'
-        Configuration: 'Release'
+      #ARM_Debug:
+      #  BuildPlatform: 'ARM'
+      #  Configuration: 'Debug'
+      #ARM_Release:
+      #  BuildPlatform: 'ARM'
+      #  Configuration: 'Release'
       ARM64_Debug:
         BuildPlatform: 'ARM64'
         Configuration: 'Debug'
