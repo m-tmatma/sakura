@@ -44,6 +44,10 @@ jobs:
 
   steps:
   # show environmental variables for debug.
+  - script: "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" update .vsconfig
+    displayName: vs_installer
+
+  # show environmental variables for debug.
   - script: set
     displayName: Show environmental variables for debug
 
