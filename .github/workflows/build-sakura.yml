@@ -40,6 +40,7 @@ jobs:
         platform:
           - Win32
           - x64
+          - ARM64
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
