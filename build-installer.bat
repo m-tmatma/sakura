@@ -50,7 +50,7 @@ set BRON_ZIP=installer\externals\bregonig\bron420.zip
 if "%platform%" == "x64" (
 	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
 ) else if "%platform%" == "ARM64" (
-	7z e %BRON_ZIP% -o%platform%\%configuration% -y ARM64/%BREGONIG_DLL%
+	7z e %BRON_ZIP% -o%platform%\%configuration% -y x64/%BREGONIG_DLL%
 ) else (
 	7z e %BRON_ZIP% -o%platform%\%configuration% -y %BREGONIG_DLL%
 )
