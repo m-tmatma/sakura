@@ -23,7 +23,7 @@ csvKeys = [
 	'errType',
 	'code',
 	'source',
-	'dest',
+'dest',
 	'path',
 	'lineNumber',
 	'message',
