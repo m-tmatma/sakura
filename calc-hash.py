@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
 	hashFile = sys.argv[1]
 	topdir   = sys.argv[2]
-	extensions = []
-	if len(sys.argv) > 3:
-		extensions = sys.argv[3:]
-	writeHash(hashFile, topdir, extensions)
+		extensions = []
+		if len(sys.argv) > 3:
+			extensions = sys.argv[3:]
+		writeHash(hashFile, topdir, extensions)
