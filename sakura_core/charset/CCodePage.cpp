@@ -499,7 +499,7 @@ ssize_t CCodePage::S_UTF32LEToUnicode( const char* pSrc, ssize_t nSrcLen, wchar_
 				if( IsUtf16SurrogHi(c) || IsUtf16SurrogLow(c) ){
 					nDstUseCharLen = 4;
 					if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-						BinToText(pSrcByte + static_cast<int>(i), static_cast<int>(nDstUseCharLen), pDstShort + nDstUseLen);
+						BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
 					}else{
 						return 0;
 					}
@@ -529,7 +529,7 @@ ssize_t CCodePage::S_UTF32LEToUnicode( const char* pSrc, ssize_t nSrcLen, wchar_
 				// UCS-4(UTF-16範囲外。バイトごとに出力する)
 				nDstUseCharLen = 4;
 				if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-					BinToText(pSrcByte + static_cast<int>(i), static_cast<int>(nDstUseCharLen), pDstShort + nDstUseLen);
+					BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
 					nDstUseLen += nDstUseCharLen;
 				}else{
 					return 0;
@@ -538,7 +538,7 @@ ssize_t CCodePage::S_UTF32LEToUnicode( const char* pSrc, ssize_t nSrcLen, wchar_
 		}else{
 			nDstUseCharLen = nSrcLen - i;
 			if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-				BinToText(pSrcByte + static_cast<int>(i), static_cast<int>(nDstUseCharLen), pDstShort + nDstUseLen);
+				BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
 				nDstUseLen += nDstUseCharLen;
 			}else{
 				return 0;
@@ -590,7 +590,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, ssize_t nSrcLen, wchar_t* p
 				if( IsUtf16SurrogHi(c) || IsUtf16SurrogLow(c) ){
 					nDstUseCharLen = 4;
 					if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-						BinToText(pSrcByte + static_cast<int>(i), static_cast<int>(nDstUseCharLen), pDstShort + nDstUseLen);
+						BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
 					}else{
 						return 0;
 					}
@@ -618,7 +618,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, ssize_t nSrcLen, wchar_t* p
 				// UCS-4(UTF-16範囲外。バイトごとに出力する)
 				nDstUseCharLen = 4;
 				if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-					BinToText(pSrcByte + static_cast<int>(i), static_cast<int>(nDstUseCharLen), pDstShort + nDstUseLen);
+					BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
 					nDstUseLen += nDstUseCharLen;
 				}else{
 					return 0;
@@ -628,7 +628,7 @@ int CCodePage::S_UTF32BEToUnicode( const char* pSrc, ssize_t nSrcLen, wchar_t* p
 		}else{
 			nDstUseCharLen = nSrcLen - i;
 			if( nDstUseLen + nDstUseCharLen <= nDstLen ){
-				BinToText(pSrcByte + static_cast<int>(i), static_cast<int>(nDstUseCharLen), pDstShort + nDstUseLen);
+				BinToText(pSrcByte + i, nDstUseCharLen, pDstShort + nDstUseLen);
 				nDstUseLen += nDstUseCharLen;
 			}else{
 				return 0;

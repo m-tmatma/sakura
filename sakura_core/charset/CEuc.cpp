@@ -11,11 +11,11 @@
 /*!
 	EUCJP → Unicode 変換関数
 */
-int CEuc::EucjpToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError )
+ssize_t CEuc::EucjpToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	const unsigned char *pr, *pr_end;
 	unsigned short *pw;
-	int nclen;
+	ssize_t nclen;
 	ECharSet echarset;
 	bool berror_tmp, berror=false;
 
@@ -70,7 +70,7 @@ int CEuc::EucjpToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bo
 		*pbError = berror;
 	}
 
-	return int(pw - reinterpret_cast<unsigned short*>(pDst));
+	return static_cast<ssize_t>(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 /* EUC→Unicodeコード変換 */
@@ -91,10 +91,10 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 	}
 
 	// 変換
-	int nDstLen = EucjpToUni( pSrc, nSrcLen, pDst, &bError );
+	ssize_t nDstLen = EucjpToUni( pSrc, nSrcLen, pDst, &bError );
 
 	// pDstMem を更新
-	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, static_cast<size_t>(nDstLen*sizeof(wchar_t)) );
 
 	// 後始末
 	delete [] pDst;

@@ -99,7 +99,7 @@ public:
 	virtual EConvertResult UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
-	static ssize_t BinToText(const unsigned char *pSrc, const int nLen, unsigned short *pDst);
+	static ssize_t BinToText(const unsigned char *pSrc, const ssize_t nLen, unsigned short *pDst);
 	static int TextToBin(const unsigned short cSrc);
 
 	// MIME Header デコーダ
@@ -109,7 +109,7 @@ public:
 /*!
 	バイナリ１バイトを U+DC00 から U+DCFF までに対応付ける
 */
-inline ssize_t CCodeBase::BinToText( const unsigned char *pSrc, const int nLen, unsigned short *pDst )
+inline ssize_t CCodeBase::BinToText( const unsigned char *pSrc, const ssize_t nLen, unsigned short *pDst )
 {
 	ssize_t i;
 
