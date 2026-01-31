@@ -1,4 +1,4 @@
-﻿/*! @file */
+﻿﻿/*! @file */
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
@@ -127,15 +127,15 @@ void CStream::Close()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 void CStream::SeekSet(	//!< シーク
-	long offset	//!< ストリーム先頭からのオフセット 
+	LONGLONG offset	//!< ストリーム先頭からのオフセット 
 )
 {
-	fseek(m_fp,offset,SEEK_SET);
+	_fseeki64(m_fp,offset,SEEK_SET);
 }
 
 void CStream::SeekEnd(   //!< シーク
-	long offset //!< ストリーム終端からのオフセット
+	LONGLONG offset //!< ストリーム終端からのオフセット
 )
 {
-	fseek(m_fp,offset,SEEK_END);
+	_fseeki64(m_fp,offset,SEEK_END);
 }

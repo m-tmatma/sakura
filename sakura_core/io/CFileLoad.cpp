@@ -1,4 +1,4 @@
-﻿/*!	@file
+﻿﻿/*!	@file
 	@brief ファイル読み込みクラス
 
 	@author Moca
@@ -389,7 +389,7 @@ EConvertResult CFileLoad::ReadLine_core(
 	m_nLineIndex++;
 
 	// 2012.10.21 Moca BOMの除去(UTF-7対応)
-	if( m_nLineIndex == 0 ){
+	if( m_nLineIndex == 0 && m_nReadBufOffsetBegin == 0 ){
 		if( m_bBomExist && 1 <= pUnicodeBuffer->GetStringLength() ){
 			if( pUnicodeBuffer->GetStringPtr()[0] == 0xfeff ){
 				CNativeW tmp(pUnicodeBuffer->GetStringPtr() + 1, pUnicodeBuffer->GetStringLength() - 1);

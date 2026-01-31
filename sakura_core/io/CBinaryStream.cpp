@@ -13,19 +13,19 @@ CBinaryInputStream::CBinaryInputStream(LPCWSTR pszFilePath)
 }
 
 //! ストリームの「残り」サイズを取得
-int CBinaryInputStream::GetLength()
+LONGLONG CBinaryInputStream::GetLength()
 {
-	long nCur = ftell(GetFp());
-	fseek(GetFp(), 0, SEEK_END);
-	long nDataLen = ftell(GetFp());
-	fseek(GetFp(), nCur, SEEK_SET);
-	return nDataLen;
+	__int64 nCur = _ftelli64(GetFp());
+	_fseeki64(GetFp(), 0, SEEK_END);
+	__int64 nDataLen = _ftelli64(GetFp());
+	_fseeki64(GetFp(), nCur, SEEK_SET);
+	return (LONGLONG)nDataLen;
 }
 
 //! データを無変換で読み込む。戻り値は読み込んだバイト数。
-int CBinaryInputStream::Read(void* pBuffer, size_t nSizeInBytes)
+LONGLONG CBinaryInputStream::Read(void* pBuffer, size_t nSizeInBytes)
 {
-	return int(fread(pBuffer,1,int(nSizeInBytes),GetFp()));
+	return (LONGLONG)fread(pBuffer,1,nSizeInBytes,GetFp());
 }
 
 CBinaryOutputStream::CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode)

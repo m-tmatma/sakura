@@ -90,7 +90,7 @@ protected:
 	HANDLE	m_hFileMapping = nullptr;	// メモリマップドファイルハンドル
 	LONGLONG	m_nFileSize;	// ファイルサイズ(64bit)
 	LONGLONG	m_nFileDataLen;	// ファイルデータ長からBOM長を引いたバイト数
-	int		m_nLineIndex;	// 現在ロードしている論理行(0開始)
+	LONGLONG	m_nLineIndex;	// 現在ロードしている論理行(0開始)
 	ECodeType	m_CharCode;		// 文字コード
 	CCodeBase*	m_pCodeBase;	////
 	EEncodingTrait	m_encodingTrait;

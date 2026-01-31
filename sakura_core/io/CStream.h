@@ -9,6 +9,8 @@
 #define SAKURA_CSTREAM_0083EDD7_A671_4315_801D_41FED1A2E3DA_H_
 #pragma once
 
+#include "StdAfx.h"
+
 class CFileAttribute;
 
 //! 例外：ファイルオープンに失敗
@@ -51,10 +53,10 @@ public:
 
 	//操作
 	void SeekSet(	//!< シーク
-		long offset	//!< ストリーム先頭からのオフセット 
+		LONGLONG offset	//!< ストリーム先頭からのオフセット 
 	);
 	void SeekEnd(   //!< シーク
-		long offset //!< ストリーム終端からのオフセット
+		LONGLONG offset //!< ストリーム終端からのオフセット
 	);
 
 	//状態
@@ -80,11 +82,11 @@ public:
 	}
 
 	//! データを無変換で書き込む。戻り値は書き込んだバイト数。
-	int Write(const void* pBuffer, size_t nSizeInBytes)
+	LONGLONG Write(const void* pBuffer, size_t nSizeInBytes)
 	{
 		size_t nRet = ::fwrite(pBuffer, 1, nSizeInBytes, GetFp());
 		if(nRet!=nSizeInBytes && IsExceptionMode())throw CError_FileWrite();
-		return static_cast<int>(nRet);
+		return static_cast<LONGLONG>(nRet);
 	}
 };
 #endif /* SAKURA_CSTREAM_0083EDD7_A671_4315_801D_41FED1A2E3DA_H_ */

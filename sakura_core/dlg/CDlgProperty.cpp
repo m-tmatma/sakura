@@ -225,7 +225,7 @@ void CDlgProperty::SetData( void )
 #ifdef _DEBUG/////////////////////////////////////////////////////
 	HGLOBAL					hgData;
 	char*					pBuf;
-	int						nBufLen;
+	LONGLONG				nBufLen;
 	CNativeW				ctext;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = nullptr;
@@ -237,17 +237,17 @@ void CDlgProperty::SetData( void )
 	if( nBufLen > CheckKanjiCode_MAXREADLENGTH ){
 		nBufLen = CheckKanjiCode_MAXREADLENGTH;
 	}
-	hgData = ::GlobalAlloc( GHND, nBufLen + 1 );
+	hgData = ::GlobalAlloc( GHND, static_cast<SIZE_T>(nBufLen) + 1 );
 	if( nullptr == hgData ){
 		in.Close();
 		goto end_of_CodeTest;
 	}
 	pBuf = static_cast<char*>(::GlobalLock(hgData));
-	in.Read( pBuf, nBufLen );
+	in.Read( pBuf, static_cast<size_t>(nBufLen) );
 	in.Close();
 
 	//CESIのデバッグ情報
-	CESI::GetDebugInfo(pBuf,nBufLen,&ctext);
+	CESI::GetDebugInfo(pBuf, static_cast<int>(nBufLen), &ctext);
 	cmemProp.AppendNativeData(ctext);
 
 	if( nullptr != hgData ){

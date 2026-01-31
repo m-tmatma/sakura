@@ -219,9 +219,15 @@ INT_PTR CPropFile::DispatchEvent(
 			if( nVal < 1 ){
 				nVal = 1;
 			}
+#ifdef _WIN64
+			if( nVal > 1024 * 1024 ){
+				nVal = 1024 * 1024;  // 最大 1TB まで
+			}
+#else
 			if( nVal > 2048 ){
 				nVal = 2048;  // 最大 2GB まで
 			}
+#endif
 			::SetDlgItemInt( hwndDlg, IDC_EDIT_ALERT_FILESIZE, nVal, FALSE );
 			return TRUE;
 			/*NOTREACHED*/
@@ -447,9 +453,15 @@ int CPropFile::GetData( HWND hwndDlg )
 	if( m_Common.m_sFile.m_nAlertFileSize < 1 ){
 		m_Common.m_sFile.m_nAlertFileSize = 1;
 	}
+#ifdef _WIN64
+	if( m_Common.m_sFile.m_nAlertFileSize > 1024 * 1024 ){
+		m_Common.m_sFile.m_nAlertFileSize = 1024 * 1024;
+	}
+#else
 	if( m_Common.m_sFile.m_nAlertFileSize > 2048 ){
 		m_Common.m_sFile.m_nAlertFileSize = 2048;
 	}
+#endif
 
 	// ファイル保存ダイアログのフィルタ設定	// 2006.11.16 ryoji
 	m_Common.m_sFile.m_bNoFilterSaveNew = ::IsDlgButtonCheckedBool( hwndDlg, IDC_CHECK_NoFilterSaveNew );	// 新規から保存時は全ファイル表示
