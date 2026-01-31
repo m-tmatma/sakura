@@ -1306,8 +1306,9 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			}
 			szLineData[nLINEDATA_LAST_CHAR] = '\0';
 			//巻き戻し用に現在のオフセット位置を退避
-			old_offset = ftell(fp);
-			if (old_offset == -1) { //読み取りエラー or ファイル終端に到達時はタグファイルとして扱わない
+			// 4GBを超えるファイルに対応するため、ftell()の代わりにfgetpos()を使用
+			// fgetpos()はfpos_tを使用し、Windowsでは64bit対応
+			if (fgetpos(fp, &old_offset) != 0) { //読み取りエラー or ファイル終端に到達時はタグファイルとして扱わない
 				return false;
 			}
 			continue;

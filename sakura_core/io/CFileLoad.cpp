@@ -220,6 +220,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	// 注意: 32ビット版ではsize_tは4GB未満の値しか扱えない
 	// 4GBを超えるファイルの場合、このキャストは正しい値を保持できない可能性がある
 	// 64ビット版ではsize_tは8バイトなので問題なし
+	// ただし、MapViewOfFileの制限により、32bit版では実質的に4GB未満のファイルのみがサポートされる
 	m_nFileDataLen = m_nReadBufOffsetEnd = (size_t)m_nFileSize;
 	bool bBom = false;
 	if( 0 < m_nFileSize ){
@@ -436,6 +437,8 @@ size_t CFileLoad::GetNextLineOffset( size_t nOffset )
 		((m_encodingTrait == ENCODING_TRAIT_UTF32LE) || (m_encodingTrait == ENCODING_TRAIT_UTF32BE)) ? 4 :
 		((m_encodingTrait == ENCODING_TRAIT_UTF16LE) || (m_encodingTrait == ENCODING_TRAIT_UTF16BE)) ? 2 :
 		1;
+	// 注意: 32bit版ではsize_tが4バイトのため、4GBを超えるファイルでは
+	// オフセットが切り詰められる可能性がある
 	size_t nOffsetBegin = (std::min)(nOffset, (size_t)m_nFileSize);
 	nOffsetBegin = nOffsetBegin - (nOffsetBegin % nAlignBytes);
 	if( nOffsetBegin < nAlignBytes ){
@@ -446,6 +449,8 @@ size_t CFileLoad::GetNextLineOffset( size_t nOffset )
 	size_t nLineLenDummy = 0;
 	CEol cEolDummy;
 	size_t nEolLenDummy = 0;
+	// 注意: 32bit版ではsize_tが4バイトのため、4GBを超えるファイルでは
+	// ファイルサイズが切り詰められる可能性がある
 	(void)GetNextLineCharCode( m_pReadBufTop, (size_t)m_nFileSize, &nLineLenDummy, &nOffsetBegin, &cEolDummy, &nEolLenDummy );
 
 	return nOffsetBegin;
