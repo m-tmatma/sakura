@@ -145,10 +145,13 @@ public:
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
 						}else{
+							// 注意: 4GBを超えるファイルではnFileSizeLowのみが保存される
+							// PairGrepEnumItemがDWORD型のため、4GB超のファイルサイズは切り詰められる
 							m_vpItems.emplace_back( lpName, w32fd.nFileSizeLow );
 							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
 								// フォルダーを含んだパスなら検索済みとして除外指定に追加する
+								// 注意: 4GBを超えるファイルではnFileSizeLowのみが保存される
 								pExceptItems->m_vpItems.emplace_back( lpFullPath, w32fd.nFileSizeLow );
 							}else{
 								delete [] lpFullPath;

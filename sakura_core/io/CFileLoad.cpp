@@ -224,7 +224,8 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_nFileDataLen = m_nReadBufOffsetEnd = (size_t)m_nFileSize;
 	bool bBom = false;
 	if( 0 < m_nFileSize ){
-		const int nBomCheckLen = (int)(std::min)(m_nFileSize, 10LL);
+		// BOMチェックは最大10バイトまで。intではなくsize_tを使用
+		const size_t nBomCheckLen = (size_t)(std::min)(m_nFileSize, 10LL);
 		CMemory headData(m_pReadBufTop, nBomCheckLen);
 		CNativeW headUni;
 		CIoBridge::FileToImpl(headData, &headUni, m_pCodeBase, m_nFlag);
