@@ -30,7 +30,7 @@ public:
 public:
 	// 実装
 	// 2008.11.10 変換ロジックを書き直す
-	inline static int _EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex );
+	inline static ssize_t _EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex );
 protected:
 	static ssize_t EucjpToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError );
 	inline static int _UniToEucjp_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
@@ -44,7 +44,7 @@ protected:
 
 	高速化のため、インライン化
 */
-inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex = nullptr )
+inline ssize_t CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex = nullptr )
 {
 	ssize_t nret;
 	unsigned char czenkaku[2];
@@ -55,7 +55,7 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 	switch( eCharset ){
 	case CHARSET_JIS_HANKATA:
 		// 半角カタカナを処理。エラーは起こらない
-		nret = MyMultiByteToWideChar_JP( &pSrc[1], 1, pDst );
+		nret = static_cast<ssize_t>(MyMultiByteToWideChar_JP( &pSrc[1], 1, pDst ));
 		// 保護コード
 		if( nret < 1 ){
 			nret = 1;
@@ -74,7 +74,7 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 			// SJIS → Unicode
 			czenkaku[0] = static_cast<unsigned char>( (ctemp & 0x0000ff00) >> 8 );
 			czenkaku[1] = static_cast<unsigned char>( ctemp & 0x000000ff );
-			nret = MyMultiByteToWideChar_JP( &czenkaku[0], 2, pDst );
+			nret = static_cast<ssize_t>(MyMultiByteToWideChar_JP( &czenkaku[0], 2, pDst ));
 			if( nret < 1 ){
 				nret = BinToText( pSrc, 2, pDst );
 				hex = true;
@@ -101,7 +101,7 @@ inline int CEuc::_EucjpToUni_char( const unsigned char* pSrc, unsigned short* pD
 		*pbHex = hex;
 	}
 
-	return static_cast<int>(nret);
+	return nret;
 }
 
 /*
