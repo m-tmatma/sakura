@@ -93,7 +93,7 @@ CTextOutputStream::CTextOutputStream(const WCHAR* pszPath, ECodeType eCodeType, 
 		CMemory cmemBom;
 		m_pcCodeBase->GetBom(&cmemBom);
 		if(cmemBom.GetRawLength()>0){
-			fwrite(cmemBom.GetRawPtr(),cmemBom.GetRawLength(),1,GetFp());
+			fwrite(cmemBom.GetRawPtr(), static_cast<size_t>(cmemBom.GetRawLength()), 1, GetFp());
 		}
 	}
 }
@@ -151,12 +151,12 @@ void CTextOutputStream::WriteString(
 			CNativeW cSrc(p, static_cast<size_t>(lf - p));
 			CMemory cDst;
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //コード変換
-			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
+			fwrite(cDst.GetRawPtr(), 1, static_cast<size_t>(cDst.GetRawLength()), GetFp());
 
 			//\r\nを出力
 			cSrc.SetString(L"\r\n");
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst);
-			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
+			fwrite(cDst.GetRawPtr(), 1, static_cast<size_t>(cDst.GetRawLength()), GetFp());
 
 			//次へ
 			p=lf+1;
@@ -166,7 +166,7 @@ void CTextOutputStream::WriteString(
 			CNativeW cSrc(p, static_cast<size_t>(pEnd - p));
 			CMemory cDst;
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //コード変換
-			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
+			fwrite(cDst.GetRawPtr(), 1, static_cast<size_t>(cDst.GetRawLength()), GetFp());
 			break;
 		}
 	}

@@ -34,7 +34,7 @@ public:
 protected:
 	static ssize_t EucjpToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError );
 	inline static int _UniToEucjp_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
-	static int UniToEucjp( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError );
+	static ssize_t UniToEucjp( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError );
 };
 
 /*!

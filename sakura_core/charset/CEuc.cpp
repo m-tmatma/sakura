@@ -108,7 +108,7 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 	}
 }
 
-int CEuc::UniToEucjp( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError )
+ssize_t CEuc::UniToEucjp( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError )
 {
 	int nclen;
 	const unsigned short *pr, *pr_end;
@@ -158,7 +158,7 @@ int CEuc::UniToEucjp( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bo
 		*pbError = berror;
 	}
 
-	return int(pw - reinterpret_cast<unsigned char*>(pDst));
+	return static_cast<ssize_t>(pw - reinterpret_cast<unsigned char*>(pDst));
 }
 
 EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
@@ -167,19 +167,19 @@ EConvertResult CEuc::UnicodeToEUC(const CNativeW& cSrc, CMemory* pDstMem)
 	bool bError = false;
 
 	const wchar_t* pSrc = cSrc.GetStringPtr();
-	int nSrcLen = cSrc.GetStringLength();
+	ssize_t nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファサイズを調べてメモリを確保
-	char* pDst = new (std::nothrow) char[nSrcLen * 2];
+	char* pDst = new (std::nothrow) char[static_cast<size_t>(nSrcLen * 2)];
 	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
 
 	// 変換
-	int nDstLen = UniToEucjp( pSrc, nSrcLen, pDst, &bError );
+	ssize_t nDstLen = UniToEucjp( pSrc, nSrcLen, pDst, &bError );
 
 	// pDstMem を更新
-	pDstMem->SetRawDataHoldBuffer( pDst, nDstLen );
+	pDstMem->SetRawDataHoldBuffer( pDst, static_cast<size_t>(nDstLen) );
 
 	// 後始末
 	delete [] pDst;
