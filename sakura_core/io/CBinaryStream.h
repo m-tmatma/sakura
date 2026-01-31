@@ -17,10 +17,10 @@ public:
 	explicit CBinaryInputStream(LPCWSTR pszFilePath);
 
 	//! ストリームの「残り」サイズを取得
-	LONGLONG GetLength();
+	ssize_t GetLength();
 
 	//! データを無変換で読み込む。戻り値は読み込んだバイト数。
-	LONGLONG Read(void* pBuffer, size_t nSizeInBytes);
+	ssize_t Read(void* pBuffer, size_t nSizeInBytes);
 };
 
 class CBinaryOutputStream final : public COutputStream{

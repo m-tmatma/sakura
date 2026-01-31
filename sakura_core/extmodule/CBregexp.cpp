@@ -454,7 +454,7 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 	@retval false No Match または エラー。エラーは GetLastMessage()により判定可能。
 
 */
-bool CBregexp::Match( const wchar_t* target, int len, int nStart )
+bool CBregexp::Match( const wchar_t* target, ssize_t len, ssize_t nStart )
 {
 	int matched;		//!< 検索一致したか? >0:Match, 0:NoMatch, <0:Error
 
@@ -508,7 +508,7 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 
 	@date	2007.01.16 ryoji 戻り値を置換個数に変更
 */
-int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
+int CBregexp::Replace(const wchar_t *szTarget, ssize_t nLen, ssize_t nStart)
 {
 	int result;
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了

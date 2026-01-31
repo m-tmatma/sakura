@@ -46,7 +46,7 @@ bool CDocLine::IsEmptyLine() const
 void CDocLine::SetEol(bool bEnableExtEol)
 {
 	const wchar_t* pData = m_cLine.GetStringPtr();
-	int nLength = m_cLine.GetStringLength();
+	ssize_t nLength = m_cLine.GetStringLength();
 	//改行コード設定
 	const wchar_t* p = &pData[nLength] - 1;
 	while(p>=pData && WCODE::IsLineDelimiter(*p, bEnableExtEol))p--;
@@ -59,7 +59,7 @@ void CDocLine::SetEol(bool bEnableExtEol)
 	}
 }
 
-void CDocLine::SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol)
+void CDocLine::SetDocLineString(const wchar_t* pData, ssize_t nLength, bool bEnableExtEol)
 {
 	m_cLine.SetString(pData, nLength);
 	SetEol(bEnableExtEol);

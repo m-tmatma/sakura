@@ -720,7 +720,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	const wchar_t* pStrLast = nullptr; // 最後の行に改行がなければそのポインタ
 	if( 0 < sta.size() ){
 		pStrLast = sta[sta.size()-1]->pCmemLine->GetStringPtr();
-		int nlen = sta[sta.size()-1]->pCmemLine->GetStringLength();
+		ssize_t nlen = sta[sta.size()-1]->pCmemLine->GetStringLength();
 		if( 0 < nlen ){
 			if( WCODE::IsLineDelimiter(pStrLast[nlen-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 				pStrLast = nullptr;
@@ -756,7 +756,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	if( pStrLast ){
 		// 最終行の改行を削除
 		CLineData& lastData = repData[repData.size()-1];
-		int nLen = lastData.cmemLine.GetStringLength();
+		ssize_t nLen = lastData.cmemLine.GetStringLength();
 		bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		while( 0 <nLen && WCODE::IsLineDelimiter(lastData.cmemLine[nLen-1], bExtEol) ){
 			nLen--;

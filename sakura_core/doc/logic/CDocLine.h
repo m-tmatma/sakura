@@ -104,7 +104,7 @@ public:
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
-	void SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol);
+	void SetDocLineString(const wchar_t* pData, ssize_t nLength, bool bEnableExtEol);
 	void SetDocLineString(const CNativeW& cData, bool bEnableExtEol);
 	void SetDocLineStringMove(CNativeW* pcData, bool bEnableExtEol);
 

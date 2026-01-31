@@ -229,7 +229,7 @@ void CDlgProperty::SetData( void )
 #ifdef _DEBUG/////////////////////////////////////////////////////
 	HGLOBAL					hgData;
 	char*					pBuf;
-	LONGLONG				nBufLen;
+	ssize_t					nBufLen;
 	CNativeW				ctext;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = nullptr;

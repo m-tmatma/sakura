@@ -436,7 +436,7 @@ int CEditView::IsSearchString(
 		** 対策として、行頭を MacthInfoに教えないといけないので、文字列の長さ・位置情報を与える形に変更
 		** 2003.05.04 かろと
 		*/
-		if( m_CurRegexp.Match( cStr.GetPtr(), static_cast<int>(cStr.GetLength()), nPos ) ){
+		if( m_CurRegexp.Match( cStr.GetPtr(), static_cast<ssize_t>(cStr.GetLength()), static_cast<ssize_t>(nPos) ) ){
 			*pnSearchStart = m_CurRegexp.GetIndex();	// 2002.02.08 hor
 			*pnSearchEnd = m_CurRegexp.GetLastIndex();
 			return 1;

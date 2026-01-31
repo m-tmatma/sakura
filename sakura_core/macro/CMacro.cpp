@@ -478,7 +478,7 @@ void CMacro::Save([[maybe_unused]] HINSTANCE hInstance, CTextOutputStream& out) 
 				cmemWork.Replace( L"\u2028", L"\\u2028" );
 				cmemWork.Replace( L"\u2029", L"\\u2029" );
 				for( int c = 1; c < 0x20; c++ ){
-					int nLen = cmemWork.GetStringLength();
+					ssize_t nLen = cmemWork.GetStringLength();
 					const wchar_t* p = cmemWork.GetStringPtr();
 					for( int i = 0; i < nLen; i++ ){
 						if( p[i] == c ){

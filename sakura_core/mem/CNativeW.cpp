@@ -263,8 +263,8 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 {
 	if(&cmem1==&cmem2)return true;
 
-	const int nLen1 = cmem1.GetStringLength();
-	const int nLen2 = cmem2.GetStringLength();
+	const ssize_t nLen1 = cmem1.GetStringLength();
+	const ssize_t nLen2 = cmem2.GetStringLength();
 	if( nLen1 == nLen2 ){
 		const wchar_t* psz1 = cmem1.GetStringPtr();
 		const wchar_t* psz2 = cmem2.GetStringPtr();

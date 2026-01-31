@@ -197,7 +197,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const ssize_t nSrcLen, cha
 	return int(pw - pDst);
 }
 
-int CUtf7::UniToUtf7( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, int nDstLen )
+ssize_t CUtf7::UniToUtf7( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, ssize_t nDstLen )
 {
 	const wchar_t *pr, *pr_base;
 	const wchar_t* pr_end;
@@ -236,7 +236,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, in
 		pr_base = pr;
 	}while( pr_base < pr_end );
 
-	return int(pw - pDst);
+	return static_cast<ssize_t>(pw - pDst);
 }
 
 /*! コード変換 Unicode→UTF-7
@@ -246,11 +246,11 @@ EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 {
 	// データ取得
 	const wchar_t* pSrc = cSrc.GetStringPtr();
-	int nSrcLen = cSrc.GetStringLength();
+	ssize_t nSrcLen = cSrc.GetStringLength();
 
 	// 出力先バッファの確保
 	// 最大で、変換元のデータ長の５倍。
-	int nDstLen = nSrcLen * 5;
+	ssize_t nDstLen = nSrcLen * 5;
 	std::string dst( nDstLen, char() );  // * → +ACo-
 	auto pDst = dst.data();
 

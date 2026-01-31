@@ -73,18 +73,18 @@ public:
 	// 文字列検索
 	static const wchar_t* SearchString(
 		const wchar_t*	pLine,
-		int				nLineLen,
-		int				nIdxPos,
+		ssize_t			nLineLen,
+		ssize_t			nIdxPos,
 		const CSearchStringPattern& pattern
 	);
 	// 単語単位で文字列検索
 	static const wchar_t* SearchStringWord(
 		const wchar_t*	pLine,
-		int				nLineLen,
-		int				nIdxPos,
+		ssize_t			nLineLen,
+		ssize_t			nIdxPos,
 		const std::vector<std::pair<const wchar_t*, CLogicInt> >& searchWords,
 		bool	bLoHiCase,
-		int*	pnMatchLen
+		ssize_t*	pnMatchLen
 	);
 
 	// 検索条件の情報
@@ -97,7 +97,7 @@ public:
 	static void CreateWordList(
 		std::vector<std::pair<const wchar_t*, CLogicInt> >&	searchWords,
 		const wchar_t*	pszPattern,
-		int	nPatternLen
+		ssize_t	nPatternLen
 	);
 
 public:

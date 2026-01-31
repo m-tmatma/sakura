@@ -662,7 +662,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				cMemRepKey2 = cMemRepKey;
 			}
 			cRegexp.Compile( m_pCommanderView->m_strCurSearchKey.c_str(), cMemRepKey2.GetStringPtr(), nFlag);
-			if( cRegexp.Replace(pLine, nLen, nIdx) ){
+			if( cRegexp.Replace(pLine, nLen, static_cast<ssize_t>(nIdx)) ){
 				// From Here Jun. 6, 2005 かろと
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
 				// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
@@ -1286,7 +1286,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				}
 			}
 
-			if( int nReplace = cRegexp.Replace(pLine, nLen, nIdx) ){
+			if( int nReplace = cRegexp.Replace(pLine, nLen, static_cast<ssize_t>(nIdx)) ){
 				nReplaceNum += nReplace;
 				CLogicInt exTail; // 置換せずに残す部分の長さ(置換対象となる選択範囲より右側の長さと、置換後文字列である CRegexp::GetString()から除外する長さを兼ねている)。
 				if ( !bConsecutiveAll ) { // 2006.04.01 かろと	// 2007.01.16 ryoji

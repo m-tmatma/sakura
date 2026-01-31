@@ -1059,7 +1059,7 @@ int CDlgTagJumpList::find_key_core(
 	// to_acharは一時バッファで破壊される可能性があるのでコピー
 	CNativeA cmemKeyA = CNativeA(to_achar(keyword));
 	const ACHAR* paszKeyword = cmemKeyA.GetStringPtr();
-	int	length = static_cast<int>(cmemKeyA.GetStringLength());
+	ssize_t	length = cmemKeyA.GetStringLength();
 
 	Empty();
 
@@ -1490,7 +1490,7 @@ void CDlgTagJumpList::find_key_for_LinearSearch(
 	const STagSearchRule* rule,
 	bool bSorted,
 	bool bFoldcase,
-	int length
+	ssize_t length
 ){
 	ACHAR	szLineData[1024];		//行バッファ
 	ACHAR	s[4][1024];

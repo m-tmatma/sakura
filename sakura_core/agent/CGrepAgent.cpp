@@ -418,7 +418,7 @@ DWORD CGrepAgent::DoGrep(
 				return 0;
 			}
 			if( bLineSelect ){
-				int len = cmemReplace.GetStringLength();
+				ssize_t len = cmemReplace.GetStringLength();
 				if( cmemReplace[len - 1] != WCODE::CR && cmemReplace[len - 1] != WCODE::LF ){
 					cmemReplace.AppendString(pcViewDst->GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2());
 				}
@@ -1095,7 +1095,7 @@ static inline
 wchar_t* lineColumnToString(
 	wchar_t (&strWork)[nCapacity],	/*!< [out] 出力先 */
 	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
-	int			nColumn				/*!< [in] マッチした桁番号(1～) */
+	ssize_t		nColumn				/*!< [in] マッチした桁番号(1～) */
 )
 {
 	// int2dec_destBufferSufficientLength 関数の
@@ -1104,7 +1104,11 @@ wchar_t* lineColumnToString(
 		1		// (
 		+ int2dec_destBufferSufficientLength<LONGLONG>() - 1	// I64d
 		+ 1		// ,
+#ifdef _WIN64
+		+ int2dec_destBufferSufficientLength<int64_t>() - 1	// %lld
+#else
 		+ int2dec_destBufferSufficientLength<int32_t>() - 1	// %d
+#endif
 		+ 1		// )
 		+ 1		// \0 終端0文字の分
 	;
@@ -1139,13 +1143,13 @@ void CGrepAgent::SetGrepResult(
 	const WCHAR*		pszCodeName,	/*!< [in] 文字コード情報．" [SJIS]"とか */
 	/* マッチした行の情報 */
 	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
-	int			nColumn,			/*!< [in] マッチした桁番号(1～) */
+	ssize_t		nColumn,			/*!< [in] マッチした桁番号(1～) */
 	const wchar_t*	pCompareData,	/*!< [in] 行の文字列 */
-	int			nLineLen,			/*!< [in] 行の文字列の長さ */
-	int			nEolCodeLen,		/*!< [in] EOLの長さ */
+	ssize_t		nLineLen,			/*!< [in] 行の文字列の長さ */
+	ssize_t		nEolCodeLen,		/*!< [in] EOLの長さ */
 	/* マッチした文字列の情報 */
 	const wchar_t*	pMatchData,		/*!< [in] マッチした文字列 */
-	int			nMatchLen,			/*!< [in] マッチした文字列の長さ */
+	ssize_t		nMatchLen,			/*!< [in] マッチした文字列の長さ */
 	/* オプション */
 	const SGrepOption&	sGrepOption
 )
@@ -1153,7 +1157,7 @@ void CGrepAgent::SetGrepResult(
 	CNativeW cmemBuf(L"");
 	wchar_t strWork[64];
 	const wchar_t * pDispData;
-	int k;
+	ssize_t k;
 	bool bEOL = true;
 	int nMaxOutStr = 0;
 
@@ -1170,7 +1174,11 @@ void CGrepAgent::SetGrepResult(
 	}
 	/* WZ風 */
 	else if( 2 == sGrepOption.nGrepOutputStyle ){
+#ifdef _WIN64
+		::auto_snprintf_s(strWork, _TRUNCATE, L"・(%6I64d,%-5lld): ", nLine, nColumn);
+#else
 		::auto_snprintf_s(strWork, _TRUNCATE, L"・(%6I64d,%-5d): ", nLine, nColumn);
+#endif
 		cmemBuf.AppendString( strWork );
 		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
@@ -1225,7 +1233,7 @@ static void OutputPathInfo(
 	{
 		// バッファを2^n 分確保する
 		int n = 1024;
-		int size = cmemMessage.GetStringLength() + 300;
+		ssize_t size = cmemMessage.GetStringLength() + 300;
 		while( n < size ){
 			n *= 2;
 		}
@@ -1308,11 +1316,11 @@ int CGrepAgent::DoGrepFile(
 	const wchar_t*	pszRes; // 2002/08/29 const付加
 	ECodeType	nCharCode;
 	const wchar_t*	pCompareData; // 2002/08/29 const付加
-	int		nColumn;
+	ssize_t		nColumn;
 	BOOL	bOutFileName;
 	bOutFileName = FALSE;
 	CEol	cEol;
-	int		nEolCodeLen;
+	ssize_t		nEolCodeLen;
 	const STypeConfigMini* type = nullptr;
 	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
 		return -1;
@@ -1320,7 +1328,7 @@ int CGrepAgent::DoGrepFile(
 	CFileLoadOrWnd	cfl( type->m_encoding, hWndTarget );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	int		nOldPercent = 0;
 
-	auto nKeyLen = int(wcslen(pszKey));
+	auto nKeyLen = static_cast<ssize_t>(wcslen(pszKey));
 	// ファイル名表示
 	const WCHAR* pszDispFilePath = ( sGrepOption.bGrepSeparateFolder || sGrepOption.bGrepOutputBaseFolder ) ? pszRelPath : pszFullPath;
 
@@ -1465,7 +1473,7 @@ int CGrepAgent::DoGrepFile(
 		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 		{
 			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-			int		nLineLen = cUnicodeBuffer.GetStringLength();
+			ssize_t	nLineLen = cUnicodeBuffer.GetStringLength();
 
 			nEolCodeLen = cEol.GetLen();
 			++nLine;
@@ -1511,7 +1519,7 @@ int CGrepAgent::DoGrepFile(
 
 			/* 正規表現検索 */
 			if( sSearchOption.bRegularExp ){
-				int nIndex = 0;
+				ssize_t nIndex = 0;
 #ifdef _DEBUG
 				int nIndexPrev = -1;
 #endif
@@ -1527,7 +1535,7 @@ int CGrepAgent::DoGrepFile(
 
 					//	パターン発見
 					nIndex = pRegexp->GetIndex();
-					int matchlen = pRegexp->GetMatchLen();
+					ssize_t matchlen = static_cast<ssize_t>(pRegexp->GetMatchLen());
 #ifdef _DEBUG
 					if( nIndex <= nIndexPrev ){
 						MYTRACE( L"ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n" );
@@ -1576,11 +1584,11 @@ int CGrepAgent::DoGrepFile(
 					Grepにも試験導入。
 					WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
 				*/
-				int nMatchLen;
-				int nIdx = 0;
+				ssize_t nMatchLen;
+				ssize_t nIdx = 0;
 				// Jun. 26, 2003 genta 無駄なwhileは削除
 				while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != nullptr ){
-					nIdx = int(pszRes - pLine + nMatchLen);
+					nIdx = static_cast<ssize_t>(pszRes - pLine) + nMatchLen;
 					++nHitCount;
 					++(*pnHitCount);
 					if( sGrepOption.nGrepOutputLineType != 2 ){
@@ -1593,7 +1601,7 @@ int CGrepAgent::DoGrepFile(
 							cmemMessage, pszDispFilePath, pszCodeName,
 							//	Jun. 25, 2002 genta
 							//	桁位置は1始まりなので1を足す必要がある
-							nLine, int(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
+							nLine, static_cast<ssize_t>(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
 							pszRes, nMatchLen, sGrepOption
 						);
 					}
@@ -1606,7 +1614,7 @@ int CGrepAgent::DoGrepFile(
 			}
 			else {
 				/* 文字列検索 */
-				int nColumnPrev = 0;
+				ssize_t nColumnPrev = 0;
 				//	Jun. 21, 2003 genta ループ条件見直し
 				//	マッチ箇所を1行から複数検出するケースを標準に，
 				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
@@ -1620,7 +1628,7 @@ int CGrepAgent::DoGrepFile(
 					);
 					if(!pszRes)break;
 
-					nColumn = int(pszRes - pCompareData + 1);
+					nColumn = static_cast<ssize_t>(pszRes - pCompareData + 1);
 
 					++nHitCount;
 					++(*pnHitCount);
@@ -1645,7 +1653,7 @@ int CGrepAgent::DoGrepFile(
 					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
 					//	nClom : マッチ位置
 					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColumn += nKeyLen - 1;
+					ssize_t nPosDiff = nColumn += nKeyLen - 1;
 					pCompareData += nPosDiff;
 					nLineLen -= nPosDiff;
 					nColumnPrev += nPosDiff;
@@ -1855,9 +1863,9 @@ int CGrepAgent::DoGrepReplaceFile(
 	ECodeType	nCharCode;
 	BOOL	bOutFileName = FALSE;
 	CEol	cEol;
-	int		nEolCodeLen;
+	ssize_t		nEolCodeLen;
 	int		nOldPercent = 0;
-	auto nKeyLen = int(wcslen(pszKey));
+	auto nKeyLen = static_cast<ssize_t>(wcslen(pszKey));
 	const WCHAR*	pszCodeName = L"";
 
 	const STypeConfigMini* type = nullptr;
@@ -1907,7 +1915,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 		{
 			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-			int		nLineLen = cUnicodeBuffer.GetStringLength();
+			ssize_t	nLineLen = cUnicodeBuffer.GetStringLength();
 
 			nEolCodeLen = cEol.GetLen();
 			++nLine;
@@ -1948,8 +1956,8 @@ int CGrepAgent::DoGrepReplaceFile(
 
 			/* 正規表現検索 */
 			if( sSearchOption.bRegularExp ){
-				int nIndex = 0;
-				int nIndexOld = nIndex;
+				ssize_t nIndex = 0;
+				ssize_t nIndexOld = nIndex;
 				int nMatchNum = 0;
 				//	Jun. 21, 2003 genta ループ条件見直し
 				//	マッチ箇所を1行から複数検出するケースを標準に，
@@ -1963,7 +1971,7 @@ int CGrepAgent::DoGrepReplaceFile(
 					( sGrepOption.bGrepPaste && pRegexp->Match( pLine, nLineLen, nIndex ))) ){
 					//	パターン発見
 					nIndex = pRegexp->GetIndex();
-					int matchlen = pRegexp->GetMatchLen();
+					ssize_t matchlen = static_cast<ssize_t>(pRegexp->GetMatchLen());
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,
@@ -2025,12 +2033,12 @@ int CGrepAgent::DoGrepReplaceFile(
 					WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
 				*/
 				const wchar_t* pszRes;
-				int nMatchLen;
-				int nIdx = 0;
-				int nOutputPos = 0;
+				ssize_t nMatchLen;
+				ssize_t nIdx = 0;
+				ssize_t nOutputPos = 0;
 				// Jun. 26, 2003 genta 無駄なwhileは削除
 				while ((pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen))) {
-					nIdx = int(pszRes - pLine + nMatchLen);
+					nIdx = static_cast<ssize_t>(pszRes - pLine) + nMatchLen;
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,
@@ -2042,7 +2050,7 @@ int CGrepAgent::DoGrepReplaceFile(
 							cmemMessage, pszDispFilePath, pszCodeName,
 							//	Jun. 25, 2002 genta
 							//	桁位置は1始まりなので1を足す必要がある
-							nLine, int(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
+							nLine, static_cast<ssize_t>(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
 							pszRes, nMatchLen,
 							sGrepOption
 						);
@@ -2057,15 +2065,15 @@ int CGrepAgent::DoGrepReplaceFile(
 						cOutBuffer.AppendString( &pLine[nOutputPos], pszRes - pLine - nOutputPos );
 					}
 					cOutBuffer.AppendNativeData( cmGrepReplace );
-					nOutputPos = int(pszRes - pLine + nMatchLen);
+					nOutputPos = static_cast<ssize_t>(pszRes - pLine) + nMatchLen;
 				}
 				cOutBuffer.AppendString( &pLine[nOutputPos], nLineLen - nOutputPos );
 			}
 			else {
 				/* 文字列検索 */
-				int nColumnPrev = 0;
+				ssize_t nColumnPrev = 0;
 				const wchar_t*	pCompareData = pLine;
-				int nCompareLen = nLineLen;
+				ssize_t nCompareLen = nLineLen;
 				//	Jun. 21, 2003 genta ループ条件見直し
 				//	マッチ箇所を1行から複数検出するケースを標準に，
 				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
@@ -2074,7 +2082,7 @@ int CGrepAgent::DoGrepReplaceFile(
 					const wchar_t* pszRes = CSearchAgent::SearchString( pCompareData, nCompareLen, 0, pattern );
 					if(!pszRes)break;
 
-					auto nColumn = int(pszRes - pCompareData);
+					auto nColumn = static_cast<ssize_t>(pszRes - pCompareData);
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,
@@ -2103,7 +2111,7 @@ int CGrepAgent::DoGrepReplaceFile(
 					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
 					//	nClom : マッチ位置
 					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColumn + nKeyLen;
+					ssize_t nPosDiff = nColumn + nKeyLen;
 					pCompareData += nPosDiff;
 					nCompareLen -= nPosDiff;
 					nColumnPrev += nPosDiff;

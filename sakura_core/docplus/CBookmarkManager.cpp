@@ -242,7 +242,7 @@ void CBookmarkManager::MarkSearchWord(
 		while( pDocLine ){
 			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
 				pLine = pDocLine->GetDocLineStrWithEOL(&nLineLen);
-				int nMatchLen;
+				ssize_t nMatchLen;
 				if( CSearchAgent::SearchStringWord(pLine, nLineLen, 0, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
 					CBookmarkSetter(pDocLine).SetBookmark(true);
 				}

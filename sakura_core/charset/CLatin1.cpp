@@ -175,7 +175,7 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 
 	// ソース取得
 	const wchar_t* pSrc = cSrc.GetStringPtr();
-	int nSrcLen = cSrc.GetStringLength();
+	ssize_t nSrcLen = cSrc.GetStringLength();
 
 	// 変換先バッファサイズを設定してバッファを確保
 	char* pDst = new (std::nothrow) char[ nSrcLen * 2 ];

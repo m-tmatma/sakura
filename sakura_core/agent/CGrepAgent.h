@@ -159,13 +159,13 @@ private:
 		const WCHAR*	pszCodeName,	//	文字コード情報"[SJIS]"とか
 		// マッチした行の情報
 		LONGLONG		nLine,			//	マッチした行番号
-		int				nColumn,		//	マッチした桁番号
+		ssize_t			nColumn,		//	マッチした桁番号
 		const wchar_t*	pCompareData,	//	行の文字列
-		int				nLineLen,		//	行の文字列の長さ
-		int				nEolCodeLen,	//	EOLの長さ
+		ssize_t			nLineLen,		//	行の文字列の長さ
+		ssize_t			nEolCodeLen,	//	EOLの長さ
 		// マッチした文字列の情報
 		const wchar_t*	pMatchData,		//	マッチした文字列
-		int				nMatchLen,		//	マッチした文字列の長さ
+		ssize_t			nMatchLen,		//	マッチした文字列の長さ
 		// オプション
 		const SGrepOption&	sGrepOption
 	);

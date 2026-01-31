@@ -859,7 +859,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, [[m
 		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol ) ){
 
 			const wchar_t*	pLine = cBuf.GetStringPtr();
-			int			nLineLen = cBuf.GetStringLength();
+			ssize_t			nLineLen = cBuf.GetStringLength();
 
 			++nLineNum;
 			Command_INSTEXT( false, pLine, CLogicInt(nLineLen), true);

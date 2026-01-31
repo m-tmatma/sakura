@@ -100,7 +100,7 @@ public:
 	//末尾を1文字削る
 	void Chop()
 	{
-		int n = GetStringLength();
+		ssize_t n = GetStringLength();
 		n-=1;
 		if(n>=0){
 			_SetStringLength(n);
