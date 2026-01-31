@@ -1096,9 +1096,20 @@ BOOL CPythonMacroManager::LoadKeyMacro(HINSTANCE hInstance [[maybe_unused]], con
 	}
 	m_wstrPath = pszPath;
 	wide2utf8(m_strPath, pszPath);
-	long sz = _filelength(_fileno(f));
-	m_strMacro.resize(sz);
-	fread(&m_strMacro[0], 1, sz, f);
+	// 4GBを超えるファイルに対応するため、_filelength()の代わりに_ftelli64()を使用
+	// _ftelli64は32bit版Windowsでも64bitのファイル位置を返す
+	__int64 nCur = _ftelli64(f);
+	_fseeki64(f, 0, SEEK_END);
+	__int64 sz = _ftelli64(f);
+	_fseeki64(f, nCur, SEEK_SET);
+	// 32bit版ではsize_tが4バイトなので、4GBを超える値はsize_tに収まらない
+	// そのため、szがsize_tの最大値を超える場合はエラーとする
+	if (sz < 0 || sz > static_cast<__int64>(m_strMacro.max_size())) {
+		fclose(f);
+		return FALSE;
+	}
+	m_strMacro.resize(static_cast<size_t>(sz));
+	fread(&m_strMacro[0], 1, static_cast<size_t>(sz), f);
 	fclose(f);
 	// detect and erase UTF-8 BOM
 	constexpr const BYTE utf8BOM[]{ 0xef, 0xbb, 0xbf };

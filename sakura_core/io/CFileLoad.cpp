@@ -190,6 +190,8 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 
 	m_pReadBufTop = nullptr;
 	if( 0 < m_nFileSize ){
+		// 64bit WindowsではMapViewOfFileは大きなファイル（数TBまで）をマッピング可能
+		// 32bit Windowsではプロセスの仮想アドレス空間の制限（通常2GB、/LARGEADDRESSAWAREで4GB）がある
 		m_hFileMapping = CreateFileMapping( hFile, nullptr, PAGE_READONLY, 0, 0, nullptr );
 		if( m_hFileMapping != nullptr ){
 			m_pReadBufTop = (const char*)MapViewOfFile( m_hFileMapping, FILE_MAP_READ, 0, 0, 0 );
@@ -215,6 +217,9 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_encodingTrait = CCodePage::GetEncodingTrait(m_CharCode);
 	m_nFlag = nFlag;
 
+	// 注意: 32ビット版ではsize_tは4GB未満の値しか扱えない
+	// 4GBを超えるファイルの場合、このキャストは正しい値を保持できない可能性がある
+	// 64ビット版ではsize_tは8バイトなので問題なし
 	m_nFileDataLen = m_nReadBufOffsetEnd = (size_t)m_nFileSize;
 	bool bBom = false;
 	if( 0 < m_nFileSize ){
