@@ -19,8 +19,8 @@ class CColor_LineComment final : public CColorStrategy{
 public:
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_COMMENT; }
 	void InitStrategyStatus() override{}
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRef& cStr, ssize_t nPos) override;
+	bool EndColor(const CStringRef& cStr, ssize_t nPos) override;
 	bool Disp() const override{
 		// タイプ別設定 『カラー』プロパティのコメントのリストアイテムのチェックが付いているか
 		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)
@@ -49,8 +49,8 @@ public:
 	}
 	EColorIndexType GetStrategyColor() const override{ return m_nType; }
 	void InitStrategyStatus() override{ m_nCOMMENTEND = 0; }
-	bool BeginColor(const CStringRef& cStr, int nPos) override;
-	bool EndColor(const CStringRef& cStr, int nPos) override;
+	bool BeginColor(const CStringRef& cStr, ssize_t nPos) override;
+	bool EndColor(const CStringRef& cStr, ssize_t nPos) override;
 	bool Disp() const override{
 		// タイプ別設定 『カラー』プロパティのコメントのリストアイテムのチェックが付いているか
 		if (!m_pTypeData->m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp)
@@ -61,6 +61,6 @@ public:
 private:
 	EColorIndexType m_nType;
 	const CBlockComment* m_pcBlockComment;
-	int m_nCOMMENTEND;
+	ssize_t m_nCOMMENTEND;
 };
 #endif /* SAKURA_CCOLOR_COMMENT_C056FE79_A77B_4451_AA5E_1FA5517C0EC1_H_ */

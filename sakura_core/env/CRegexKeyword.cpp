@@ -343,7 +343,7 @@ BOOL CRegexKeyword::RegexKeyLineStart( void )
 BOOL CRegexKeyword::RegexIsKeyword(
 	const CStringRef&	cStr,		//!< [in] 検索対象文字列
 //	const wchar_t*		pLine,		//!< [in] １行のデータ
-	int					nPos,		//!< [in] 検索開始オフセット
+	ssize_t				nPos,		//!< [in] 検索開始オフセット
 //	int					nLineLen,	//!< [in] １行の長さ
 	int*				nMatchLen,	//!< [out] マッチした長さ
 	int*				nMatchColor	//!< [out] マッチした色番号

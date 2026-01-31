@@ -44,7 +44,7 @@ CLayoutColorInfo* CColor_Heredoc::GetStrategyColorInfo() const
 	return info;
 }
 
-bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Heredoc::BeginColor(const CStringRef& cStr, ssize_t nPos)
 {
 	if(!cStr.IsValid())return false;
 
@@ -58,7 +58,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	){
 		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
 		const int length = static_cast<int>(cStr.GetLength());
-		int nPosIdStart = nPos + 3;
+		ssize_t nPosIdStart = nPos + 3;
 		for(; nPosIdStart < length; nPosIdStart++ ){
 			if(cStr[nPosIdStart] != L'\t' && cStr[nPosIdStart] != L' '){
 				break;
@@ -72,7 +72,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 			quote = cStr[nPosIdStart];
 			nPosIdStart++;
 		}
-		int i = nPosIdStart;
+		ssize_t i = nPosIdStart;
 		for(; i < length; i++ ){
 			if( !(WCODE::IsAZ(cStr[i]) || WCODE::Is09(cStr[i]) || cStr[i] == L'_') ){
 				break;
@@ -81,7 +81,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 		if( nPosIdStart == i ){
 			return false;
 		}
-		const int k = i;
+		const ssize_t k = i;
 		if( quote != L'\0' ){
 			if( i < length && cStr[i] == quote ){
 				i++;
@@ -93,40 +93,40 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 			m_id = std::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
 			m_pszId = m_id.c_str();
 			m_nSize = m_id.size();
-			this->m_nCOMMENTEND = length;
+			this->m_nCOMMENTEND = static_cast<ssize_t>(length);
 			return true;
 		}
 	}
 	return false;
 }
 
-bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Heredoc::EndColor(const CStringRef& cStr, ssize_t nPos)
 {
 	if (!m_nCOMMENTEND) {
 		if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
 		 && nPos == 0 && m_nSize <= size_t(cStr.GetLength())
 		 && wmemcmp(cStr.GetPtr(), m_pszId, m_nSize) == 0 ){
 			if (m_nSize == size_t(cStr.GetLength())) {
-				m_nCOMMENTEND = m_nSize;
+				m_nCOMMENTEND = static_cast<ssize_t>(m_nSize);
 				return false;
 			}else{
 				size_t i = m_nSize;
 				if( i + 1 < size_t(cStr.GetLength()) && cStr[i] == L';' && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID;
-					m_nCOMMENTEND = i;
+					m_nCOMMENTEND = static_cast<ssize_t>(i);
 					return false;
 				}else if( m_nSize < size_t(cStr.GetLength()) && WCODE::IsLineDelimiter(cStr[m_nSize], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID
-					m_nCOMMENTEND = m_nSize;
+					m_nCOMMENTEND = static_cast<ssize_t>(m_nSize);
 					return false;
 				}
 			}
-			m_nCOMMENTEND = cStr.GetLength();
+			m_nCOMMENTEND = static_cast<ssize_t>(cStr.GetLength());
 		}else{
-			m_nCOMMENTEND = cStr.GetLength();
+			m_nCOMMENTEND = static_cast<ssize_t>(cStr.GetLength());
 		}
 	}
-	else if (nPos == int(m_nCOMMENTEND)) {
+	else if (nPos == m_nCOMMENTEND) {
 		return true;
 	}
 	return false;

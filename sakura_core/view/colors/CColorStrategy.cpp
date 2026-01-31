@@ -22,7 +22,7 @@
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
 
-bool _IsPosKeywordHead(const CStringRef& cStr, int nPos)
+bool _IsPosKeywordHead(const CStringRef& cStr, ssize_t nPos)
 {
 	return (nPos==0 || !IS_KEYWORD_CHAR(cStr.At(nPos-1)));
 }
@@ -232,7 +232,7 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 // 2005.11.20 Mocaコメントの色分けがON/OFF関係なく行われていたバグを修正
 void CColorStrategyPool::CheckColorMODE(
 	CColorStrategy**	ppcColorStrategy,	//!< [in,out]
-	int					nPos,
+	ssize_t				nPos,
 	const CStringRef&	cLineStr
 )
 {

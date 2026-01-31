@@ -29,7 +29,7 @@ class CColor_Heredoc;
 class CEditView;
 class CStringRef;
 
-bool _IsPosKeywordHead(const CStringRef& cStr, int nPos);
+bool _IsPosKeywordHead(const CStringRef& cStr, ssize_t nPos);
 
 //! 正規表現キーワードのEColorIndexType値を作る関数
 inline EColorIndexType ToColorIndexType_RegularExpression(const int nRegexColorIndex)
@@ -138,8 +138,8 @@ public:
 	//! 色切り替え開始を検出したら、その直前までの描画を行い、さらに色設定を行う。
 	virtual void InitStrategyStatus() = 0;
 	virtual void SetStrategyColorInfo([[maybe_unused]] const CLayoutColorInfo* info = nullptr) { }
-	virtual bool BeginColor([[maybe_unused]] const CStringRef& cStr, [[maybe_unused]] int nPos) { return false; }
-	virtual bool EndColor  ([[maybe_unused]] const CStringRef& cStr, [[maybe_unused]] int nPos) { return true; }
+	virtual bool BeginColor([[maybe_unused]] const CStringRef& cStr, [[maybe_unused]] ssize_t nPos) { return false; }
+	virtual bool EndColor  ([[maybe_unused]] const CStringRef& cStr, [[maybe_unused]] ssize_t nPos) { return true; }
 	virtual bool Disp() const = 0;
 	//イベント
 	virtual void OnStartScanLogic(){}
@@ -193,7 +193,7 @@ public:
 	*/
 	//@@@ 2002.09.22 YAZAKI
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-	void CheckColorMODE( CColorStrategy** ppcColorStrategy, int nPos, const CStringRef& cLineStr );
+	void CheckColorMODE( CColorStrategy** ppcColorStrategy, ssize_t nPos, const CStringRef& cLineStr );
 	bool IsSkipBeforeLayout();	// レイアウトが行頭からチェックしなくていいか判定
 
 	//設定変更

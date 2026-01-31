@@ -420,7 +420,7 @@ uchar_t wc_to_c(wchar_t wc)
 */
 BOOL IsURL(
 	const wchar_t*	pszLine,	//!< [in]  文字列
-	int				offset,		//!< [in]  検査を開始する位置。
+	ssize_t			offset,		//!< [in]  検査を開始する位置。
 	size_t			cchLine,	//!< [in]  文字列の長さ
 	int*			pnMatchLen	//!< [out] URLの長さ。offset からの距離。
 )
@@ -508,9 +508,9 @@ BOOL IsURL(
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAddressLength )
+BOOL IsMailAddress( const wchar_t* pszBuf, ssize_t offset, size_t cchBuf, int* pnAddressLength )
 {
-	auto nBufLen = int(cchBuf);
+	auto nBufLen = static_cast<ssize_t>(cchBuf);
 
 	struct {
 		bool operator()(const wchar_t ch)

@@ -62,7 +62,7 @@ void CBlockComment::SetBlockCommentRule(
 	@retval false 一致しなかった
 */
 bool CBlockComment::Match_CommentFrom(
-	int					nPos,		//!< [in] 探索開始位置
+	ssize_t				nPos,		//!< [in] 探索開始位置
 	const CStringRef&	cStr		//!< [in] 探索対象文字列 ※探索開始位置のポインタではないことに注意
 	/*
 	int				nLineLen,	//!< [in] pLineの長さ
@@ -87,8 +87,8 @@ bool CBlockComment::Match_CommentFrom(
 
 	@return 当てはまった位置を返すが、当てはまらなかったときは、nLineLenをそのまま返す。
 */
-int CBlockComment::Match_CommentTo(
-	int					nPos,		//!< [in] 探索開始位置
+ssize_t CBlockComment::Match_CommentTo(
+	ssize_t				nPos,		//!< [in] 探索開始位置
 	const CStringRef&	cStr		//!< [in] 探索対象文字列 ※探索開始位置のポインタではないことに注意
 	/*
 	int				nLineLen,	//!< [in] pLineの長さ
@@ -96,11 +96,11 @@ int CBlockComment::Match_CommentTo(
 	*/
 ) const
 {
-	for( int i = nPos; i <= cStr.GetLength() - m_nBlockToLen; ++i ){
+	for( ssize_t i = nPos; i <= cStr.GetLength() - m_nBlockToLen; ++i ){
 		//if( 0 == wmemicmp( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//非ASCIIも大文字小文字を区別しない	//###locale 依存
 		if( 0 == wmemicmp_ascii( &cStr.GetPtr()[i], m_szBlockCommentTo, m_nBlockToLen ) ){	//ASCIIのみ大文字小文字を区別しない（高速）
 			return i + m_nBlockToLen;
 		}
 	}
-	return static_cast<int>(cStr.GetLength());
+	return static_cast<ssize_t>(cStr.GetLength());
 }

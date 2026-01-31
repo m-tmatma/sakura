@@ -126,7 +126,7 @@ protected:
 
     境界判定はメールアドレスの先頭でのみ行われ、URL の先頭ではこれまで通り行われません。
 */
-BOOL IsURL( const wchar_t* pszLine, int offset, size_t nLineLen, int* pnMatchLen);
+BOOL IsURL( const wchar_t* pszLine, ssize_t offset, size_t nLineLen, int* pnMatchLen);
 
 /** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
 */
@@ -146,7 +146,7 @@ BOOL IsURL( const wchar_t* pszLine, size_t nLineLen, int* pnMatchLen)
     途中から切り出したメールアドレスの一部をメールアドレスであると誤って判定しないために
     pszBuf を固定し offset を０以上の範囲で変化させるのが望ましい使用方法です。
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t nBufLen, int* pnAddressLength);
+BOOL IsMailAddress( const wchar_t* pszBuf, ssize_t offset, size_t nBufLen, int* pnAddressLength);
 
 /** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
 */

@@ -77,7 +77,7 @@ CLayoutColorInfo* CColor_Quote::GetStrategyColorInfo() const
 
 // nPos "の位置
 //staic
-bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
+bool CColor_Quote::IsCppRawString(const CStringRef& cStr, ssize_t nPos)
 {
 	if( 0 < nPos && cStr.At(nPos-1) == 'R' && cStr.At(nPos) == '"'
 		&& nPos + 1 < cStr.GetLength() ){
@@ -111,7 +111,7 @@ bool CColor_Quote::IsCppRawString(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
+bool CColor_Quote::BeginColor(const CStringRef& cStr, ssize_t nPos)
 {
 	if(!cStr.IsValid())return false;
 
@@ -123,7 +123,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 		switch( nStringType ){
 		case STRING_LITERAL_CPP:
 			if( IsCppRawString(cStr, nPos) ){
-				for( int i = nPos + 1; i < cStr.GetLength(); i++ ){
+				for( ssize_t i = nPos + 1; i < cStr.GetLength(); i++ ){
 					if( cStr[i] == '(' ){
 						if( nPos + 1 < i ){
 							m_tag = L')';
@@ -141,7 +141,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 			break;
 		case STRING_LITERAL_HTML:
 			{
-				int i;
+				ssize_t i;
 				for(i = nPos - 1; 0 <= i; i--){
 					if( cStr.At(i) != L' ' && cStr.At(i) != L'\t' ){
 						break;
@@ -185,9 +185,9 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr[cStr.GetLength()-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 				if( 1 < cStr.GetLength() && cStr[cStr.GetLength()-2] == WCODE::CR
 						&& cStr[cStr.GetLength()-1] == WCODE::LF ){
-					m_nCOMMENTEND = static_cast<int>(cStr.GetLength() - 2);
+					m_nCOMMENTEND = static_cast<ssize_t>(cStr.GetLength() - 2);
 				}else{
-					m_nCOMMENTEND = static_cast<int>(cStr.GetLength() - 1);
+					m_nCOMMENTEND = static_cast<ssize_t>(cStr.GetLength() - 1);
 					}
 				}
 				return true;
@@ -203,7 +203,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
+bool CColor_Quote::EndColor(const CStringRef& cStr, ssize_t nPos)
 {
 	if( -1 == m_nCOMMENTEND ){
 		// ここにくるのは行頭のはず
@@ -233,10 +233,10 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, int nPos)
 	return false;
 }
 
-int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd )
+ssize_t CColor_Quote::Match_Quote( wchar_t wcQuote, ssize_t nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd )
 {
 	int nCharChars;
-	int i;
+	ssize_t i;
 	for( i = nPos; i < cLineStr.GetLength(); ++i ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
 		nCharChars = (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( cLineStr.GetPtr(), cLineStr.GetLength(), i ));
@@ -272,13 +272,13 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 			++i;
 		}
 	}
-	return static_cast<int>(cLineStr.GetLength() + 1); // 終端なしはLength + 1
+	return static_cast<ssize_t>(cLineStr.GetLength() + 1); // 終端なしはLength + 1
 }
 
-int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape )
+ssize_t CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, ssize_t nPos, const CStringRef& cLineStr, bool bEscape )
 {
 	int nCharChars;
-	int i;
+	ssize_t i;
 	const int nCompLen = static_cast<int>(cLineStr.GetLength() - nQuoteLen + 1);
 	const WCHAR quote1 = pszQuote[0];
 	const WCHAR* pLine = cLineStr.GetPtr();
@@ -291,5 +291,5 @@ int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nP
 			i += (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( pLine, cLineStr.GetLength(), i + nCharChars ));
 		}
 	}
-	return static_cast<int>(cLineStr.GetLength());
+	return static_cast<ssize_t>(cLineStr.GetLength());
 }
