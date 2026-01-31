@@ -95,18 +95,11 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		std::vector<std::future<EConvertResult>> vecWorkerFutures;
 		std::atomic<bool> bCanceled = false;
 
-		// 注意: 32bit版ではsize_tが4バイトのため、4GBを超えるファイルでは
-		// GetNextLineOffset()に渡すオフセットが切り詰められる可能性がある
-		// ただし、GetNextLineOffset()の実装でも(size_t)m_nFileSizeにキャストしているため、
-		// 32bit版では実質的に4GB未満のファイルのみがサポートされる
-		const LONGLONG nFileSize = cfl.GetFileSize();
-		const size_t nMaxSizeT = std::numeric_limits<size_t>::max();
-		size_t nOffsetBegin = cfl.GetNextLineOffset( (size_t)(std::min)(nFileSize, (LONGLONG)nMaxSizeT) );
+		size_t nOffsetBegin = cfl.GetNextLineOffset( (size_t)cfl.GetFileSize() );
 		for( int i = nThreadCount - 1; 0 <= i; i-- ){
 			// 分担する範囲を決める
 			const size_t nOffsetEnd = nOffsetBegin;
-			const LONGLONG nOffsetCalc = (nFileSize / nThreadCount * i);
-			nOffsetBegin = cfl.GetNextLineOffset( (size_t)(std::min)(nOffsetCalc, (LONGLONG)nMaxSizeT) );
+			nOffsetBegin = cfl.GetNextLineOffset( (size_t)((double)cfl.GetFileSize() / nThreadCount * i) );
 
 			if( nOffsetBegin == nOffsetEnd ){
 				continue;
@@ -213,6 +206,7 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 //	CModifyVisitor().ResetAllModifyFlag(pcDocLineMgr, 0);
 	return eRet;
 }
+
 
 /*!
 	ファイルから行データを読み込む
