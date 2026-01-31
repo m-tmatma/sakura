@@ -243,13 +243,13 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, size_t nSrcLen, char *pDest )
 	パッド文字などは付加しない。エラーチェックなし。
 */
 template< class CHAR_TYPE >
-int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
+ssize_t _EncodeBase64( const char *pSrc, const ssize_t nSrcLen, CHAR_TYPE *pDest )
 {
 	const unsigned char *psrc;
 	unsigned long lDataSrc;
-	int i, j, k, n;
+	ssize_t i, j, k, n;
 	char v;
-	int nDesLen;
+	ssize_t nDesLen;
 
 	psrc = reinterpret_cast<const unsigned char *>(pSrc);
 	nDesLen = 0;
@@ -266,13 +266,13 @@ int _EncodeBase64( const char *pSrc, const int nSrcLen, CHAR_TYPE *pDest )
 		// j エンコード後のBASE64文字数
 		for( k = 0; k < n; k++ ){
 			lDataSrc |=
-				static_cast<unsigned long>(psrc[i + k]) << ((n - k - 1) * 8);
+				static_cast<unsigned long>(psrc[static_cast<size_t>(i + k)]) << ((n - k - 1) * 8);
 		}
 		// パッドビット付加。lDataSrc の長さが 6*j になるように調節する。
-		lDataSrc <<= j * 6 - n * 8;
+		lDataSrc <<= static_cast<unsigned long>(j * 6 - n * 8);
 		// エンコードして書き込む。
 		for( k = 0; k < j; k++ ){
-			v = static_cast<char>((lDataSrc >> (6 * (j - k - 1))) & 0x0000003f);
+			v = static_cast<char>((lDataSrc >> (6 * static_cast<unsigned long>(j - k - 1))) & 0x0000003f);
 			pDest[nDesLen] = static_cast<CHAR_TYPE>(ValToBase64<CHAR_TYPE>( v ));
 			nDesLen++;
 		}

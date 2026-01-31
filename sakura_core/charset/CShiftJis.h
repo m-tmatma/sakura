@@ -31,15 +31,15 @@ public:
 //	S_GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	// 2005-09-02 D.S.Koba
 	// 2007.08.14 kobake CMemoryからCShiftJisへ移動
-	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
+	static int GetSizeOfChar( const char* pData, const ssize_t nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
 
 protected:
 	// 実装
 	// 2008.11.10 変換ロジックを書き直す
 	inline static int _SjisToUni_char( const unsigned char *pSrc, unsigned short *pDst, const ECharSet eCharset, bool* pbError );
-	static int SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError );
+	static int SjisToUni( const char *pSrc, const ssize_t nSrcLen, wchar_t *pDst, bool* pbError );
 	inline static int _UniToSjis_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
-	static int UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError );
+	static int UniToSjis( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool *pbError );
 };
 
 /*!
@@ -51,7 +51,7 @@ protected:
 */
 inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short *pDst, const ECharSet eCharset, bool* pbError )
 {
-	int nret;
+	ssize_t nret;
 	bool berror = false;
 
 	switch( eCharset ){
@@ -82,7 +82,7 @@ inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short
 		*pbError = berror;
 	}
 
-	return nret;
+	return static_cast<int>(nret);
 }
 
 /*!

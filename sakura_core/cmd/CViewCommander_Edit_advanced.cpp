@@ -608,7 +608,7 @@ inline int CStringRef_comp(const CStringRef& c1, const CStringRef& c2)
 {
 	int ret = wmemcmp(c1.GetPtr(), c2.GetPtr(), t_min(c1.GetLength(), c2.GetLength()));
 	if( ret == 0 ){
-		return c1.GetLength() - c2.GetLength();
+		return static_cast<int>(c1.GetLength() - c2.GetLength());
 	}
 	return ret;
 }

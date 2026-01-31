@@ -238,7 +238,7 @@ void CViewCommander::Command_BASE64DECODE( void )
 	}
 
 	//データ
-	int nDataLen = cmemBuf.GetRawLength();
+	ssize_t nDataLen = cmemBuf.GetRawLength();
 	const void* pData = cmemBuf.GetRawPtr();
 
 	//カキコ
@@ -286,7 +286,7 @@ void CViewCommander::Command_UUDECODE( void )
 	}
 
 	//データ
-	int nDataLen = cmemBin.GetRawLength();
+	ssize_t nDataLen = cmemBin.GetRawLength();
 	const void* pData = cmemBin.GetRawPtr();
 
 	//カキコ

@@ -63,18 +63,18 @@ public:
 	
 protected:
 	// 実装
-	static EConvertResult CPToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, int nDstCchLen, int& nRetLen, UINT codepage );
-	static EConvertResult UniToCP( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstByteLen, int& nRetLen, UINT codepage );
+	static EConvertResult CPToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, const ssize_t nDstCchLen, int& nRetLen, UINT codepage );
+	static EConvertResult UniToCP( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, const ssize_t nDstByteLen, int& nRetLen, UINT codepage );
 	
 	int m_nCodePageEx;
 	
 	static BOOL CALLBACK CallBackEnumCodePages( LPCWSTR );
 
-	static int MultiByteToWideChar2(UINT codepage, int flags, const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
-	static int WideCharToMultiByte2(UINT codepage, int flags, const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
-	static int S_UTF32LEToUnicode(const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
-	static int S_UTF32BEToUnicode(const char* pSrc, int nSrcLen, wchar_t* pDst, int nDstLen);
-	static int S_UnicodeToUTF32LE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
-	static int S_UnicodeToUTF32BE(const wchar_t* pSrc, int nSrcLen, char* pDst, int nDstLen);
+	static int MultiByteToWideChar2(UINT codepage, int flags, const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, const ssize_t nDstLen);
+	static int WideCharToMultiByte2(UINT codepage, int flags, const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, const ssize_t nDstLen);
+	static ssize_t S_UTF32LEToUnicode(const char* pSrc, ssize_t nSrcLen, wchar_t* pDst, const ssize_t nDstLen);
+	static int S_UTF32BEToUnicode(const char* pSrc, ssize_t nSrcLen, wchar_t* pDst, const ssize_t nDstLen);
+	static int S_UnicodeToUTF32LE(const wchar_t* pSrc, ssize_t nSrcLen, char* pDst, const ssize_t nDstLen);
+	static int S_UnicodeToUTF32BE(const wchar_t* pSrc, ssize_t nSrcLen, char* pDst, const ssize_t nDstLen);
 };
 #endif /* SAKURA_CCODEPAGE_2FB24C14_37A2_4D64_BF97_973E456462CE_H_ */

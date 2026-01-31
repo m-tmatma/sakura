@@ -56,7 +56,7 @@ const char* CJis::TABLE_JISESCDATA[] = {
 
 	eMyJisesc は、MYJISESC_HANKATA か MYJISESC_ZENKAKU。
 */
-int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, const EMyJisEscseq eMyJisesc, bool* pbError )
+int CJis::_JisToUni_block( const unsigned char* pSrc, const ssize_t nSrcLen, unsigned short* pDst, const EMyJisEscseq eMyJisesc, bool* pbError )
 {
 	const unsigned char* pr;
 	unsigned short* pw;
@@ -167,7 +167,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 /*
 	JIS → Unicode 変換
 */
-int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CJis::JisToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	const unsigned char *pr, *pr_end;
 	const unsigned char *pr_next;
@@ -247,12 +247,12 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 	bool berror;
 
 	// ソースを取得
-	int nSrcLen = cSrc.GetRawLength();
+	ssize_t nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// ソースバッファポインタとソースの長さ
 	const char* psrc = pSrc;
-	int nsrclen = nSrcLen;
+	ssize_t nsrclen = nSrcLen;
 	CMemory cmem;
 
 	if( base64decode == true ){
@@ -336,7 +336,7 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 	return nret;
 }
 
-int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
+int CJis::UniToJis( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError )
 {
 	const unsigned short *pr, *pr_end;
 	unsigned char* pw;
@@ -476,7 +476,7 @@ EConvertResult CJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, c
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	ssize_t			i;
 	unsigned char*	ps;
 
 	// 2008/6/21 Uchi

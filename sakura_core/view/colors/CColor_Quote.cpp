@@ -183,11 +183,11 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, int nPos)
 			if( m_pTypeData->m_bStringEndLine ){
 				// 改行コードを除く
 				if( 0 < cStr.GetLength() && WCODE::IsLineDelimiter(cStr[cStr.GetLength()-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-					if( 1 < cStr.GetLength() && cStr[cStr.GetLength()-2] == WCODE::CR
-							&& cStr[cStr.GetLength()-1] == WCODE::LF ){
-						m_nCOMMENTEND = cStr.GetLength() - 2;
-					}else{
-						m_nCOMMENTEND = cStr.GetLength() - 1;
+				if( 1 < cStr.GetLength() && cStr[cStr.GetLength()-2] == WCODE::CR
+						&& cStr[cStr.GetLength()-1] == WCODE::LF ){
+					m_nCOMMENTEND = static_cast<int>(cStr.GetLength() - 2);
+				}else{
+					m_nCOMMENTEND = static_cast<int>(cStr.GetLength() - 1);
 					}
 				}
 				return true;
@@ -272,14 +272,14 @@ int CColor_Quote::Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLin
 			++i;
 		}
 	}
-	return cLineStr.GetLength() + 1; // 終端なしはLength + 1
+	return static_cast<int>(cLineStr.GetLength() + 1); // 終端なしはLength + 1
 }
 
 int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape )
 {
 	int nCharChars;
 	int i;
-	const int nCompLen = cLineStr.GetLength() - nQuoteLen + 1;
+	const int nCompLen = static_cast<int>(cLineStr.GetLength() - nQuoteLen + 1);
 	const WCHAR quote1 = pszQuote[0];
 	const WCHAR* pLine = cLineStr.GetPtr();
 	for( i = nPos; i < nCompLen; i += nCharChars ){
@@ -291,5 +291,5 @@ int CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, int nP
 			i += (Int)t_max(CLogicInt(1), CNativeW::GetSizeOfChar( pLine, cLineStr.GetLength(), i + nCharChars ));
 		}
 	}
-	return cLineStr.GetLength();
+	return static_cast<int>(cLineStr.GetLength());
 }

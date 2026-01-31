@@ -11,7 +11,7 @@
 /*!
 	EUCJP → Unicode 変換関数
 */
-int CEuc::EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CEuc::EucjpToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	const unsigned char *pr, *pr_end;
 	unsigned short *pw;
@@ -81,7 +81,7 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 	bool bError = false;
 
 	// ソース取得
-	int nSrcLen = cSrc.GetRawLength();
+	ssize_t nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 変換先バッファサイズとその確保
@@ -108,7 +108,7 @@ EConvertResult CEuc::EUCToUnicode(const CMemory& cSrc, CNativeW* pDstMem)
 	}
 }
 
-int CEuc::UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
+int CEuc::UniToEucjp( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError )
 {
 	int nclen;
 	const unsigned short *pr, *pr_end;
@@ -196,7 +196,7 @@ EConvertResult CEuc::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, c
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	ssize_t			i;
 	unsigned char*	ps; 
 	bool			bbinary=false;
 

@@ -29,7 +29,7 @@
 
 	エラーでなければ1を返す
 */
-int CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, int nDataLen, int nIdx )
+int CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, const ssize_t nDataLen, int nIdx )
 {
 	if( nIdx >= nDataLen ){
 		return 0;
@@ -40,7 +40,7 @@ int CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, int nDataLen, in
 /*!
 	Latin1 → Unicode 変換
 */
-int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
+int CLatin1::Latin1ToUni( const char *pSrc, const ssize_t nSrcLen, wchar_t *pDst, bool* pbError )
 {
 	int nret;
 	const unsigned char *pr, *pr_end;
@@ -81,7 +81,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	bool bError;
 
 	//ソース取得
-	int nSrcLen = cSrc.GetRawLength();
+	ssize_t nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 変換先バッファサイズを設定してメモリ領域確保
@@ -109,7 +109,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 /*
 	Unicode -> Latin1
 */
-int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError )
+int CLatin1::UniToLatin1( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool *pbError )
 {
 	int nclen;
 	const unsigned short *pr, *pr_end;
@@ -205,7 +205,7 @@ EConvertResult CLatin1::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	ssize_t			i;
 	unsigned char*	ps;
 	bool			bbinary=false;
 

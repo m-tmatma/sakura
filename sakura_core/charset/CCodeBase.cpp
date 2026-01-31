@@ -68,7 +68,7 @@ EConvertResult CCodeBase::UnicodeToHex(std::wstring_view src, std::span<WCHAR> d
 
 	@param[out] pcMem デコード済みの文字列を格納
 */
-bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype )
+bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const ssize_t nSrcLen, CMemory* pcMem, const ECodeType eCodetype )
 {
 	ECodeType ecodetype;
 	int nskip_bytes;
@@ -83,7 +83,7 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 
 	CMemory cmembuf;
 	int i = 0;
-	int j = 0;
+	ssize_t j = 0;
 	while( i < nSrcLen ){
 		if( pSrc[i] != '=' ){
 			pdst[j] = pSrc[i];
@@ -100,7 +100,7 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 			if( ecodetype == eCodetype ){
 				// eChartype が ecodetype と一致している場合にだけ、
 				// 変換結果をコピー
-				memcpy( &pdst[j], cmembuf.GetRawPtr(), cmembuf.GetRawLength() );
+				memcpy( &pdst[j], cmembuf.GetRawPtr(), static_cast<size_t>(cmembuf.GetRawLength()) );
 				i += nskip_bytes;
 				j += cmembuf.GetRawLength();
 			}else{
@@ -111,7 +111,7 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 		}
 	}
 
-	pcMem->_SetRawLength( j );
+	pcMem->_SetRawLength( static_cast<size_t>(j) );
 	return true;
 }
 

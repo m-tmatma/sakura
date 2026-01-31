@@ -24,7 +24,7 @@ public:
 	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
-	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
+	[[nodiscard]] ssize_t GetLength() const noexcept { return static_cast<ssize_t>(m_nDataLen); }
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
@@ -111,7 +111,7 @@ public:
 		CMemory::swap( left );
 	}
 	//! メモリ再確保を行わずに格納できる最大文字数を求める
-	[[nodiscard]] int capacity() const noexcept {
+	[[nodiscard]] ssize_t capacity() const noexcept {
 		return CMemory::capacity() / sizeof(wchar_t);
 	}
 

@@ -25,7 +25,7 @@
 	@note nIdxは予め文字の先頭位置とわかっていなければならない．
 	2バイト文字の2バイト目をnIdxに与えると正しい結果が得られない．
 */
-int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
+int CShiftJis::GetSizeOfChar( const char* pData, const ssize_t nDataLen, int nIdx )
 {
 	if( nIdx >= nDataLen ){
 		return 0;
@@ -43,7 +43,7 @@ int CShiftJis::GetSizeOfChar( const char* pData, int nDataLen, int nIdx )
 /*!
 	SJIS → Unicode 変換
 */
-int CShiftJis::SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
+int CShiftJis::SjisToUni( const char *pSrc, const ssize_t nSrcLen, wchar_t *pDst, bool* pbError )
 {
 	ECharSet echarset;
 	int nclen;
@@ -111,7 +111,7 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	bool bError;
 
 	//ソース取得
-	int nSrcLen = cSrc.GetRawLength();
+	ssize_t nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	if( &cSrc == pDstMem->_GetMemory() )
@@ -153,7 +153,7 @@ EConvertResult CShiftJis::SJISToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 /*
 	Unicode -> SJIS
 */
-int CShiftJis::UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError )
+int CShiftJis::UniToSjis( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool *pbError )
 {
 	int nclen;
 	const unsigned short *pr, *pr_end;
@@ -220,7 +220,7 @@ EConvertResult CShiftJis::UnicodeToSJIS( const CNativeW& cSrc, CMemory* pDstMem 
 
 	// ソース取得
 	const wchar_t* pSrc = reinterpret_cast<const wchar_t*>( pMem->GetRawPtr() );
-	int nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
+	ssize_t nSrcLen = pMem->GetRawLength() / sizeof(wchar_t);
 
 	// 変換先バッファサイズを設定してバッファを確保
 	char* pDst = new (std::nothrow) char[ nSrcLen * 2 ];
@@ -250,7 +250,7 @@ EConvertResult CShiftJis::UnicodeToHex(std::wstring_view src, std::span<WCHAR> d
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
-	int				i;
+	ssize_t			i;
 	unsigned char*	ps;
 	bool			bbinary=false;
 

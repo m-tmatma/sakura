@@ -107,18 +107,29 @@ void CTextOutputStream::Write(
 	std::wstring_view text	//!< 書き込む文字列
 )
 {
-	WriteString(text.data(), (int)text.size());
+	// ssize_tは64bit版では__int64、32bit版ではint
+	// 64bit版では4GB超の文字列も扱えるが、32bit版ではINT_MAXの制限がある
+	const size_t nTextSize = text.size();
+#ifdef _WIN64
+	WriteString(text.data(), static_cast<ssize_t>(nTextSize));
+#else
+	if (nTextSize > static_cast<size_t>(INT_MAX)) {
+		WriteString(text.data(), INT_MAX);
+	} else {
+		WriteString(text.data(), static_cast<ssize_t>(nTextSize));
+	}
+#endif
 }
 
 void CTextOutputStream::WriteString(
 	const wchar_t*	szData,	//!< 書き込む文字列
-	int				nLen	//!< 書き込む文字列長。-1を渡すと自動計算。
+	ssize_t			nLen	//!< 書き込む文字列長。-1を渡すと自動計算。
 )
 {
 	//$$メモ: 文字変換時にいちいちコピーを作ってるので効率が悪い。後々効率改善予定。
 
-	int nDataLen = nLen;
-	if(nDataLen<0)nDataLen = (int)wcslen(szData);
+	ssize_t nDataLen = nLen;
+	if(nDataLen<0)nDataLen = static_cast<ssize_t>(wcslen(szData));
 	const wchar_t* pData = szData;
 	const wchar_t* pEnd = szData + nDataLen;
 
@@ -137,7 +148,7 @@ void CTextOutputStream::WriteString(
 
 		if(lf){
 			//\nの前まで(p～lf)出力
-			CNativeW cSrc(p,lf-p);
+			CNativeW cSrc(p, static_cast<size_t>(lf - p));
 			CMemory cDst;
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //コード変換
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
@@ -152,7 +163,7 @@ void CTextOutputStream::WriteString(
 		}
 		else{
 			//残りぜんぶ出力
-			CNativeW cSrc(p,pEnd-p);
+			CNativeW cSrc(p, static_cast<size_t>(pEnd - p));
 			CMemory cDst;
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst); //コード変換
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());

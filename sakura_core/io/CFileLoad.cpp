@@ -253,7 +253,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[1], EEolType::line_separator );
 	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
-	int  nMaxEolLen = 0;
+	ssize_t nMaxEolLen = 0;
 	for( int k = 0; k < int(std::size(m_memEols)); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
@@ -342,7 +342,9 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 	}else{
 		// 改行が途中にあった。必要分をコピー
 		pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
-		pUnicodeBuffer->AppendString( pRet, nRetLineLen + cEolTemp.GetLen() );
+		// nRetLineLenはint型だが、AppendStringはsize_tを受け取るので暗黙的に変換される
+		// GetNextLineW関数がint* pnLineLenを返すため、nRetLineLenは常に非負の値
+		pUnicodeBuffer->AppendString( pRet, static_cast<size_t>(nRetLineLen) + static_cast<size_t>(cEolTemp.GetLen()) );
 	}
 	*pcEol = cEolTemp;
 	return m_nTempResult;
@@ -481,7 +483,7 @@ const char* CFileLoad::GetNextLineCharCode(
 	const unsigned char* pUData = (const unsigned char*)pData; // signedだと符号拡張でNELがおかしくなるので
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 	size_t nLen = nDataLen;
-	size_t neollen = 0;
+	ssize_t neollen = 0;
 	switch( m_encodingTrait ){
 	case ENCODING_TRAIT_ERROR://
 	case ENCODING_TRAIT_ASCII:
@@ -495,16 +497,17 @@ const char* CFileLoad::GetNextLineCharCode(
 			for( i = nbgn; i < nDataLen; ++i ){
 				if( pData[i] == '\r' || pData[i] == '\n' ){
 					pcEol->SetTypeByStringForFile( &pData[i], nDataLen - i );
-					neollen = (size_t)pcEol->GetLen();
+					neollen = static_cast<ssize_t>(pcEol->GetLen());
 					break;
 				}
 				if( m_bEolEx ){
 					int k;
 					for( k = 0; k < int(std::size(eEolEx)); k++ ){
-						if( 0 != m_memEols[k].GetRawLength() && i + m_memEols[k].GetRawLength() - 1 < nDataLen
-								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, m_memEols[k].GetRawLength()) ){
+						ssize_t nEolLen = m_memEols[k].GetRawLength();
+						if( 0 != nEolLen && i + nEolLen - 1 < nDataLen
+								&& 0 == memcmp( m_memEols[k].GetRawPtr(), pData + i, static_cast<size_t>(nEolLen)) ){
 							pcEol->SetType(eEolEx[k]);
-							neollen = (size_t)m_memEols[k].GetRawLength();
+							neollen = nEolLen;
 							break;
 						}
 					}
@@ -521,7 +524,7 @@ const char* CFileLoad::GetNextLineCharCode(
 			wchar_t c = static_cast<wchar_t>((pUData[i + 1] << 8) | pUData[i]);
 			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
-				neollen = (size_t)pcEol->GetLen() * sizeof(wchar_t);
+				neollen = static_cast<ssize_t>(pcEol->GetLen()) * sizeof(wchar_t);
 				break;
 			}
 		}
@@ -553,7 +556,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				wchar_t pDataTmp[2] = {c, c2};
 				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
-				neollen = (size_t)pcEol->GetLen() * 4U;
+				neollen = static_cast<ssize_t>(pcEol->GetLen()) * 4;
 				break;
 			}
 		}
@@ -574,7 +577,7 @@ const char* CFileLoad::GetNextLineCharCode(
 				}
 				wchar_t pDataTmp[2] = {c, c2};
 				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
-				neollen = (size_t)pcEol->GetLen() * 4U;
+				neollen = static_cast<ssize_t>(pcEol->GetLen()) * 4;
 				break;
 			}
 		}
@@ -585,9 +588,9 @@ const char* CFileLoad::GetNextLineCharCode(
 		for( i = nbgn; i < nDataLen; ++i ){
 			if( m_encodingTrait == ENCODING_TRAIT_EBCDIC && bExtEol ){
 				if( pData[i] == '\x15' ){
-					pcEol->SetType(EEolType::next_line);
-					neollen = 1U;
-					break;
+				pcEol->SetType(EEolType::next_line);
+				neollen = 1;
+				break;
 				}
 			}
 			if( pData[i] == '\x0d' || pData[i] == '\x25' ){
@@ -599,23 +602,23 @@ const char* CFileLoad::GetNextLineCharCode(
 					0
 				};
 				pcEol->SetTypeByStringForFile( szEof, t_min(nDataLen - i, (size_t)2) );
-				neollen = (size_t)pcEol->GetLen();
+				neollen = static_cast<ssize_t>(pcEol->GetLen());
 				break;
 			}
 		}
 		break;
 	}
 
-	if( neollen < 1U ){
+	if( neollen < 1 ){
 		// EOLがなかった場合
 		if( i != nDataLen ){
 			i = nDataLen;		// 最後の半端なバイトを落とさないように
 		}
 	}
 
-	*pnBgn = i + neollen;
+	*pnBgn = i + static_cast<size_t>(neollen);
 	*pnLineLen = i - nbgn;
-	*pnEolLen = neollen;
+	*pnEolLen = static_cast<size_t>(neollen);
 
 	return &pData[nbgn];
 }

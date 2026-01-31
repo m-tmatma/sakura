@@ -99,19 +99,19 @@ public:
 	virtual EConvertResult UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
-	static int BinToText(const unsigned char *pSrc, const int nLen, unsigned short *pDst);
+	static ssize_t BinToText(const unsigned char *pSrc, const int nLen, unsigned short *pDst);
 	static int TextToBin(const unsigned short cSrc);
 
 	// MIME Header デコーダ
-	static bool MIMEHeaderDecode(const char* pSrc, const int nSrcLen, CMemory* pcMem, const ECodeType eCodetype);
+	static bool MIMEHeaderDecode(const char* pSrc, const ssize_t nSrcLen, CMemory* pcMem, const ECodeType eCodetype);
 };
 
 /*!
 	バイナリ１バイトを U+DC00 から U+DCFF までに対応付ける
 */
-inline int CCodeBase::BinToText( const unsigned char *pSrc, const int nLen, unsigned short *pDst )
+inline ssize_t CCodeBase::BinToText( const unsigned char *pSrc, const int nLen, unsigned short *pDst )
 {
-	int i;
+	ssize_t i;
 
 	for( i = 0; i < nLen; ++i ){
 		pDst[i] = static_cast<unsigned short>(pSrc[i]) + 0xdc00;

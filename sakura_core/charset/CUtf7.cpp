@@ -46,23 +46,23 @@ int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 		}
 		return 0;
 	}
-	int ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
-	int nModLen = ndecoded_len % sizeof(wchar_t);
+	ssize_t ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
+	ssize_t nModLen = ndecoded_len % sizeof(wchar_t);
 	ndecoded_len = ndecoded_len - nModLen;
-	CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
-	memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
+	CMemory::SwapHLByte( pbuf, static_cast<int>(ndecoded_len) );  // UTF-16 BE を UTF-16 LE に直す
+	memcpy( reinterpret_cast<char*>(pDst), pbuf, static_cast<size_t>(ndecoded_len) );
 	if( nModLen ){
-		ndecoded_len += BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
-			nModLen, &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(wchar_t)]) * sizeof(wchar_t);
+		ndecoded_len += static_cast<ssize_t>(BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
+			static_cast<int>(nModLen), &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(wchar_t)]) * sizeof(wchar_t));
 		if( pbError ){
 			*pbError = true;
 		}
 	}
 	delete [] pbuf;
-	return ndecoded_len / sizeof(wchar_t);
+	return static_cast<int>(ndecoded_len / sizeof(wchar_t));
 }
 
-int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CUtf7::Utf7ToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool* pbError )
 {
 	bool berror = false;
 
@@ -128,7 +128,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	bool bError = false;
 
 	// データ取得
-	int nDataLen = cSrc.GetRawLength();
+	ssize_t nDataLen = cSrc.GetRawLength();
 	const char* pData = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 必要なバッファサイズを調べて確保
@@ -152,7 +152,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	}
 }
 
-int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst )
 {
 	int i;
 
@@ -167,7 +167,7 @@ int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return i;
 }
 
-int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst )
 {
 	char* pw;
 
@@ -197,7 +197,7 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return int(pw - pDst);
 }
 
-int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstLen )
+int CUtf7::UniToUtf7( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, int nDstLen )
 {
 	const wchar_t *pr, *pr_base;
 	const wchar_t* pr_end;
@@ -214,7 +214,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nD
 				break;
 			}
 		}
-		pw += _UniToUtf7SetD_block( pr_base, int(pr - pr_base), pw );
+		pw += _UniToUtf7SetD_block( pr_base, static_cast<ssize_t>(pr - pr_base), pw );
 		pr_base = pr;
 
 		if( *pr == L'+' ){
@@ -231,7 +231,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nD
 					break;
 				}
 			}
-			pw += _UniToUtf7SetB_block( pr_base, int(pr - pr_base), pw );
+			pw += _UniToUtf7SetB_block( pr_base, static_cast<ssize_t>(pr - pr_base), pw );
 		}
 		pr_base = pr;
 	}while( pr_base < pr_end );

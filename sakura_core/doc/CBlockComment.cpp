@@ -102,5 +102,5 @@ int CBlockComment::Match_CommentTo(
 			return i + m_nBlockToLen;
 		}
 	}
-	return cStr.GetLength();
+	return static_cast<int>(cStr.GetLength());
 }

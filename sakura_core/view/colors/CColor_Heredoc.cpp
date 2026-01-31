@@ -57,7 +57,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	 && wmemcmp(cStr.GetPtr() + nPos + 1, L"<<", 2) == 0
 	){
 		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
-		const int length = cStr.GetLength();
+		const int length = static_cast<int>(cStr.GetLength());
 		int nPosIdStart = nPos + 3;
 		for(; nPosIdStart < length; nPosIdStart++ ){
 			if(cStr[nPosIdStart] != L'\t' && cStr[nPosIdStart] != L' '){

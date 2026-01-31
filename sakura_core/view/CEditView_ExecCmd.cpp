@@ -474,7 +474,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 					}
 					else if (outputEncoding == CODE_UTF8) {
 						int		j;
-						int checklen = 0;
+						ssize_t checklen = 0;
 						for( j = 0; j < (int)read_cnt;){
 							ECharSet echarset;
 							checklen = CheckUtf8Char2(work + j , read_cnt - j, &echarset, true, 0);
@@ -485,7 +485,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 								// 次の読み込みで、CRLFの一部になる可能性がある
 								break;
 							}else{
-								j += checklen;
+								j += static_cast<int>(checklen);
 							}
 						}
 						if( j == (int)read_cnt ) {	//ぴったり出力できる場合

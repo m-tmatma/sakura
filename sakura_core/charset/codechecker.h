@@ -426,9 +426,9 @@ int _CheckUtf16Char( const wchar_t* pS, size_t nLen, ECharSet*, const int nOptio
 inline int CheckUtf16leChar( const wchar_t* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, false ); }
 inline int CheckUtf16beChar( const wchar_t* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, true ); }
 
-int CheckUtf8Char( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
-int CheckUtf8Char2( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
-int CheckCesu8Char( const char* pS, size_t nLen, ECharSet*, const int nOption );
+ssize_t CheckUtf8Char( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
+ssize_t CheckUtf8Char2( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
+ssize_t CheckCesu8Char( const char* pS, size_t nLen, ECharSet*, const int nOption );
 // UTF-7 フォーマットチェック
 int CheckUtf7DPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError );
 int CheckUtf7BPart( const char* pS, size_t nLen, const char **ppNextChar, bool *pbError, const int nOption, bool *pbNoAddPoint = nullptr );

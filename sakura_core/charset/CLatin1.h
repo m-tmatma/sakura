@@ -29,13 +29,13 @@ public:
 	//実装
 	static EConvertResult Latin1ToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// Latin1   → Unicodeコード変換
 	static EConvertResult UnicodeToLatin1(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode  → Latin1コード変換
-	static int GetSizeOfChar( const char* pData, int nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
+	static int GetSizeOfChar( const char* pData, const ssize_t nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
 
 protected:
 	// 実装
-	static int Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError );
+	static int Latin1ToUni( const char *pSrc, const ssize_t nSrcLen, wchar_t *pDst, bool* pbError );
 	inline static int _UniToLatin1_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
-	static int UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError );
+	static int UniToLatin1( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool *pbError );
 };
 
 /*!

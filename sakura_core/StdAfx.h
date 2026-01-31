@@ -96,6 +96,17 @@
 #include <ctime>
 #include <cwchar>
 #include <cwctype>
+
+// ssize_t型の定義（POSIX互換）
+// Windowsでは標準で提供されていないため、独自に定義
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+#ifdef _WIN64
+typedef __int64 ssize_t;
+#else
+typedef int ssize_t;
+#endif
+#endif
 #include <deque>
 #include <exception>
 #include <filesystem>

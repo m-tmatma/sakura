@@ -17,11 +17,11 @@
 
 	@param[in] bCESU8Mode CESU-8 を処理する場合 true
 */
-int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode )
+ssize_t CUtf8::Utf8ToUni( const char* pSrc, const ssize_t nSrcLen, wchar_t* pDst, bool bCESU8Mode )
 {
 	const unsigned char *pr, *pr_end;
 	unsigned short *pw;
-	int nclen;
+	ssize_t nclen;
 	ECharSet echarset;
 
 	if( nSrcLen < 1 ){
@@ -36,9 +36,9 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 
 		// 文字をチェック
 		if( bCESU8Mode != true ){
-			nclen = CheckUtf8Char( reinterpret_cast<const char*>(pr), pr_end-pr, &echarset, true, 0 );
+			nclen = CheckUtf8Char( reinterpret_cast<const char*>(pr), static_cast<size_t>(pr_end-pr), &echarset, true, 0 );
 		}else{
-			nclen = CheckCesu8Char( reinterpret_cast<const char*>(pr), pr_end-pr, &echarset, 0 );
+			nclen = CheckCesu8Char( reinterpret_cast<const char*>(pr), static_cast<size_t>(pr_end-pr), &echarset, 0 );
 		}
 		if( nclen < 1 ){
 			break;
@@ -57,7 +57,7 @@ int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool b
 		}
 	}
 
-	return int(pw - reinterpret_cast<unsigned short*>(pDst));
+	return static_cast<ssize_t>(pw - reinterpret_cast<unsigned short*>(pDst));
 }
 
 //! UTF-8→Unicodeコード変換
@@ -68,22 +68,22 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	bool bError = false;
 
 	// データ取得
-	int nSrcLen = cSrc.GetRawLength();
+	ssize_t nSrcLen = cSrc.GetRawLength();
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	if( &cSrc == pDstMem->_GetMemory() )
 	{
 		// 必要なバッファサイズを調べて確保する
-		wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
+		wchar_t* pDst = new (std::nothrow) wchar_t[static_cast<size_t>(nSrcLen)];
 		if( pDst == nullptr ){
 			return RESULT_FAILURE;
 		}
 
 		// 変換
-		int nDstLen = Utf8ToUni( pSrc, nSrcLen, pDst, bCESU8Mode );
+		ssize_t nDstLen = Utf8ToUni( pSrc, nSrcLen, pDst, bCESU8Mode );
 
 		// pDstMem を更新
-		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, static_cast<size_t>(nDstLen*sizeof(wchar_t)) );
 
 		// 後始末
 		delete [] pDst;
@@ -91,14 +91,14 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	else
 	{
 		// 変換先バッファサイズを設定してメモリ領域確保
-		pDstMem->AllocStringBuffer( nSrcLen + 1 );
+		pDstMem->AllocStringBuffer( static_cast<size_t>(nSrcLen + 1) );
 		wchar_t* pDst = pDstMem->GetStringPtr();
 
 		// 変換
-		size_t nDstLen = Utf8ToUni(pSrc, nSrcLen, pDst, bCESU8Mode);
+		ssize_t nDstLen = Utf8ToUni(pSrc, nSrcLen, pDst, bCESU8Mode);
 
 		// pDstMem を更新
-		pDstMem->_SetStringLength( nDstLen );
+		pDstMem->_SetStringLength( static_cast<size_t>(nDstLen) );
 	}
 
 	if( bError == false ){
@@ -113,7 +113,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 
 	@param[in] bCESU8Mode CESU-8 を処理する場合 true
 */
-int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode )
+int CUtf8::UniToUtf8( const wchar_t* pSrc, const ssize_t nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode )
 {
 	const unsigned short* pr = reinterpret_cast<const unsigned short*>(pSrc);
 	const unsigned short* pr_end = reinterpret_cast<const unsigned short*>(pSrc+nSrcLen);

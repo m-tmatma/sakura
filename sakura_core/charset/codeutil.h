@@ -81,7 +81,7 @@ inline int EncodeUtf8( const wchar32_t wc32, unsigned char* pDst )
 /*!
 	UTF-8 -> UTF-32
 */
-inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const int nSrcLen )
+inline wchar32_t DecodeUtf8( const unsigned char* pSrc, const ssize_t nSrcLen )
 {
 	wchar32_t wc32 = 0;
 

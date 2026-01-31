@@ -114,7 +114,7 @@ const CNativeA& CNativeA::operator += ( char ch )
 //              ネイティブ取得インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-int CNativeA::GetStringLength() const
+ssize_t CNativeA::GetStringLength() const
 {
 	return GetRawLength();
 }

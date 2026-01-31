@@ -1059,7 +1059,7 @@ int CDlgTagJumpList::find_key_core(
 	// to_acharは一時バッファで破壊される可能性があるのでコピー
 	CNativeA cmemKeyA = CNativeA(to_achar(keyword));
 	const ACHAR* paszKeyword = cmemKeyA.GetStringPtr();
-	int	length = cmemKeyA.GetStringLength();
+	int	length = static_cast<int>(cmemKeyA.GetStringLength());
 
 	Empty();
 

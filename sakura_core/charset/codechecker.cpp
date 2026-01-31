@@ -525,10 +525,10 @@ UTF-8のエンコーディング
 
 	@date 2008/11/01 syat UTF8ファイルで欧米の特殊文字が読み込めない不具合を修正
 */
-int CheckUtf8Char( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
+ssize_t CheckUtf8Char( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, const int nOption )
 {
 	unsigned char c0, c1, c2, c3;
-	int ncwidth;
+	ssize_t ncwidth;
 	ECharSet echarset;
 
 	if( nLen < 1 ){
@@ -636,10 +636,10 @@ EndFunc:
 
 	@date 2015.12.30 novice  第１バイトが11110abbのとき、nLenより大きい値を返すのを修正
 */
-int CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, [[maybe_unused]] const int nOption )
+ssize_t CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool bAllow4byteCode, [[maybe_unused]] const int nOption )
 {
 	unsigned char c0, c1, c2;
-	int ncwidth;
+	ssize_t ncwidth;
 	ECharSet echarset;
 
 	if( nLen < 1 ){
@@ -696,7 +696,7 @@ int CheckUtf8Char2( const char *pS, size_t nLen, ECharSet *peCharset, const bool
 			}
 			// 第2バイトが10bbcccc、第3バイトが10ddddee
 			if( (c1 & 0xc0) == 0x80 && (c2 & 0xc0) == 0x80 ){
-				ncwidth = int(nLen);  // ４バイトコードである
+				ncwidth = static_cast<ssize_t>(nLen);  // ４バイトコードである
 				echarset = CHARSET_BINARY2; // 文字列断片(継続用)
 				// 第1バイトのabb=000、第2バイトのbb=00の場合（\u10000未満に変換される）
 				if( (c0 & 0x07) == 0 && (c1 & 0x30) == 0 ){
@@ -737,10 +737,10 @@ EndFunc:
 /*
 	CESU-8 文字のチェック　(組み合わせ文字列考慮なし)
 */
-int CheckCesu8Char( const char* pS, size_t nLen, ECharSet* peCharset, const int nOption )
+ssize_t CheckCesu8Char( const char* pS, size_t nLen, ECharSet* peCharset, const int nOption )
 {
 	ECharSet echarset1, echarset2, eret_charset;
-	int nclen1, nclen2, nret_clen;
+	ssize_t nclen1, nclen2, nret_clen;
 
 	if( nLen < 1 ){
 		return 0;

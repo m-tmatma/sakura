@@ -89,7 +89,7 @@ namespace ApiWrap{
 			str.AllocStringBuffer(bufsize);
 		}
 
-		int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), str.capacity());
+		int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), static_cast<int>(str.capacity()));
 		if (actualCount < 0)
 		{
 			// 仕様上は負の場合はありえないが、念の為エラーチェックしておく。

@@ -96,7 +96,7 @@ protected:
 	EEncodingTrait	m_encodingTrait;
 	CMemory			m_memEols[3];
 	bool	m_bEolEx;		//!< CR/LF以外のEOLが有効か
-	int		m_nMaxEolLen;	//!< EOLの長さ
+	ssize_t	m_nMaxEolLen;	//!< EOLの長さ
 	bool	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca
@@ -116,6 +116,8 @@ protected:
 	size_t m_nReadBufOffsetCurrent = 0;		// 読み込みバッファ中のオフセット(次の行頭位置)
 	CMemory m_cLineBuffer;
 	CNativeW m_cLineTemp;
+	// 注意: m_nReadOffset2はGetNextLineW関数のint* pnBgnパラメータとして使用されるため、
+	// int型のまま。GetStringLength()もint（CLogicInt）を返すため、型の一貫性は保たれている
 	int		m_nReadOffset2;
 	EConvertResult m_nTempResult;
 

@@ -55,7 +55,7 @@ public:
 
 	[[nodiscard]] const std::byte* GetRawPtr() const noexcept { return m_pRawData; } //!< データへのポインタを返す
 	std::byte* GetRawPtr() noexcept { return m_pRawData; }             //!< データへのポインタを返す
-	[[nodiscard]] int GetRawLength() const noexcept { return static_cast<int>(m_nRawLen); }                //!<データ長を返す。バイト単位。
+	[[nodiscard]] ssize_t GetRawLength() const noexcept { return static_cast<ssize_t>(m_nRawLen); }                //!<データ長を返す。バイト単位。
 
 	// 演算子
 	CMemory& operator = ( const CMemory& rhs );
@@ -72,7 +72,7 @@ public:
 	void _SetRawLength( size_t nLength );
 	void swap( CMemory& left ) noexcept;
 	//! メモリ再確保を行わずに格納できる最大バイト数を求める
-	[[nodiscard]] int capacity() const noexcept { return 8 <= m_nDataBufSize ? m_nDataBufSize - 2: 0; }
+	[[nodiscard]] ssize_t capacity() const noexcept { return 8 <= m_nDataBufSize ? static_cast<ssize_t>(m_nDataBufSize - 2): 0; }
 
 private: // 2002/2/10 aroka アクセス権変更
 	/*

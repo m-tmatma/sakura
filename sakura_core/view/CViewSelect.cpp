@@ -757,9 +757,9 @@ void CViewSelect::PrintSelectionInfoMsg() const
 				delete pCode;
 
 				if( bSelExtend ){
-					select_sum = m_nLastSelectedByteLen + cmemCode.GetRawLength();
+					select_sum = m_nLastSelectedByteLen + static_cast<int>(cmemCode.GetRawLength());
 				}else{
-					select_sum = m_nLastSelectedByteLen - cmemCode.GetRawLength();
+					select_sum = m_nLastSelectedByteLen - static_cast<int>(cmemCode.GetRawLength());
 				}
 				thiz->m_nLastSelectedByteLen = select_sum;
 			}

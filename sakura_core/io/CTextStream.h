@@ -58,7 +58,7 @@ public:
 	void	Write(std::wstring_view text);
 
 	//文字列書込。改行を入れたい場合は、文字列内に'\n'を含めること。(クラス側で適切な改行コードに変換して出力します)
-	void WriteString(const wchar_t* szData, int nLen = -1);
+	void WriteString(const wchar_t* szData, ssize_t nLen = -1);
 
 	//数値書込。(クラス側で適当に整形して出力します)
 	void WriteInt(int n);

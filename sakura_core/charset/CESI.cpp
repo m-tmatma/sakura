@@ -413,7 +413,7 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 {
 	const char *pr, *pr_end;
 	int nillbytes, num_of_utf8_encoded_bytes;
-	int nret;
+	ssize_t nret;
 	ECharSet echarset;
 
 	if( nLen < 1 || pS == nullptr ){
@@ -429,11 +429,11 @@ void CESI::GetEncodingInfo_utf8( const char* pS, const int nLen )
 	for( ; 0 != (nret = CheckUtf8Char(pr, pr_end-pr, &echarset, true, 0)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
-				num_of_utf8_encoded_bytes += nret;
+				num_of_utf8_encoded_bytes += static_cast<int>(nret);
 			}
 		}else{
 			if( pr_end - pr < GuessUtf8Charsz(pr[0]) ){ break; }
-			nillbytes += nret;
+			nillbytes += static_cast<int>(nret);
 		}
 	}
 
@@ -451,7 +451,7 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 {
 	const char *pr, *pr_end;
 	int nillbytes, num_of_cesu8_encoded_bytes;
-	int nret;
+	ssize_t nret;
 	ECharSet echarset;
 
 	if( nLen < 1 || pS == nullptr ){
@@ -467,11 +467,11 @@ void CESI::GetEncodingInfo_cesu8( const char* pS, const int nLen )
 	for( ; 0 != (nret = CheckCesu8Char(pr, pr_end-pr, &echarset, 0)); pr += nret ){
 		if( echarset != CHARSET_BINARY ){
 			if( 1 < nret ){
-				num_of_cesu8_encoded_bytes += nret;
+				num_of_cesu8_encoded_bytes += static_cast<int>(nret);
 			}
 		}else{
 			if( pr_end - pr < GuessCesu8Charsz(pr[0]) ){ break; }
-			nillbytes += nret;
+			nillbytes += static_cast<int>(nret);
 		}
 	}
 

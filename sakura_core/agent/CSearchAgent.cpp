@@ -1186,7 +1186,7 @@ prev_line:;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLine, nSeq);
 			}
-			pArg->ptNewPos.x = cPrevLine2.GetLength() + nLen;	/* 挿入された部分の次の位置のデータ位置 */
+			pArg->ptNewPos.x = CLogicInt(cPrevLine2.GetLength() + nLen);	/* 挿入された部分の次の位置のデータ位置 */
 		}
 	}
 	pArg->nInsLineNum = m_pcDocLineMgr->GetLineCount() - nAllLinesOld;
