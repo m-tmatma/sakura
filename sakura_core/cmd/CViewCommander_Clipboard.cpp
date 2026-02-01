@@ -508,7 +508,7 @@ void CViewCommander::Command_INSTEXT(
 			bool bAfterEOLSelect = false;
 			if( !bFastMode ){
 				CLogicInt		len;
-				int pos;
+				ssize_t			pos;
 				const wchar_t	*line;
 				const CLayout* pcLayout;
 				line = GetDocument()->m_cLayoutMgr.GetLineStr( GetSelect().GetFrom().GetY2(), &len, &pcLayout );
@@ -567,7 +567,7 @@ void CViewCommander::Command_INSTEXT(
 		m_pCommanderView->InsertData_CEditView(
 			GetCaret().GetCaretLayoutPos(),
 			pszText,
-			(int)nTextLen,
+			nTextLen,
 			&ptLayoutNew,
 			bRedraw
 		);
@@ -608,11 +608,11 @@ end_of_func:
 /* 最後にテキストを追加 */
 void CViewCommander::Command_ADDTAIL(
 	const wchar_t*	pszData,	//!< 追加するテキスト
-	int				nDataLen	//!< 追加するテキストの長さ。文字単位。-1を指定すると、テキスト終端まで。
+	ssize_t			nDataLen	//!< 追加するテキストの長さ。文字単位。-1を指定すると、テキスト終端まで。
 )
 {
 	//テキスト長自動計算
-	if(nDataLen==-1 && pszData!=nullptr)nDataLen = (int)wcslen(pszData);
+	if(nDataLen==-1 && pszData!=nullptr)nDataLen = (ssize_t)wcslen(pszData);
 
 	GetDocument()->m_cDocEditor.SetModified(true,true);	//	Jan. 22, 2002 genta
 
@@ -671,7 +671,7 @@ void CViewCommander::Command_COPYLINESWITHLINENUMBER( void )
 static bool AppendHTMLColor(
 	const SColorAttr& sColorAttrLast, SColorAttr& sColorAttrLast2,
 	const SFontAttr& sFontAttrLast, SFontAttr& sFontAttrLast2,
-	const WCHAR* pAppendStr, int nLen,
+	const WCHAR* pAppendStr, ssize_t nLen,
 	CNativeW& cmemClip)
 {
 	if( sFontAttrLast.m_bBoldFont != sFontAttrLast2.m_bBoldFont || sFontAttrLast.m_bUnderLine != sFontAttrLast2.m_bUnderLine
@@ -739,7 +739,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	// 修飾分を除いたバッファの長さをだいたいで計算
 	CLogicRange sSelectLogic;
 	sSelectLogic.Clear(-1);
-	int nBuffSize = 0;
+	ssize_t nBuffSize = 0;
 	const CLayout* pcLayoutTop = nullptr;
 	{
 		const CLayout* pcLayout;
@@ -806,7 +806,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	szLineFormat[0] = L'\0';
 	CNativeW cmemNullLine;
 	if( bLineNumber ){
-		int nLineNumberMax;
+		ssize_t nLineNumberMax;
 		if( type.m_bLineNumIsCRLF ){
 			nLineNumberMax = sSelectLogic.GetTo().GetY();
 		}else{
@@ -884,7 +884,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		{
 			CLogicInt nIdxFrom;
 			CLogicInt nIdxTo;
-			const int nLineLen = pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
+			const ssize_t nLineLen = pcLayout->GetLengthWithoutEOL() + pcLayout->GetLayoutEol().GetLen();
 			if( nLayoutLineNum < rcSel.top ){
 				nIdxTo = nIdxFrom = CLogicInt(-1);
 			}else{
@@ -933,9 +933,9 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 					}
 				}
 			}
-			const int nLineStart = pcLayout->GetLogicOffset();
-			int nBgnLogic = nIdxFrom + nLineStart;
-			int iLogic = nLineStart;
+			const ssize_t nLineStart = pcLayout->GetLogicOffset();
+			ssize_t nBgnLogic = nIdxFrom + nLineStart;
+			ssize_t iLogic = nLineStart;
 			bool bAddCRLF = false;
 			for( ; iLogic < nLineStart + nLineLen; ++iLogic ){
 				bool bChange = false;
@@ -999,7 +999,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 				cmemClip.AppendString(WCODE::CRLF, 2);
 			}
 			// 2014.06.25 バッファ拡張
-			if( cmemClip.capacity() < cmemClip.GetStringLength() + 100 ){
+			if( static_cast<size_t>(cmemClip.capacity()) < static_cast<size_t>(cmemClip.GetStringLength()) + 100 ){
 				cmemClip.AllocStringBuffer( cmemClip.capacity() + cmemClip.capacity() / 2 );
 			}
 		}
@@ -1029,7 +1029,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 */
 CColorStrategy* CViewCommander::GetColorStrategyHTML(
 	const CStringRef&	cStringLine,
-	int					iLogic,
+	ssize_t				iLogic,
 	const CColorStrategyPool*	pool,
 	CColorStrategy**	ppStrategy,
 	CColorStrategy**	ppStrategyFound,		// [in,out]

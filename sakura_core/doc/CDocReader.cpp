@@ -15,10 +15,10 @@
 	@retval 全行データ。freeで解放しなければならない。
 	@note   Debug版のテストにのみ使用している。
 */
-wchar_t* CDocReader::GetAllData(int* pnDataLen)
+wchar_t* CDocReader::GetAllData(ssize_t* pnDataLen)
 {
-	int			nDataLen;
-	int			nLineLen;
+	ssize_t		nDataLen;
+	ssize_t		nLineLen;
 	const CDocLine* 	pDocLine;
 
 	pDocLine = m_pcDocLineMgr->GetDocLineTop();
@@ -71,7 +71,7 @@ const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 	@author Moca
 	@date 2003.06.22
 */
-const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen )
+const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, ssize_t* pnLineLen )
 {
 	const CDocLine* pDocLine = m_pcDocLineMgr->GetLine( nLine );
 	if( nullptr == pDocLine ){
@@ -89,7 +89,7 @@ const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen
 	データが1行もないときは、長さ0、ポインタNULLが返る。
 
 */
-const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
+const wchar_t* CDocReader::GetFirstLinrStr( ssize_t* pnLineLen )
 {
 	const wchar_t* pszLine;
 	if( CLogicInt(0) == m_pcDocLineMgr->GetLineCount() ){
@@ -111,7 +111,7 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 	GetFirstLinrStr()が呼び出されていないとNULLが返る
 
 */
-const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )
+const wchar_t* CDocReader::GetNextLinrStr( ssize_t* pnLineLen )
 {
 	const wchar_t* pszLine;
 	if( nullptr == m_pcDocLineMgr->m_pDocLineCurrent ){

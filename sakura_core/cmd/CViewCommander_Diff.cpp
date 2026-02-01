@@ -42,21 +42,21 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 	const wchar_t*	pLineSrc;
 	CLogicInt		nLineLenSrc;
 	const wchar_t*	pLineDes;
-	int			nLineLenDes;
-	int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
+	ssize_t	nLineLenDes;
+	ssize_t max_size = (ssize_t)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
 	const CDocLineMgr& docMgr = commander.GetDocument()->m_cDocLineMgr;
 
 	bDifferent = true;
 	{
 		pLineDes = GetDllShareData().m_sWorkBuffer.GetWorkBuffer<const EDIT_CHAR>();
-		int nLineOffset = 0;
+		ssize_t nLineOffset = 0;
 		for(;;){
 			pLineSrc = docMgr.GetLine(poSrc.y)->GetDocLineStrWithEOL(&nLineLenSrc);
 			do{
 				// m_sWorkBuffer#m_Workの排他制御。外部コマンド出力/TraceOut/Diffが対象
 				LockGuard<CMutex> guard( CShareData::GetMutexShareWork() );
 				// 行(改行単位)データの要求
-				nLineLenDes = (int)::SendMessageW( hwnd, MYWM_GETLINEDATA, poDes.y, nLineOffset );
+				nLineLenDes = (ssize_t)::SendMessageW( hwnd, MYWM_GETLINEDATA, poDes.y, nLineOffset );
 				if( nLineLenDes < 0 ){
 					return false;
 				}
@@ -69,7 +69,7 @@ static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, 
 				if( pLineSrc == nullptr || 0 == nLineLenDes ){
 					return true;
 				}
-				int nDstEndPos = std::min( nLineLenDes, max_size ) + nLineOffset;
+				ssize_t nDstEndPos = std::min( nLineLenDes, max_size ) + nLineOffset;
 				if( poDes.x < nLineOffset ){
 					// 1行目行頭データ読み飛ばし
 					if( nLineLenDes < poDes.x ){
@@ -408,7 +408,7 @@ void CViewCommander::Command_Diff_Next( void )
 	BOOL		bRedo = TRUE;
 
 	CLogicPoint	ptXY(0, GetCaret().GetCaretLogicPos().y);
-	int			nYOld_Logic = ptXY.y;
+	ssize_t		nYOld_Logic = ptXY.y;
 	CLogicInt tmp_y;
 
 re_do:;	
@@ -458,7 +458,7 @@ void CViewCommander::Command_Diff_Prev( void )
 	BOOL		bRedo = TRUE;
 
 	CLogicPoint	ptXY(0,GetCaret().GetCaretLogicPos().y);
-	int			nYOld_Logic = ptXY.y;
+	ssize_t		nYOld_Logic = ptXY.y;
 	CLogicInt tmp_y;
 
 re_do:;

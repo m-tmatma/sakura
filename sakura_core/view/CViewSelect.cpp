@@ -677,7 +677,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	}
 	else {
 		//	通常の選択では選択範囲の中身を数える
-		int select_sum = 0;	//	バイト数合計
+		ssize_t select_sum = 0;	//	バイト数合計
 		const CLayout* __restrict pcLayout;
 		CViewSelect* thiz = const_cast<CViewSelect*>( this );	// const外しthis
 
@@ -757,9 +757,9 @@ void CViewSelect::PrintSelectionInfoMsg() const
 				delete pCode;
 
 				if( bSelExtend ){
-					select_sum = m_nLastSelectedByteLen + static_cast<int>(cmemCode.GetRawLength());
+					select_sum = m_nLastSelectedByteLen + static_cast<ssize_t>(cmemCode.GetRawLength());
 				}else{
-					select_sum = m_nLastSelectedByteLen - static_cast<int>(cmemCode.GetRawLength());
+					select_sum = m_nLastSelectedByteLen - static_cast<ssize_t>(cmemCode.GetRawLength());
 				}
 				thiz->m_nLastSelectedByteLen = select_sum;
 			}
@@ -797,7 +797,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 					//	最終行の処理
 					pcLayout = pView->m_pcEditDoc->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 					if( pcLayout ){
-						int last_line_chars = pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
+						ssize_t last_line_chars = pView->LineColumnToIndex( pcLayout, m_sSelect.GetTo().GetX2() );
 						select_sum += last_line_chars;
 						if( last_line_chars == 0 ){
 							//	最終行の先頭にキャレットがある場合は

@@ -46,10 +46,10 @@
 	// -- -- 通常のintで単位型を定義
 
 	//ロジック単位
-	typedef int CLogicInt;
+	typedef ssize_t CLogicInt;
 
 	//レイアウト単位
-	typedef int CLayoutInt;
+	typedef ssize_t CLayoutInt;
 
 #endif
 
@@ -57,11 +57,11 @@ typedef CLogicInt  CLogicXInt;
 typedef CLogicInt  CLogicYInt;
 typedef CLayoutInt CLayoutXInt;
 typedef CLayoutInt CLayoutYInt;
-typedef int CPixelYInt;
-typedef int CPixelXInt;
+typedef ssize_t CPixelYInt;
+typedef ssize_t CPixelXInt;
 
 typedef CLayoutXInt CHabaXInt;
-typedef int         CKetaXInt;
+typedef ssize_t     CKetaXInt;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ２次元型の定義                         //

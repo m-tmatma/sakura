@@ -30,7 +30,7 @@ const CTextArea* CTextDrawer::GetTextArea() const
 @@@ 2002.09.22 YAZAKI    const unsigned char* pDataを、const char* pDataに変更
 @@@ 2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 */
-void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent ) const
+void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, ssize_t nLength, bool bTransparent ) const
 {
 	if( 0 >= nLength ){
 		return;
@@ -71,7 +71,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 		// ウィンドウの左にあふれた文字数 -> nBefore
 		// 2007.09.08 kobake注 「ウィンドウの左」ではなく「クリップの左」を元に計算したほうが描画領域を節約できるが、
 		//                        バグが出るのが怖いのでとりあえずこのまま。
-		int nBeforeLogic = 0;
+		ssize_t nBeforeLogic = 0;
 		CLayoutInt nBeforeLayout = CLayoutInt(0);
 		if ( x < 0 ){
 			const CLayoutMgr& layoutMgr = m_pEditView->m_pcEditDoc->m_cLayoutMgr;
@@ -98,7 +98,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 
 		// 実際の描画文字列ポインタ
 		const wchar_t* pDrawData          = &pData[nBeforeLogic];
-		int            nDrawDataMaxLength = nLength - nBeforeLogic;
+		ssize_t        nDrawDataMaxLength = nLength - nBeforeLogic;
 
 		// 実際の文字間隔配列
 		const int* pDrawDxArray = &pDxArray[nBeforeLogic];

@@ -19,7 +19,7 @@ public:
 	virtual ~CViewParser(){}
 
 	//! カーソル直前の単語を取得
-	int GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const;
+	ssize_t GetLeftWord( CNativeW* pcmemWord, int nMaxWordLen ) const;
 
 	//! キャレット位置の単語を取得
 	// 2006.03.24 fon

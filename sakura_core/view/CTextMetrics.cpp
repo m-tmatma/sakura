@@ -56,7 +56,7 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 const int* CTextMetrics::GenerateDxArray(
 	std::vector<int>* pvResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
 	const wchar_t* pText,           //!< [in]  文字列
-	int nLength,                    //!< [in]  文字列長
+	ssize_t nLength,                //!< [in]  文字列長
 	int	nHankakuDx,					//!< [in]  半角文字の文字間隔
 	int	nTabSpace,					//   [in]  TAB幅(CLayoutXInt)
 	int	nIndent,					//   [in]  インデント(TAB対応用)(CLayoutXInt)
@@ -81,7 +81,7 @@ const int* CTextMetrics::GenerateDxArray(
 			continue;
 		}
 
-		const int spacing = CNativeW::GetKetaOfChar(pText, nLength, i, cache) * nCharSpacing;
+		const ssize_t spacing = CNativeW::GetKetaOfChar(pText, nLength, i, cache) * nCharSpacing;
 		if(IsUTF16High(pText[i]) && i + 1 < nLength && IsUTF16Low(pText[i + 1])) {
 			vResultArray.push_back(cache.CalcPxWidthByFont2(pText + i) + spacing);
 			vResultArray.push_back(0);
@@ -103,7 +103,7 @@ const int* CTextMetrics::GenerateDxArray(
 //!文字列のピクセル幅を返す。
 int CTextMetrics::CalcTextWidth(
 	const wchar_t*, //!< 文字列
-	int nLength,          //!< 文字列長
+	ssize_t nLength,      //!< 文字列長
 	const int* pnDx       //!< 文字間隔の入った配列
 )
 {
@@ -117,7 +117,7 @@ int CTextMetrics::CalcTextWidth(
 //!文字列のピクセル幅を返す。
 int CTextMetrics::CalcTextWidth2(
 	const wchar_t* pText, //!< 文字列
-	int nLength,          //!< 文字列長
+	ssize_t nLength,      //!< 文字列長
 	int nHankakuDx,       //!< 半角文字の文字間隔
 	int nCharSpacing,     //!< 文字の隙間
 	std::vector<int>& vDxArray, //!< [out] 文字間隔配列
@@ -141,7 +141,7 @@ int CTextMetrics::CalcTextWidth2(
 
 int CTextMetrics::CalcTextWidth3(
 	const wchar_t* pText, //!< 文字列
-	int nLength,          //!< 文字列長
+	ssize_t nLength,      //!< 文字列長
 	CCharWidthCache& cache
 ) const
 {

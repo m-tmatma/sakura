@@ -345,7 +345,7 @@ void CEditView::DrawBackImage(HDC hdc, RECT& rcPaint, HDC hdcBgImg)
 CColor3Setting CEditView::GetColorIndex(
 	const CLayout*			pcLayout,
 	CLayoutYInt				nLineNum,
-	int						nIndex,
+	ssize_t					nIndex,
 	SColorStrategyInfo* 	pInfo,			// 2010.03.31 ryoji 追加
 	bool					bPrev			// 指定位置の色変更直前まで	2010.06.19 ryoji 追加
 )
@@ -424,7 +424,7 @@ CColor3Setting CEditView::GetColorIndex(
 
 	const CLayout* pcLayoutNext = pcLayoutLineFirst->GetNextLayout();
 	CLayoutYInt nLineNumScan = nLineNumFirst;
-	int nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, (int)pcLayout->GetLengthWithEOL() - 1);
+	ssize_t nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, pcLayout->GetLengthWithEOL() - 1);
 	while(pInfo->m_nPosInLogic <= nPosTo){
 		if( bPrev && pInfo->m_nPosInLogic == nPosTo )
 			break;
@@ -982,7 +982,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	if(pInfo->m_pDispPos->GetDrawPos().y < GetTextArea().GetAreaTop()){
 		if(pcLayout){
 			bool bChange = false;
-			int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
+			ssize_t nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 			CColor3Setting cColor;
 			while(pInfo->m_nPosInLogic < nPosTo){
 				//色切替
@@ -1068,15 +1068,15 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 	}
 	//行終端または折り返しに達するまでループ
 	if(pcLayout){
-		int nPosBgn = pInfo->m_nPosInLogic; // Logic
-		int nPosLength = 0;
+		ssize_t nPosBgn = pInfo->m_nPosInLogic; // Logic
+		ssize_t nPosLength = 0;
 		CLayoutInt nDrawX = pInfo->m_pDispPos->GetDrawCol(); // Layout
 		const int nDrawBlockLen = 1000; // ExtTextOutの長さ制限にかからない適当な値
-		int nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
+		ssize_t nPosTo = pcLayout->GetLogicOffset() + pcLayout->GetLengthWithEOL();
 		CFigureManager* pcFigureManager = CFigureManager::getInstance();
 		FigureRenderType prevRenderType = CFigure_Text::RenderType_None;
 		while(pInfo->m_nPosInLogic < nPosTo){
-			int nPosInLogic = pInfo->GetPosInLogic(); // FowardChars/DrawImpで更新される
+			ssize_t nPosInLogic = pInfo->GetPosInLogic(); // FowardChars/DrawImpで更新される
 			nPosLength = nPosInLogic - nPosBgn;
 			//1文字情報取得
 			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[nPosInLogic],

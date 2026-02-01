@@ -15,6 +15,7 @@
 #define SAKURA_CSTRICTINTEGER_5B7614A0_282F_48F6_9420_CE672061CF3E_H_
 #pragma once
 
+#include "StdAfx.h"   // for ssize_t
 #include "primitive.h" // for Int
 
 //! 整数型、または、intにキャスト可能な型
@@ -68,23 +69,23 @@ public:
 	//整数型からの変換は、「明示的に指定したときのみ」可能
 	template<IntOrCastable T>
 	explicit CStrictInteger(T value) noexcept
-		: m_value(static_cast<int>(value))
+		: m_value(static_cast<ssize_t>(value))
 	{
 	}
 
 	//! 値を取得する
-	int		GetValue() const noexcept { return m_value; }
+	ssize_t		GetValue() const noexcept { return m_value; }
 
 	//! 値を設定する
 	template<IntOrCastable T>
-	void	SetValue(T n) noexcept { m_value = static_cast<int>(n); }
+	void	SetValue(T n) noexcept { m_value = static_cast<ssize_t>(n); }
 
 	//算術演算子 (加算、減算は同クラス同士でしか許さない)
 	Me& operator += (const Me& rhs)	noexcept { m_value += rhs.m_value; return *this; }
 	Me& operator -= (const Me& rhs)	noexcept { m_value -= rhs.m_value; return *this; }
 	Me& operator %= (const Me& rhs)	noexcept { m_value %= rhs.m_value; return *this; }
-	template<std::integral T> Me& operator *= (T n)	noexcept { m_value *= int(n); return *this; }
-	template<IntOrCastable T> Me& operator /= (T n)	noexcept { m_value /= int(n); return *this; }
+	template<std::integral T> Me& operator *= (T n)	noexcept { m_value *= ssize_t(n); return *this; }
+	template<IntOrCastable T> Me& operator /= (T n)	noexcept { m_value /= ssize_t(n); return *this; }
 	template<std::integral T> Me& operator %= (T n)	noexcept { return *this %= Me(n); }
 
 	//算術演算子２ (加算、減算は同クラス同士でしか許さない)
@@ -123,21 +124,21 @@ public:
 	}
 
 	// -- -- -- -- ALLOW_ADDSUB_INTがtrueの場合は、intとの加減算を許す -- -- -- -- //
-	template<IntOrCastable T> Me& operator += (const T& rhs) noexcept       { static_assert(ALLOW_ADDSUB_INT, "addsub not allowed."); m_value += static_cast<int>(rhs); return *this; }
-	template<IntOrCastable T> Me& operator -= (const T& rhs) noexcept       { static_assert(ALLOW_ADDSUB_INT, "addsub not allowed."); m_value -= static_cast<int>(rhs); return *this; }
+	template<IntOrCastable T> Me& operator += (const T& rhs) noexcept       { static_assert(ALLOW_ADDSUB_INT, "addsub not allowed."); m_value += static_cast<ssize_t>(rhs); return *this; }
+	template<IntOrCastable T> Me& operator -= (const T& rhs) noexcept       { static_assert(ALLOW_ADDSUB_INT, "addsub not allowed."); m_value -= static_cast<ssize_t>(rhs); return *this; }
 	template<IntOrCastable T> Me  operator +  (const T& rhs) const noexcept { static_assert(ALLOW_ADDSUB_INT, "addsub not allowed."); Me ret(m_value); return ret += rhs; }
 	template<IntOrCastable T> Me  operator -  (const T& rhs) const noexcept { static_assert(ALLOW_ADDSUB_INT, "addsub not allowed."); Me ret(m_value); return ret -= rhs; }
 
 	// -- -- -- -- ALLOW_CMP_INTがtrueの場合は、intとの比較を許す -- -- -- -- //
-	template<IntOrCastable T> bool operator <  (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value <  static_cast<int>(rhs); }
-	template<IntOrCastable T> bool operator <= (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value <= static_cast<int>(rhs); }
-	template<IntOrCastable T> bool operator >  (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value >  static_cast<int>(rhs); }
-	template<IntOrCastable T> bool operator >= (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value >= static_cast<int>(rhs); }
-	template<IntOrCastable T> bool operator == (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value == static_cast<int>(rhs); }
-	template<IntOrCastable T> bool operator != (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value != static_cast<int>(rhs); }
+	template<IntOrCastable T> bool operator <  (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value <  static_cast<ssize_t>(rhs); }
+	template<IntOrCastable T> bool operator <= (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value <= static_cast<ssize_t>(rhs); }
+	template<IntOrCastable T> bool operator >  (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value >  static_cast<ssize_t>(rhs); }
+	template<IntOrCastable T> bool operator >= (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value >= static_cast<ssize_t>(rhs); }
+	template<IntOrCastable T> bool operator == (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value == static_cast<ssize_t>(rhs); }
+	template<IntOrCastable T> bool operator != (const T& rhs) const noexcept { static_assert(ALLOW_CMP_INT, "compare not allowed."); return m_value != static_cast<ssize_t>(rhs); }
 
-	// -- -- -- -- ALLOW_CAST_INTがtrueの場合は、intへの暗黙の変換を許す -- -- -- -- //
-	/* implicit */ operator int() const noexcept requires ALLOW_CAST_INT {
+	// -- -- -- -- ALLOW_CAST_INTがtrueの場合は、ssize_tへの暗黙の変換を許す -- -- -- -- //
+	/* implicit */ operator ssize_t() const noexcept requires ALLOW_CAST_INT {
 		return GetValue();
 	}
 
@@ -154,25 +155,26 @@ public:
 
 private:
 	// -- -- -- -- メンバ変数 -- -- -- -- //
-	int		m_value = 0;
+	ssize_t		m_value = 0;
 };
 
 //左辺がint等の場合の演算子
 #define STRICTINT_LEFT_INT_CMP(TYPE) \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator <  (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs >  static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator <= (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs >= static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator >  (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs <  static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator >= (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs <= static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator == (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs == static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator != (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs != static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator + (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs + static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator - (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return -rhs + static_cast<int>(lhs); } \
-	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator * (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs * static_cast<int>(lhs); }
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator <  (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs >  static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator <= (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs >= static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator >  (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs <  static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator >= (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs <= static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator == (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs == static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline bool operator != (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs != static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator + (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs + static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator - (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return -rhs + static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator * (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs * static_cast<ssize_t>(lhs); }
 
 STRICTINT_LEFT_INT_CMP(int)
 STRICTINT_LEFT_INT_CMP(short)
 STRICTINT_LEFT_INT_CMP(size_t)
 STRICTINT_LEFT_INT_CMP(LONG)
+STRICTINT_LEFT_INT_CMP(ssize_t)
 
 // CStrictIntegerテンプレート型を検出するための型特性
 template<typename T>

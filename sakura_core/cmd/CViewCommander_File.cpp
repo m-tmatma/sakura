@@ -483,7 +483,7 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 	{
 		/* 全行データを返すテスト */
 		wchar_t*	pDataAll;
-		int		nDataAllLen;
+		ssize_t		nDataAllLen;
 		CRunningTimer cRunningTimer( L"CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );

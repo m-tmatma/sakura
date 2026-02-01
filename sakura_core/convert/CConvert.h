@@ -19,8 +19,8 @@
 	各種変換機能呼出の窓口となるクラス
  */
 class CConversionFacade {
-	int m_nTabWidth;
-	int m_nStartColumn;
+	ssize_t m_nTabWidth;
+	ssize_t m_nStartColumn;
 	bool m_bEnableExtEol;
 	SEncodingConfig m_sEncodingConfig;
 	CCharWidthCache& m_cCharWidthCache;
@@ -28,7 +28,7 @@ class CConversionFacade {
 public:
 	explicit CConversionFacade(
 		CKetaXInt nTabWidth,
-		int nStartColumn,
+		ssize_t nStartColumn,
 		bool bEnableExtEol,
 		const SEncodingConfig& sEncodingConfig,
 		CCharWidthCache& cCharWidthCache

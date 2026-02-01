@@ -427,7 +427,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 						// \r\n を \r だけとか漢字の第一バイトだけを出力するのを防ぐ必要がある
 						//@@@ 2002.1.24 YAZAKI 1バイト取りこぼす可能性があった。
 						//	Jan. 28, 2004 Moca 最後の文字はあとでチェックする
-						int		j;
+						ssize_t		j;
 						for( j=0; j<(int)read_cnt - 1; j++ ) {
 							//	2007.09.10 ryoji
 							if( CShiftJis::GetSizeOfChar(work, read_cnt, j) == 2 ) {

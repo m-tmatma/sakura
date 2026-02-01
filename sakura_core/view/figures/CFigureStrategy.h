@@ -45,7 +45,7 @@ public:
 	static bool IsRenderType_Block(FigureRenderType nRenderType){
 		return (nRenderType != RenderType_None) && (nRenderType & 0x1);
 	}
-	static bool DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength);
+	static bool DrawImpBlock(SColorStrategyInfo* pInfo, ssize_t nPos, ssize_t nLength);
 	static int FowardChars(SColorStrategyInfo* pInfo);
 
 	bool DrawImp(SColorStrategyInfo* pInfo) override;

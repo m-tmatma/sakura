@@ -29,7 +29,7 @@ public:
 	//実装
 	static EConvertResult Latin1ToUnicode(const CMemory& cSrc, CNativeW* pDstMem);		// Latin1   → Unicodeコード変換
 	static EConvertResult UnicodeToLatin1(const CNativeW& cSrc, CMemory* pDstMem);		// Unicode  → Latin1コード変換
-	static int GetSizeOfChar( const char* pData, const ssize_t nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
+	static ssize_t GetSizeOfChar( const char* pData, const ssize_t nDataLen, ssize_t nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
 
 protected:
 	// 実装

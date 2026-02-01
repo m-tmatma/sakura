@@ -29,7 +29,7 @@
 
 	エラーでなければ1を返す
 */
-int CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, const ssize_t nDataLen, int nIdx )
+ssize_t CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, const ssize_t nDataLen, ssize_t nIdx )
 {
 	if( nIdx >= nDataLen ){
 		return 0;

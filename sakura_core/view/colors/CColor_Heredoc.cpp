@@ -121,9 +121,9 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, ssize_t nPos)
 					return false;
 				}
 			}
-			m_nCOMMENTEND = static_cast<ssize_t>(cStr.GetLength());
+			m_nCOMMENTEND = cStr.GetLength();
 		}else{
-			m_nCOMMENTEND = static_cast<ssize_t>(cStr.GetLength());
+			m_nCOMMENTEND = cStr.GetLength();
 		}
 	}
 	else if (nPos == m_nCOMMENTEND) {

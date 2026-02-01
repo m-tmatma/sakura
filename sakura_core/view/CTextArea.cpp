@@ -227,7 +227,7 @@ int CTextArea::DetectWidthOfLineNumberArea_calculate(const CLayoutMgr* pLayoutMg
 {
 	const CEditView* pView=m_pEditView;
 
-	int nAllLines; //$$ 単位混在
+	ssize_t nAllLines; //$$ 単位混在
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 	if( pView->m_pTypeData->m_bLineNumIsCRLF && !bLayout){

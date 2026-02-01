@@ -18,8 +18,8 @@ public:
 	//! デフォルトコンストラクタ
 	CLaxInteger() noexcept = default;
 
-	//! intから構築（変換は考慮しない）
-	CLaxInteger(int value) noexcept : m_value(value) {}
+	//! ssize_tから構築（変換は考慮しない）
+	CLaxInteger(ssize_t value) noexcept : m_value(value) {}
 
 	CLaxInteger(const Me&) = default;
 	Me& operator = (const Me&) = default;
@@ -31,15 +31,15 @@ public:
 	Me& operator = (const T& n) noexcept { m_value = Me(n).m_value; return *this; }
 
 	//! intから構築できる型への明示変換は可能とする
-	template<typename T> requires std::is_constructible_v<T, int>
+	template<typename T> requires std::is_constructible_v<T, ssize_t>
 	explicit operator T() const noexcept { return T(m_value); }
 
 	//暗黙の変換
-	/* implicit */ operator int() const noexcept { return m_value; }
-	/* implicit */ operator int&()      noexcept { return m_value; }
+	/* implicit */ operator ssize_t()   const noexcept { return m_value; }
+	/* implicit */ operator ssize_t&()  noexcept { return m_value; }
 
 private:
-	int m_value = 0;
+	ssize_t m_value = 0;
 };
 
 #endif /* SAKURA_CLAXINTEGER_B3F68913_E6AE_472E_AC4F_E8985190BD7E_H_ */

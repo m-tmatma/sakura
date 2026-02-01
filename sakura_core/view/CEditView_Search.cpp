@@ -229,18 +229,18 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 				CLogicInt nLineLen = pcLayout->GetLengthWithoutEOL();
 				const wchar_t* pszData = pcLayout->GetPtr();
 				int nLimitLength = 80;
-				int pre = 0;
-				int i = 0;
+				ssize_t pre = 0;
+				ssize_t i = 0;
 				int k = 0;
-				int charSize = CNativeW::GetSizeOfChar( pszData, nLineLen, i );
-				int charWidth = t_max(1, (int)(Int)CNativeW::GetKetaOfChar( pszData, nLineLen, i ));
+				ssize_t charSize = CNativeW::GetSizeOfChar( pszData, nLineLen, i );
+				ssize_t charWidth = t_max(ssize_t(1), CNativeW::GetKetaOfChar( pszData, nLineLen, i ));
 				int charType = 0;
 				// 連続する"\t" " " を " "1つにする
 				// 左からnLimitLengthまでの幅を切り取り
 				while( i + charSize <= (Int)nLineLen && k + charWidth <= nLimitLength ){
 					if( pszData[i] == L'\t' || pszData[i] == L' ' ){
 						if( charType == 0 ){
-							cmemCurLine.AppendString( pszData + pre , i - pre );
+							cmemCurLine.AppendString( pszData + pre , static_cast<size_t>(i - pre) );
 							cmemCurLine.AppendString( L" " );
 							charType = 1;
 						}
@@ -252,9 +252,9 @@ bool CEditView::MiniMapCursorLineTip( POINT* po, RECT* rc, bool* pbHide )
 					}
 					i += charSize;
 					charSize = CNativeW::GetSizeOfChar( pszData, nLineLen, i );
-					charWidth = t_max(1, (int)(Int)CNativeW::GetKetaOfChar( pszData, nLineLen, i ));
+					charWidth = t_max(ssize_t(1), CNativeW::GetKetaOfChar( pszData, nLineLen, i ));
 				}
-				cmemCurLine.AppendString( pszData + pre , i - pre );
+				cmemCurLine.AppendString( pszData + pre , static_cast<size_t>(i - pre) );
 			}
 			if( nTipBeginLine != nCurLine ){
 				cmemCurText.AppendString( L"\n" );
@@ -436,7 +436,7 @@ int CEditView::IsSearchString(
 		** 対策として、行頭を MacthInfoに教えないといけないので、文字列の長さ・位置情報を与える形に変更
 		** 2003.05.04 かろと
 		*/
-		if( m_CurRegexp.Match( cStr.GetPtr(), static_cast<ssize_t>(cStr.GetLength()), static_cast<ssize_t>(nPos) ) ){
+		if( m_CurRegexp.Match( cStr.GetPtr(), cStr.GetLength(), static_cast<ssize_t>(nPos) ) ){
 			*pnSearchStart = m_CurRegexp.GetIndex();	// 2002.02.08 hor
 			*pnSearchEnd = m_CurRegexp.GetLastIndex();
 			return 1;

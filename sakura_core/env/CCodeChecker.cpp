@@ -68,13 +68,13 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 				pCodeBase,
 				0
 			);
-			const int nDocLineLen = (Int)pcDocLine->GetLengthWithEOL();
-			const int nConvertLen = (Int)cmemTmp2.GetStringLength();
-			const int nDataMinLen = t_min(nDocLineLen, nConvertLen);
+			const ssize_t nDocLineLen = pcDocLine->GetLengthWithEOL();
+			const ssize_t nConvertLen = cmemTmp2.GetStringLength();
+			const ssize_t nDataMinLen = t_min(nDocLineLen, nConvertLen);
 			const wchar_t* p = pcDocLine->GetPtr();
 			const wchar_t* r = cmemTmp2.GetStringPtr();
-			int nPos = -1;
-			for( int i = 0; i < nDataMinLen; i++ ){
+			ssize_t nPos = -1;
+			for( ssize_t i = 0; i < nDataMinLen; i++ ){
 				if( p[i] != r[i] ){
 					nPos = i;
 					break;

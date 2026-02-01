@@ -1976,7 +1976,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 			);
 
 			// 現在の行数を記憶する	// 2008.03.26 ryoji
-			int nLines_Old = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+			ssize_t nLines_Old = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 
 			// 以前の選択範囲を選択する
 			GetSelectionInfo().SetBoxSelect( bBeginBoxSelect_Old );
@@ -2005,7 +2005,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				// (sDelLogic.GetTo().GetY2() - sDelLogic.GetFrom().GetY2()) だと実際の削除行数と同じになる
 				// こともあるが、（削除行数－１）になることもある．
 				// 例）フリーカーソルでの行番号クリック時の１行選択
-				int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
+				ssize_t nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 				sSelLogic.SetFromY( sSelLogic.GetFrom().GetY2() - (nLines_Old - nLines) );
 				sSelLogic.SetToY( sSelLogic.GetTo().GetY2() - (nLines_Old - nLines) );
 

@@ -17,8 +17,8 @@
 
 FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 {
-	const int nIdx = pInfo->GetPosInLogic();
-	const int nLength =	CNativeW::GetSizeOfChar(
+	const ssize_t nIdx = pInfo->GetPosInLogic();
+	const ssize_t nLength =	CNativeW::GetSizeOfChar(
 						pInfo->m_pLineOfLogic,
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nIdx
@@ -48,8 +48,8 @@ FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 
 int CFigure_Text::FowardChars(SColorStrategyInfo* pInfo)
 {
-	int nIdx = pInfo->GetPosInLogic();
-	int nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
+	ssize_t nIdx = pInfo->GetPosInLogic();
+	ssize_t nLength =	CNativeW::GetSizeOfChar(	// サロゲートペア対策	2008.10.12 ryoji
 						pInfo->m_pLineOfLogic,
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nIdx
@@ -58,11 +58,11 @@ int CFigure_Text::FowardChars(SColorStrategyInfo* pInfo)
 	return pInfo->m_pcView->GetTextMetrics().CalcTextWidth3(pInfo->m_pLineOfLogic + nIdx, nLength);
 }
 
-bool CFigure_Text::DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength)
+bool CFigure_Text::DrawImpBlock(SColorStrategyInfo* pInfo, ssize_t nPos, ssize_t nLength)
 {
-	int nIdx = nPos;
+	ssize_t nIdx = nPos;
 	bool bTrans = pInfo->m_pcView->IsBkBitmap() && CTypeSupport(pInfo->m_pcView, COLORIDX_TEXT).GetBackColor() == GetBkColor(pInfo->m_gr);
-	int nLengthFirst = CNativeW::GetSizeOfChar(
+	ssize_t nLengthFirst = CNativeW::GetSizeOfChar(
 						pInfo->m_pLineOfLogic,
 						pInfo->GetDocLine()->GetLengthWithoutEOL(),
 						nPos
@@ -100,7 +100,7 @@ bool CFigure_Text::DrawImpBlock(SColorStrategyInfo* pInfo, int nPos, int nLength
 bool CFigure_Text::DrawImp(SColorStrategyInfo* pInfo)
 {
 	// 1文字前提
-	const int nLength = CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
+	const ssize_t nLength = CNativeW::GetSizeOfChar(	// 行末以外はここでスキャン位置を１字進める
 		pInfo->m_pLineOfLogic,
 		pInfo->GetDocLine()->GetLengthWithoutEOL(),
 		pInfo->GetPosInLogic()

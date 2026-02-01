@@ -16,9 +16,9 @@
 bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 {
 	const WCHAR *psrc, *pline;
-	int nsrclen;
+	ssize_t nsrclen;
 	char *pw, *pw_base;
-	int nlinelen, ncuridx;
+	ssize_t nlinelen, ncuridx;
 	CEol ceol;
 	bool bsuccess = false;
 

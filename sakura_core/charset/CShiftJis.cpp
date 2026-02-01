@@ -25,7 +25,7 @@
 	@note nIdxは予め文字の先頭位置とわかっていなければならない．
 	2バイト文字の2バイト目をnIdxに与えると正しい結果が得られない．
 */
-int CShiftJis::GetSizeOfChar( const char* pData, const ssize_t nDataLen, int nIdx )
+ssize_t CShiftJis::GetSizeOfChar( const char* pData, const ssize_t nDataLen, ssize_t nIdx )
 {
 	if( nIdx >= nDataLen ){
 		return 0;

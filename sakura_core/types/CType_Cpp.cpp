@@ -1317,7 +1317,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	wchar_t		pszSrc[1024];
 	BOOL		bChange;
 
-	int			nCaretPosX_PHY;
+	ssize_t		nCaretPosX_PHY;
 
 	CLogicPoint	ptCP;
 
@@ -1355,7 +1355,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				|| '}'や')'が入力された時と同じ処理をする
 				*/
 
-				int i;
+				ssize_t i;
 				for( i = nCaretPosX_PHY; i < nLineLen; i++ ){
 					if( WCODE::TAB != pLine[i] && WCODE::SPACE != pLine[i] ){
 						break;
@@ -1458,7 +1458,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						break;
 					}
 				}
-				for( int n = 0; n < nLineLen2; n++ ){
+				for( ssize_t n = 0; n < nLineLen2; n++ ){
 					switch( nMode ){
 					case 0:
 						if( m_pTypeData->m_bIndentCppStringIgnore && L'"' == pLine2[n] ){
@@ -1602,7 +1602,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
 				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
 				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
-					int i;
+					ssize_t i;
 					CKetaXInt m = CKetaXInt(0);
 					i = 0;
 					while( i < nDataLen ){

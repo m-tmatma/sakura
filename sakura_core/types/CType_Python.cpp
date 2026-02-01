@@ -77,8 +77,8 @@ struct COutlinePython {
 		ある状態から別の状態に移るところまでを扱う．
 		別の状態に移る判定がややこしいばあいは，Enter*として関数にする．
 	*/	
-	int ScanNormal( const wchar_t* data, int linelen, int start_offset );
-	int ScanString( const wchar_t* data, int linelen, int start_offset );
+	int ScanNormal( const wchar_t* data, ssize_t linelen, ssize_t start_offset );
+	int ScanString( const wchar_t* data, ssize_t linelen, ssize_t start_offset );
 	int EnterString( const wchar_t* data, int linelen, int start_offset );
 	void DoScanLine( const wchar_t* data, int linelen, int start_offset );
 	
@@ -176,12 +176,12 @@ int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_off
 	
 	@return 調査後の位置
 */
-int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offset )
+int COutlinePython::ScanNormal( const wchar_t* data, ssize_t linelen, ssize_t start_offset )
 {
 	assert( m_state == STATE_NORMAL || m_state == STATE_CONTINUE );
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	for( int col = start_offset; col < linelen; ++col ){
+	for( ssize_t col = start_offset; col < linelen; ++col ){
 		int nCharChars = CNativeW::GetSizeOfChar( data, linelen, col );
 		if( 1 < nCharChars ){
 			col += (nCharChars - 1);
@@ -241,13 +241,13 @@ int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offs
 	@date 2007.03.23 genta 文字列の継続行の処理を追加
 
 */
-int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offset )
+int COutlinePython::ScanString( const wchar_t* data, ssize_t linelen, ssize_t start_offset )
 {
 	assert( m_state == STATE_STRING );
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	auto quote_char = m_quote_char;
-	for( int col = start_offset; col < linelen; ++col ){
+	for( ssize_t col = start_offset; col < linelen; ++col ){
 		int nCharChars = CNativeW::GetSizeOfChar( data, linelen, col );
 		if( 1 < nCharChars ){
 			col += (nCharChars - 1);

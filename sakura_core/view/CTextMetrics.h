@@ -36,7 +36,7 @@ public:
 		return GetHankakuDx() - GetHankakuWidth();
 	}
 	// レイアウト幅分のピクセル幅を取得する
-	[[nodiscard]] int GetCharPxWidth(CLayoutXInt col) const {
+	[[nodiscard]] ssize_t GetCharPxWidth(CLayoutXInt col) const {
 		return static_cast<Int>(col);
 	}
 	[[nodiscard]] int GetCharPxWidth() const { return 1; }
@@ -55,7 +55,7 @@ public:
 	const int* GenerateDxArray2(
 		std::vector<int>* vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
 		const wchar_t* pText,           //!< [in]  文字列
-		int nLength,                    //!< [in]  文字列長
+		ssize_t nLength,                //!< [in]  文字列長
 		CCharWidthCache& cache = GetCharWidthCache()
 	) const {
 		return GenerateDxArray(vResultArray, pText, nLength,
@@ -66,7 +66,7 @@ public:
 	static const int* GenerateDxArray(
 		std::vector<int>* vResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
 		const wchar_t* pText,           //!< [in]  文字列
-		int nLength,                    //!< [in]  文字列長
+		ssize_t nLength,                //!< [in]  文字列長
 		int	nHankakuDx,					//!< [in]  半角文字の文字間隔
 		int	nTabSpace = 8,				//   [in]  TAB幅
 		int	nIndent = 0,				//   [in]  インデント
@@ -77,14 +77,14 @@ public:
 	//!文字列のピクセル幅を返す。
 	[[nodiscard]] static int CalcTextWidth(
 		const wchar_t* pText, //!< 文字列
-		int nLength,          //!< 文字列長
+		ssize_t nLength,      //!< 文字列長
 		const int* pnDx       //!< 文字間隔の入った配列
 	);
 
 	//!文字列のピクセル幅を返す。
 	static int CalcTextWidth2(
 		const wchar_t* pText, //!< 文字列
-		int nLength,          //!< 文字列長
+		ssize_t nLength,      //!< 文字列長
 		int nHankakuDx,       //!< 半角文字の文字間隔
 		int nCharSpacing,     //!< 文字の隙間
 		std::vector<int>& vDxArray, //!< [out] 文字間隔配列
@@ -93,7 +93,7 @@ public:
 
 	int CalcTextWidth3(
 		const wchar_t* pText, //!< 文字列
-		int nLength,          //!< 文字列長
+		ssize_t nLength,      //!< 文字列長
 		CCharWidthCache& cache = GetCharWidthCache()
 	) const;
 

@@ -122,7 +122,7 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 				WCHAR szMsg[128];
 				WCHAR szCode[CODE_CODEMAX][32];
 				wchar_t szChar[3];
-				int nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nIdx );
+				ssize_t nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nIdx );
 				memcpy(szChar, &pLine[nIdx], nCharChars * sizeof(wchar_t));
 				szChar[nCharChars] = L'\0';
 				for( int i = 0; i < CODE_CODEMAX; i++ ){

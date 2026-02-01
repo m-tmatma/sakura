@@ -31,7 +31,7 @@ public:
 //	S_GetEolはCCodeBaseに移動	2010/6/13 Uchi
 	// 2005-09-02 D.S.Koba
 	// 2007.08.14 kobake CMemoryからCShiftJisへ移動
-	static int GetSizeOfChar( const char* pData, const ssize_t nDataLen, int nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
+	static ssize_t GetSizeOfChar( const char* pData, const ssize_t nDataLen, ssize_t nIdx ); //!< 指定した位置の文字が何バイト文字かを返す
 
 protected:
 	// 実装

@@ -27,13 +27,13 @@
 bool CConvert_Trim::DoConvert(CNativeW* pcData)
 {
 	const wchar_t*	pLine;
-	int			nLineLen;
+	ssize_t		nLineLen;
 	wchar_t*	pDes;
-	int			nBgn;
-	int			i,j;
-	int			nPosDes;
+	ssize_t		nBgn;
+	ssize_t		i,j;
+	ssize_t		nPosDes;
 	CEol		cEol;
-	int			nCharChars;
+	ssize_t		nCharChars;
 
 	nBgn = 0;
 	nPosDes = 0;
@@ -47,7 +47,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	if( 0 >= nPosDes ){
 		return true;
 	}
-	pDes = new wchar_t[nPosDes + 1];
+	pDes = new wchar_t[static_cast<size_t>(nPosDes + 1)];
 	nBgn = 0;
 	nPosDes = 0;
 	// LTRIM

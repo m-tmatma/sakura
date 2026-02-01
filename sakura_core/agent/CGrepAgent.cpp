@@ -375,7 +375,7 @@ DWORD CGrepAgent::DoGrep(
 	CBregexp	cRegexp;
 	CNativeW	cmemMessage;
 	CNativeW	cUnicodeBuffer;
-	int			nWork;
+	ssize_t		nWork;
 	SGrepOption	sGrepOption;
 
 	/*
@@ -1521,7 +1521,7 @@ int CGrepAgent::DoGrepFile(
 			if( sSearchOption.bRegularExp ){
 				ssize_t nIndex = 0;
 #ifdef _DEBUG
-				int nIndexPrev = -1;
+				ssize_t nIndexPrev = -1;
 #endif
 
 				//	Jun. 21, 2003 genta ループ条件見直し

@@ -206,7 +206,7 @@ const wchar_t* CSearchAgent::SearchString(
 	if ( !bLoHiCase || nPatternLen > 5 ) {
 		const wchar_t pattern0 = pszPattern[0];
 		const int* const nextTable = pattern.GetKMPNextTable();
-		for( int nPos = nIdxPos; nPos <= nCompareTo; ){
+		for( ssize_t nPos = nIdxPos; nPos <= nCompareTo; ){
 			if( toLoHiLower(bLoHiCase, pLine[nPos]) != pattern0 ){
 #ifdef SEARCH_STRING_SUNDAY_QUICK
 				int index = CSearchStringPattern::GetMapIndex((wchar_t)toLoHiLower( bLoHiCase, pLine[nPos + nPatternLen]) );
@@ -234,7 +234,7 @@ const wchar_t* CSearchAgent::SearchString(
 	} else {
 #endif
 		// 通常版
-		int	nPos;
+		ssize_t	nPos;
 		for( nPos = nIdxPos; nPos <= nCompareTo; nPos += CNativeW::GetSizeOfChar(pLine, nLineLen, nPos) ){
 			int n = bLoHiCase?
 						wmemcmp( &pLine[nPos], pszPattern, nPatternLen ):
@@ -254,15 +254,15 @@ const wchar_t* CSearchAgent::SearchString(
 void CSearchAgent::CreateCharCharsArr(
 	const wchar_t*	pszPattern,
 	int				nSrcLen,
-	int**			ppnCharCharsArr
+	ssize_t**		ppnCharCharsArr
 )
 {
-	int		i;
-	int*	pnCharCharsArr;
-	pnCharCharsArr = new int[nSrcLen];
+	ssize_t	i;
+	ssize_t*	pnCharCharsArr;
+	pnCharCharsArr = new ssize_t[nSrcLen];
 	for( i = 0; i < nSrcLen; /*i++*/ ){
 		// 2005-09-02 D.S.Koba GetSizeOfChar
-		pnCharCharsArr[i] = CNativeW::GetSizeOfChar( pszPattern, nSrcLen, i );
+		pnCharCharsArr[i] = CNativeW::GetSizeOfChar( pszPattern, static_cast<size_t>(nSrcLen), static_cast<size_t>(i) );
 		if( 0 == pnCharCharsArr[i] ){
 			pnCharCharsArr[i] = 1;
 		}
@@ -285,7 +285,7 @@ void CSearchAgent::CreateWordList(
 {
 	for( CLogicInt pos = CLogicInt(0); pos < nPatternLen; ) {
 		CLogicInt begin, end; // 検索語に含まれる単語?の posを基準とした相対位置。WhereCurrentWord_2()の仕様では空白文字列も単語に含まれる。
-		if( CWordParse::WhereCurrentWord_2( pszPattern + pos, nPatternLen - pos, CLogicInt(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, nullptr, nullptr )
+		if( CWordParse::WhereCurrentWord_2( pszPattern + static_cast<int>(pos), static_cast<size_t>(nPatternLen - static_cast<ssize_t>(pos)), static_cast<size_t>(0), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, &begin, &end, nullptr, nullptr )
 			&& begin == 0 && begin < end
 		) {
 			if( ! WCODE::IsWordDelimiter( pszPattern[pos] ) ) {
@@ -419,7 +419,7 @@ int CSearchAgent::SearchWord(
 	CLogicInt	nIdxPos;
 	CLogicInt	nIdxPosOld;
 	const wchar_t*	pLine;
-	int			nLineLen;
+	ssize_t		nLineLen;
 	const wchar_t*	pszRes;
 	CLogicInt	nHitTo;
 	CLogicInt	nHitPos;
@@ -592,11 +592,7 @@ int CSearchAgent::SearchWord(
 					pMatchRange->SetFromY(nLinePos);	// マッチ行
 					pMatchRange->SetToY  (nLinePos);	// マッチ行
 					pMatchRange->SetFromX(CLogicInt(pszRes - pLine));						// マッチ位置from
-#ifdef _WIN64
-					pMatchRange->SetToX  (static_cast<CLogicInt>(static_cast<ssize_t>(pMatchRange->GetFrom().x) + nMatchLen));// マッチ位置to
-#else
 					pMatchRange->SetToX  (pMatchRange->GetFrom().x + static_cast<CLogicInt>(nMatchLen));// マッチ位置to
-#endif
 					nRetVal = 1;
 					goto end_of_func;
 				}
@@ -731,10 +727,10 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 	CDocLine* pCDocLine;
 	CDocLine* pCDocLinePrev;
 	CDocLine* pCDocLineNext;
-	int nWorkPos;
-	int nWorkLen;
+	ssize_t nWorkPos;
+	ssize_t nWorkLen;
 	const wchar_t* pLine;
-	int nLineLen;
+	ssize_t nLineLen;
 	int i;
 	CLogicInt	nAllLinesOld;
 	int			nProgress;
@@ -805,7 +801,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 		}
 	}
 	const wchar_t* pInsData = L"";
-	int nInsLen = 0;
+	ssize_t nInsLen = 0;
 	int nSetSeq = 0;
 	if( bChangeOneLine ){
 		nInsLen = pArg->pInsData->back().cmemLine.GetStringLength();
@@ -887,17 +883,17 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 			if( pCDocLineNext ){
 				/* 次の行のデータを最後に追加 */
 				// 改行を削除するような置換
-				int nNewLen = nWorkPos + pCDocLineNext->GetLengthWithEOL() + nInsLen;
+				ssize_t nNewLen = nWorkPos + pCDocLineNext->GetLengthWithEOL() + nInsLen;
 				if( nWorkLen <= nWorkPos && nLineLen <= nNewLen + 10 ){
 					// 行を連結して1行にするような操作の高速化
 					// 削除が元データの有効長以下で行の長さが伸びるか少し減る場合reallocを試みる
 					static CDocLine* pDocLinePrevAccess = nullptr;
 					static int nAccessCount = 0;
-					int nBufferReserve = nNewLen;
+					ssize_t nBufferReserve = nNewLen;
 					if( pDocLinePrevAccess == pCDocLine ){
 						if( 100 < nAccessCount ){
 							if( 1000 < nNewLen ){
-								int n = 1000;
+								ssize_t n = 1000;
 								while( n < nNewLen ){
 									n += n / 5; // 20%づつ伸ばす
 								}
@@ -911,14 +907,14 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 						nAccessCount = 0;
 					}
 					CNativeW& ref = pCDocLine->_GetDocLineData();
-					ref.AllocStringBuffer(nBufferReserve);
+					ref.AllocStringBuffer(static_cast<size_t>(nBufferReserve));
 					ref._SetStringLength(nWorkPos);
 					ref.AppendString(pInsData, nInsLen);
 					ref.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
 					pCDocLine->SetEol(bEnableExtEol);
 				}else{
 					CNativeW tmp;
-					tmp.AllocStringBuffer(nNewLen);
+					tmp.AllocStringBuffer(static_cast<size_t>(nNewLen));
 					tmp.AppendString(pLine, nWorkPos);
 					tmp.AppendString(pInsData, nInsLen);
 					tmp.AppendNativeData(pCDocLineNext->_GetDocLineDataWithEOL());
@@ -961,8 +957,8 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 			}
 			{// 20020119 aroka ブロック内に pWork を閉じ込めた
 				// 2002/2/10 aroka CMemory変更 何度も GetLength,GetPtr をよばない。
-				int nNewLen = nLineLen - nWorkLen + nInsLen;
-				int nAfterLen = nLineLen - (nWorkPos + nWorkLen);
+				ssize_t nNewLen = nLineLen - nWorkLen + nInsLen;
+				ssize_t nAfterLen = nLineLen - (nWorkPos + nWorkLen);
 				if( pCDocLine->_GetDocLineData().capacity() * 9 / 10 < nNewLen
 					&& nNewLen <= pCDocLine->_GetDocLineData().capacity() ){
 					CNativeW& ref = pCDocLine->_GetDocLineData();
@@ -973,7 +969,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 					wmemcpy(&pBuf[nWorkPos], pInsData, nInsLen);
 					ref._SetStringLength(nNewLen);
 				}else{
-					int nBufferSize = 16;
+					ssize_t nBufferSize = 16;
 					if( 1000 < nNewLen ){
 						nBufferSize = 1000;
 						while( nBufferSize < nNewLen ){
@@ -981,7 +977,7 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 						}
 					}
 					CNativeW tmp;
-					tmp.AllocStringBuffer(nBufferSize);
+					tmp.AllocStringBuffer(static_cast<size_t>(nBufferSize));
 					tmp.AppendString(pLine, nWorkPos);
 					tmp.AppendString(pInsData, nInsLen);
 					tmp.AppendString(&pLine[nWorkPos + nWorkLen], nAfterLen);
@@ -1012,7 +1008,7 @@ prev_line:;
 		m_pcDocLineMgr->m_pCodePrevRefer = pCDocLine;
 
 		if( nullptr != hwndCancel){
-			int nLines = pArg->sDelRange.GetTo().y - i;
+			ssize_t nLines = pArg->sDelRange.GetTo().y - i;
 			if( 0 == (nLines % 32) ){
 				nProgress = ::MulDiv(nLines, 100, nEditLines);
 				if( nProgressOld != nProgress ){
@@ -1103,7 +1099,7 @@ prev_line:;
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount ){
 					CNativeW tmp;
-					tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
+					tmp.AllocStringBuffer(static_cast<size_t>(cPrevLine.GetLength()) + static_cast<size_t>(cmemLine.GetStringLength()));
 					tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
 					tmp.AppendNativeData(cmemLine);
 					pCDocLineNew->SetDocLineStringMove(&tmp, bEnableExtEol);
@@ -1118,7 +1114,7 @@ prev_line:;
 				if( 0 == nCount && !bInsertLineMode ){
 					if( cmemCurLine.GetStringLength() - cPrevLine.GetLength() < cmemCurLine.GetStringLength() / 100
 						&& cPrevLine.GetLength() + cmemLine.GetStringLength() <= cmemCurLine.GetStringLength()
-						&& cmemCurLine.capacity() / 2 <= cPrevLine.GetLength() + cmemLine.GetStringLength() ){
+						&& static_cast<size_t>(cmemCurLine.capacity()) / 2 <= static_cast<size_t>(cPrevLine.GetLength()) + static_cast<size_t>(cmemLine.GetStringLength()) ){
 						// 行のうちNextになるのが1%以下で行が短くなるなら再利用する(長い一行を分割する場合の最適化)
 						CNativeW tmp; // Nextを退避
 						tmp.SetString(cNextLine.GetPtr(), cNextLine.GetLength());
@@ -1129,7 +1125,7 @@ prev_line:;
 						cNextLine = CStringRef(cmemCurLine.GetStringPtr(), cmemCurLine.GetStringLength());
 					}else{
 						CNativeW tmp;
-						tmp.AllocStringBuffer(cPrevLine.GetLength() + cmemLine.GetStringLength());
+						tmp.AllocStringBuffer(static_cast<size_t>(cPrevLine.GetLength()) + static_cast<size_t>(cmemLine.GetStringLength()));
 						tmp.AppendString(cPrevLine.GetPtr(), cPrevLine.GetLength());
 						tmp.AppendNativeData(cmemLine);
 						pCDocLine->SetDocLineStringMove(&tmp, bEnableExtEol);
@@ -1166,7 +1162,7 @@ prev_line:;
 		int nSeq = pArg->pInsData->back().nSeq;
 		ssize_t nLen = cmemLine.GetStringLength();
 		CNativeW tmp;
-		tmp.AllocStringBuffer(cPrevLine2.GetLength() + cmemLine.GetStringLength() + cNextLine.GetLength());
+		tmp.AllocStringBuffer(static_cast<size_t>(cPrevLine2.GetLength()) + static_cast<size_t>(cmemLine.GetStringLength()) + static_cast<size_t>(cNextLine.GetLength()));
 		tmp.AppendString(cPrevLine2.GetPtr(), cPrevLine2.GetLength());
 		tmp.AppendNativeData(cmemLine);
 		tmp.AppendString(cNextLine.GetPtr(), cNextLine.GetLength());
@@ -1177,11 +1173,7 @@ prev_line:;
 			if( !bLastEOLReplace || !bSetMark ){
 				CModifyVisitor().SetLineModified(pCDocLineNew, nSeq);
 			}
-#ifdef _WIN64
-			pArg->ptNewPos.x = static_cast<CLogicInt>(nLen);	/* 挿入された部分の次の位置のデータ位置 */
-#else
 			pArg->ptNewPos.x = nLen;    /* 挿入された部分の次の位置のデータ位置 */
-#endif
 		}else{
 			if( 0 == nCount ){
 				// 行の中間に挿入(削除データがなかった。1文字入力など)

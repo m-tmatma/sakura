@@ -131,15 +131,15 @@ const char* GetNextLine(
 */
 const wchar_t* GetNextLineW(
 	const wchar_t*	pData,		//!< [in]	検索文字列
-	int				nDataLen,	//!< [in]	検索文字列の文字数
-	int*			pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
-	int*			pnBgn,		//!< [i/o]	検索文字列のオフセット位置
+	ssize_t			nDataLen,	//!< [in]	検索文字列の文字数
+	ssize_t*		pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
+	ssize_t*		pnBgn,		//!< [i/o]	検索文字列のオフセット位置
 	CEol*			pcEol,		//!< [out]	EOL
 	bool			bExtEol
 )
 {
-	int		i;
-	int		nBgn;
+	ssize_t		i;
+	ssize_t		nBgn;
 	nBgn = *pnBgn;
 
 	pcEol->SetType( EEolType::none );
@@ -150,11 +150,11 @@ const wchar_t* GetNextLineW(
 		// 改行コードがあった
 		if( WCODE::IsLineDelimiter(pData[i], bExtEol) ){
 			// 行終端子の種類を調べる
-			pcEol->SetTypeByString(&pData[i], nDataLen - i);
+			pcEol->SetTypeByString(&pData[i], static_cast<size_t>(nDataLen - i));
 			break;
 		}
 	}
-	*pnBgn = i + pcEol->GetLen();
+	*pnBgn = i + static_cast<ssize_t>(pcEol->GetLen());
 	*pnLineLen = i - nBgn;
 	return &pData[nBgn];
 }

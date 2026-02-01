@@ -64,7 +64,7 @@ void CViewCommander::Command_JUMP( void )
 	int			nMode;
 	int			bValidLine;
 	int			nCurrentLine;
-	int			nCommentBegin = 0;
+	ssize_t		nCommentBegin = 0;
 
 	if( 0 == GetDocument()->m_cLayoutMgr.GetLineCount() ){
 		ErrorBeep();
@@ -72,7 +72,7 @@ void CViewCommander::Command_JUMP( void )
 	}
 
 	/* 行番号 */
-	int	nLineNum; //$$ 単位混在
+	ssize_t	nLineNum; //$$ 単位混在
 	nLineNum = GetEditWindow()->m_cDlgJump.m_nLineNum;
 
 	if( !GetEditWindow()->m_cDlgJump.m_bPLSQL ){	/* PL/SQLソースの有効行か */
@@ -114,7 +114,7 @@ void CViewCommander::Command_JUMP( void )
 	nMode = 0;
 	nCurrentLine = GetEditWindow()->m_cDlgJump.m_nPLSQL_E2 - 1;
 
-	int	nLineCount; //$$ 単位混在
+	ssize_t	nLineCount; //$$ 単位混在
 	nLineCount = GetEditWindow()->m_cDlgJump.m_nPLSQL_E1 - 1;
 
 	/* 行番号の表示 false=折り返し単位／true=改行単位 */
@@ -289,7 +289,7 @@ void CViewCommander::Command_BOOKMARK_SET(void)
 //! 次のブックマークを探し，見つかったら移動する
 void CViewCommander::Command_BOOKMARK_NEXT(void)
 {
-	int			nYOld;				// hor
+	ssize_t		nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
 	BOOL		bRedo	=	TRUE;	// hor
 
@@ -330,7 +330,7 @@ re_do:;								// hor
 //! 前のブックマークを探し，見つかったら移動する．
 void CViewCommander::Command_BOOKMARK_PREV(void)
 {
-	int			nYOld;				// hor
+	ssize_t		nYOld;				// hor
 	BOOL		bFound	=	FALSE;	// hor
 	BOOL		bRedo	=	TRUE;	// hor
 
@@ -396,7 +396,7 @@ void CViewCommander::Command_BOOKMARK_PATTERN( void )
 void CViewCommander::Command_FUNCLIST_NEXT(void)
 {
 	CLogicPoint	ptXY(0, GetCaret().GetCaretLogicPos().y);
-	int			nYOld = ptXY.y;
+	ssize_t		nYOld = ptXY.y;
 
 	for(int n = 0; n < 2; n++){
 		if( CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr,
@@ -424,7 +424,7 @@ void CViewCommander::Command_FUNCLIST_NEXT(void)
 void CViewCommander::Command_FUNCLIST_PREV(void)
 {
 	CLogicPoint	ptXY(0,GetCaret().GetCaretLogicPos().y);
-	int			nYOld = ptXY.y;
+	ssize_t     nYOld = ptXY.y;
 
 	for(int n = 0; n < 2; n++){
 		if(CFuncListManager().SearchFuncListMark(&GetDocument()->m_cDocLineMgr,

@@ -187,7 +187,9 @@ size_t CEditView::HokanSearchByFile(
 ){
 	const auto nKeyLen = int(wcslen(pszKey));
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
-	int j, nWordLen, nLineLen, nRet, nCharSize, nWordBegin, nWordLenStop;
+	ssize_t j;
+	int nWordLen, nRet, nCharSize, nWordBegin, nWordLenStop;
+	ssize_t nLineLen;
 
 	const wchar_t* pszLine;
 	const wchar_t* word;

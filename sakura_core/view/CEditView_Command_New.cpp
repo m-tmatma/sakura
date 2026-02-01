@@ -66,7 +66,7 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 void CEditView::InsertData_CEditView(
 	CLayoutPoint	ptInsertPos,	// [in] 挿入位置
 	const wchar_t*	pData,			// [in] 挿入テキスト
-	int				nDataLen,		// [in] 挿入テキスト長。文字単位。
+	ssize_t			nDataLen,		// [in] 挿入テキスト長。文字単位。
 	CLayoutPoint*	pptNewPos,		// [out] 挿入された部分の次の位置のレイアウト位置
 	bool			bRedraw
 )
@@ -962,7 +962,7 @@ void CEditView::RTrimPrevLine( void )
 	CLogicPoint ptCaretPos_PHY = GetCaret().GetCaretLogicPos();
 
 	if( GetCaret().GetCaretLogicPos().y > 0 ){
-		int				nLineLen;
+		ssize_t			nLineLen;
 		const wchar_t*	pLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( GetCaret().GetCaretLogicPos().GetY2() - CLogicInt(1), &nLineLen );
 		if( nullptr != pLine && nLineLen > 0 ){
 			int i=0;

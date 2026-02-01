@@ -238,7 +238,7 @@ protected:
 
 	//色分け
 public:
-	CColor3Setting GetColorIndex( const CLayout* pcLayout, CLayoutYInt nLineNum, int nIndex, SColorStrategyInfo* pInfo, bool bPrev = false );	/* 指定位置のColorIndexの取得 02/12/13 ai */
+	CColor3Setting GetColorIndex( const CLayout* pcLayout, CLayoutYInt nLineNum, ssize_t nIndex, SColorStrategyInfo* pInfo, bool bPrev = false );	/* 指定位置のColorIndexの取得 02/12/13 ai */
 	void SetCurrentColor( CGraphics& gr, EColorIndexType, EColorIndexType, EColorIndexType);
 	COLORREF GetTextColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
 	COLORREF GetBackColorByColorInfo2(const ColorInfo& info, const ColorInfo& info2);
@@ -386,7 +386,7 @@ public:
 	void InsertData_CEditView(
 		CLayoutPoint	ptInsertPos,
 		const wchar_t*	pData,
-		int				nDataLen,
+		ssize_t			nDataLen,
 		CLayoutPoint*	pptNewPos,	//挿入された部分の次の位置のデータ位置
 		bool			bRedraw
 	);

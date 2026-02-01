@@ -91,7 +91,7 @@ public:
 	static void CreateCharCharsArr(
 		const wchar_t*	pszPattern,
 		int				nSrcLen,
-		int**			ppnCharCharsArr
+		ssize_t**		ppnCharCharsArr
 	);
 	
 	static void CreateWordList(

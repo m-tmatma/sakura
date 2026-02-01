@@ -15,7 +15,7 @@
 	カーソル直前の単語を取得 単語の長さを返します
 	単語区切り
 */
-int CViewParser::GetLeftWord( CNativeW* pcmemWord, [[maybe_unused]] int nMaxWordLen ) const
+ssize_t CViewParser::GetLeftWord( CNativeW* pcmemWord, [[maybe_unused]] int nMaxWordLen ) const
 {
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;

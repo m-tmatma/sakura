@@ -116,9 +116,9 @@ protected:
 	size_t m_nReadBufOffsetCurrent = 0;		// 読み込みバッファ中のオフセット(次の行頭位置)
 	CMemory m_cLineBuffer;
 	CNativeW m_cLineTemp;
-	// 注意: m_nReadOffset2はGetNextLineW関数のint* pnBgnパラメータとして使用されるため、
-	// int型のまま。GetStringLength()もint（CLogicInt）を返すため、型の一貫性は保たれている
-	int		m_nReadOffset2;
+	// 注意: m_nReadOffset2はGetNextLineW関数のssize_t* pnBgnパラメータとして使用されるため、
+	// ssize_t型に変更。GetStringLength()もssize_t（CLogicInt）を返すため、型の一貫性は保たれている
+	ssize_t		m_nReadOffset2;
 	EConvertResult m_nTempResult;
 
 	DISALLOW_COPY_AND_ASSIGN(CFileLoad);

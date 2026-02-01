@@ -102,5 +102,5 @@ ssize_t CBlockComment::Match_CommentTo(
 			return i + m_nBlockToLen;
 		}
 	}
-	return static_cast<ssize_t>(cStr.GetLength());
+	return cStr.GetLength();
 }

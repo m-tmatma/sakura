@@ -26,10 +26,10 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++) {
 		CDocLine* cDocLine = cDocLineMgr->GetLine(nLine);
 
-		int nLineLen;
+		ssize_t nLineLen;
 		int nCharChars;
 		int nField = 0;
-		int nFieldWidth = 0;
+		ssize_t nFieldWidth = 0;
 		LPCWSTR pcLine = cDocLine->GetDocLineStrWithEOL(&nLineLen);
 		for (i = 0; i < nLineLen; ) {
 			if (WCODE::IsLineDelimiter(pcLine[i], true)) break;
@@ -46,7 +46,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 			}
 			if( pcLine[i] != WCODE::TAB ){
 				CKetaXInt nKeta = CNativeW::GetKetaOfChar(pcLine, nLineLen, i);
-				nFieldWidth += Int(nKeta);
+				nFieldWidth += nKeta;
 			} else {
 				nFieldWidth++;
 			}

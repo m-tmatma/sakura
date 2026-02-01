@@ -38,7 +38,7 @@ public:
 	//CDocLine用コンストラクタ
 	CMemoryIterator( const CDocLine* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
 	: m_pLine( pcT ? pcT->GetPtr() : nullptr )
-	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
+	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : ssize_t(0) )
 	, m_nTabSpace( nTabSpace )
 	, m_tsvInfo( tsvInfo )
 	, m_nIndent( CLayoutInt(0) )
@@ -52,7 +52,7 @@ public:
 	//CLayout用コンストラクタ
 	CMemoryIterator( const CLayout* pcT, CLayoutInt nTabSpace, const CTsvModeInfo& tsvInfo, CPixelXInt nCharDx, CPixelXInt nSpacing )
 	: m_pLine( pcT ? pcT->GetPtr() : nullptr )
-	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : 0 )
+	, m_nLineLen( pcT ? pcT->GetLengthWithEOL() : ssize_t(0) )
 	, m_nTabSpace( nTabSpace )
 	, m_tsvInfo( tsvInfo )
 	, m_nIndent( pcT ? pcT->GetIndent() : CLayoutInt(0) )
@@ -135,7 +135,7 @@ public:
 private:
 	//コンストラクタで受け取ったパラメータ (固定)
 	const wchar_t*		m_pLine;
-	const int			m_nLineLen;  //データ長。文字単位。
+	const ssize_t		m_nLineLen;  //データ長。文字単位。
 	const CLayoutInt	m_nTabSpace;
 	const CTsvModeInfo&	m_tsvInfo;
 	const CLayoutInt	m_nIndent;

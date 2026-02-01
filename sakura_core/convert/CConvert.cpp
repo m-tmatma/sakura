@@ -32,7 +32,7 @@
  */
 CConversionFacade::CConversionFacade(
 	CKetaXInt nTabWidth,
-	int nStartColumn,
+	ssize_t nStartColumn,
 	bool bEnableExtEol,
 	const SEncodingConfig& sEncodingConfig,
 	CCharWidthCache& cCharWidthCache

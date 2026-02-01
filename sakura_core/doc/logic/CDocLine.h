@@ -52,7 +52,7 @@ public:
 	const wchar_t*	GetPtr() const						{ return m_cLine.GetStringPtr(); }
 	CLogicInt		GetLengthWithEOL() const			{ return m_cLine.GetStringLength(); }	//	CMemoryIterator用
 #ifdef USE_STRICT_INT
-	const wchar_t*	GetDocLineStrWithEOL(int* pnLen) const //###仮の名前、仮の対処
+	const wchar_t*	GetDocLineStrWithEOL(ssize_t* pnLen) const //###仮の名前、仮の対処
 	{
 		CLogicInt n;
 		const wchar_t* p = GetDocLineStrWithEOL(&n);

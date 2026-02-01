@@ -821,7 +821,7 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 			auto text = std::make_unique<wchar_t[]>(length + 1);
 			::GetWindowText(hwndCombo, text.get(), length + 1);
 
-			const int pos = DeletePreviousWord(text.get(), length, selStart);
+			const ssize_t pos = DeletePreviousWord(text.get(), length, selStart);
 
 			::SetWindowText(hwndCombo, text.get());
 			ApiWrap::Combo_SetEditSel(hwndCombo, pos, pos);

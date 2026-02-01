@@ -70,7 +70,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		{ return ch == WCODE::SPACE || ch == WCODE::TAB; }
 	} IsIndentChar;
 	struct SSoftTabData {
-		SSoftTabData( CLayoutXInt nTab, int width ) : m_szTab(nullptr), m_nTab((Int)nTab), m_nXWidth(width - 1), m_nSpWidth(width) {}
+		SSoftTabData( CLayoutXInt nTab, ssize_t width ) : m_szTab(nullptr), m_nTab((Int)nTab), m_nXWidth(width - 1), m_nSpWidth(width) {}
 		SSoftTabData(const SSoftTabData&) = delete;
 		SSoftTabData& operator = (const SSoftTabData&) = delete;
 		SSoftTabData(SSoftTabData&&) noexcept = delete;
@@ -88,7 +88,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		// @see CConvert_TabToSpace::DoConvert() convert/CConvert_TabToSpace.cpp
 		// とりあえずCMemoryIterator/CLayoutMgr::GetActualTabSpace互換で計算してx幅での個数分を追加する
 		// nColまでの文字のGetKetaOfCharとGetTabSpaceKetasを使うとTAB指定文字数分になる
-		int Len( CLayoutInt nCol ) { return (m_nTab + m_nXWidth - ((Int)nCol + m_nXWidth) % m_nTab) / m_nSpWidth; }
+		ssize_t Len( CLayoutInt nCol ) { return (m_nTab + m_nXWidth - ((Int)nCol + m_nXWidth) % m_nTab) / m_nSpWidth; }
 		wchar_t* m_szTab;
 		int m_nTab;
 		int m_nXWidth;
@@ -636,13 +636,13 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	CLayoutRange sRangeA;
 	CLogicRange sSelectOld;
 
-	int			nColumnFrom, nColumnTo;
+	ssize_t		nColumnFrom, nColumnTo;
 	CLayoutInt	nCF(0), nCT(0);
 	CLayoutInt	nCaretPosYOLD;
 	bool		bBeginBoxSelectOld;
-	const wchar_t*	pLine;
+		const wchar_t*	pLine;
 	CLogicInt		nLineLen;
-	int			j;
+	ssize_t			j;
 	std::vector<SORTDATA*> sta;
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */
@@ -825,7 +825,7 @@ void CViewCommander::Command_MERGE(void)
 	CLayoutInt		nCaretPosYOLD;
 	const wchar_t*	pLinew;
 	CLogicInt		nLineLen;
-	int			j;
+	ssize_t		j;
 	CLayoutInt		nMergeLayoutLines;
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */
@@ -878,7 +878,7 @@ void CViewCommander::Command_MERGE(void)
 	// 2010.08.22 NUL対応修正
 	std::vector<CStringRef> lineArr;
 	pLinew=nullptr;
-	int nLineLenw = 0;
+	ssize_t nLineLenw = 0;
 	bool bMerge = false;
 	lineArr.reserve(sSelectOld.GetTo().y - sSelectOld.GetFrom().GetY2());
 	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){

@@ -342,7 +342,7 @@ inline BYTE _UUDECODE_CHAR( ACHAR c )
 	        書き込んだデータが戻り値よりも大きいときがあるので注意。
 */
 template< class CHAR_TYPE >
-int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
+int _DecodeUU_line( const CHAR_TYPE *pSrc, const ssize_t nSrcLen, char *pDest )
 {
 	unsigned long lDataDes;
 	const CHAR_TYPE *pr;
@@ -352,9 +352,9 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 	}
 
 	pr = pSrc+1;  // 先頭の文字（M(0x20+45)など）を飛ばす
-	int i = 0;
-	int j = 0;
-	int k = 0;
+	ssize_t i = 0;
+	ssize_t j = 0;
+	ssize_t k = 0;
 	for( ; i < nSrcLen; i += 4 ){
 		lDataDes = 0;
 		for( j = 0; j < 4; ++j ){
@@ -373,7 +373,7 @@ int _DecodeUU_line( const CHAR_TYPE *pSrc, const int nSrcLen, char *pDest )
 	UUエンコードのヘッダー部分を解析
 */
 template< class CHAR_TYPE >
-bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
+bool CheckUUHeader( const CHAR_TYPE *pSrc, const ssize_t nLen, WCHAR *pszFilename )
 {
 //	using namespace WCODE;
 
@@ -489,12 +489,12 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	UU フッターを確認
 */
 template< class CHAR_TYPE >
-bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
+bool CheckUUFooter( const CHAR_TYPE *pS, const ssize_t nLen )
 {
-	int nstartidx;
+	ssize_t nstartidx;
 	const CHAR_TYPE* psrc;
-	int nsrclen;
-	int i;
+	ssize_t nsrclen;
+	ssize_t i;
 
 	// フッターの構成
 	// end

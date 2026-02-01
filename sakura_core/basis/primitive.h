@@ -37,6 +37,6 @@ typedef char KEYCODE;
 	#include "CLaxInteger.h"
 	typedef CLaxInteger Int;
 #else
-	typedef int Int;
+	typedef ssize_t Int;
 #endif
 #endif /* SAKURA_PRIMITIVE_C8059DE4_C986_492E_9C09_7F044049C481_H_ */

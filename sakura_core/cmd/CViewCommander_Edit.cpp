@@ -875,12 +875,12 @@ void CViewCommander::Command_DELETE_BACK( void )
 }
 
 /* 	上書き用の一文字削除	2009.04.11 ryoji */
-void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
+void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, ssize_t nLen )
 {
 	bool bEol = false;
 	BOOL bDelete = TRUE;
 	const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
-	int nDelLen = 0;
+	ssize_t nDelLen = 0;
 	CKetaXInt nKetaDiff = CKetaXInt(0);
 	CKetaXInt nKetaAfterIns = CKetaXInt(0);
 	if( nullptr != pcLayout ){

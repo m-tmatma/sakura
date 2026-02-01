@@ -327,8 +327,8 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 		m_nReadOffset2 = 0;
 		m_nTempResult = e;
 	}
-	int  nOffsetTemp = m_nReadOffset2;
-	int  nRetLineLen;
+	ssize_t  nOffsetTemp = m_nReadOffset2;
+	ssize_t  nRetLineLen;
 	CEol cEolTemp;
 	const wchar_t* pRet = GetNextLineW( m_cLineTemp.GetStringPtr(), m_cLineTemp.GetStringLength(),
 				&nRetLineLen, &m_nReadOffset2, &cEolTemp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );

@@ -15,7 +15,7 @@ class CCharWidthCache;
 
 class CConvert_SpaceToTab final : public CConvert{
 public:
-	CConvert_SpaceToTab(int nTabWidth, int nStartColumn, bool bExtEol, CCharWidthCache& cache)
+	CConvert_SpaceToTab(ssize_t nTabWidth, ssize_t nStartColumn, bool bExtEol, CCharWidthCache& cache)
 		: m_nTabWidth(nTabWidth), m_nStartColumn(nStartColumn),
 		  m_bExtEol(bExtEol), m_cCache(cache)
 	{
@@ -24,8 +24,8 @@ public:
 	bool DoConvert(CNativeW* pcData) override;
 
 private:
-	int m_nTabWidth;
-	int m_nStartColumn;
+	ssize_t m_nTabWidth;
+	ssize_t m_nStartColumn;
 	bool m_bExtEol;
 	CCharWidthCache& m_cCache;
 };

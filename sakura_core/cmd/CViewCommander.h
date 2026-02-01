@@ -208,7 +208,7 @@ public:
 	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
 	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
 		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = nullptr ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
-	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
+	void Command_ADDTAIL( const wchar_t* pszData, ssize_t nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
 	void Command_COPYDIRPATH( void );				/* このファイルのフォルダー名をクリップボードにコピー */
@@ -218,7 +218,7 @@ public:
 	void Command_COPYLINESWITHLINENUMBER( void );	/* 選択範囲内全行行番号付きコピー */
 	void Command_COPY_COLOR_HTML(bool bLineNumber = false);	//選択範囲内全行行番号付きコピー
 	void Command_COPY_COLOR_HTML_LINENUMBER( void );		//選択範囲内色付きHTMLコピー
-	CColorStrategy* GetColorStrategyHTML(const CStringRef&	cStringLine, int iLogic, const CColorStrategyPool*	pool, CColorStrategy**	ppStrategy, CColorStrategy** pStrategyFound, bool& bChange);
+	CColorStrategy* GetColorStrategyHTML(const CStringRef&	cStringLine, ssize_t iLogic, const CColorStrategyPool*	pool, CColorStrategy**	ppStrategy, CColorStrategy** pStrategyFound, bool& bChange);
 	void Command_CREATEKEYBINDLIST( void );			// キー割り当て一覧をコピー //Sept. 15, 2000 JEPRO	Command_の作り方がわからないので殺してある
 
 	/* 挿入系 */
@@ -394,7 +394,7 @@ public:
 private:
 	void MoveViewTopLine(CLayoutInt nViewTopLine);
 	void AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...);
-	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
+	void DelCharForOverwrite(const wchar_t* pszInput, ssize_t nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	bool Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:
 	ptrdiff_t ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText);

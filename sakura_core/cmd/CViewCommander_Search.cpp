@@ -662,7 +662,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 				cMemRepKey2 = cMemRepKey;
 			}
 			cRegexp.Compile( m_pCommanderView->m_strCurSearchKey.c_str(), cMemRepKey2.GetStringPtr(), nFlag);
-			if( cRegexp.Replace(pLine, nLen, static_cast<ssize_t>(nIdx)) ){
+			if( cRegexp.Replace(pLine, nLen, nIdx) ){
 				// From Here Jun. 6, 2005 かろと
 				// 物理行末までINSTEXTする方法は、キャレット位置を調整する必要があり、
 				// キャレット位置の計算が複雑になる。（置換後に改行がある場合に不具合発生）
@@ -978,7 +978,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	//$$ 単位混在
 	CLayoutPoint ptOld(0, -1); // 検索後の選択範囲(xはいつもLogic。yは矩形はLayout,通常はLogic)
-	/*CLogicInt*/int		lineCnt = 0;		//置換前の行数
+	/*CLogicInt*/ssize_t	lineCnt = 0;		//置換前の行数
 	/*CLayoutInt*/int		linDif = (0);		//置換後の行調整
 	CLogicXInt  colDif(0);     // 置換後の桁調整
 	CLogicPoint boxRight;      // 矩形選択の現在の行の右端。sRangeA.GetTo().x ではなく boxRight.x + colDif を使う。
@@ -1047,7 +1047,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			if ( bBeginBoxSelect )
 			{
 				// 検索時の行数を記憶
-				lineCnt = (Int)rLayoutMgr.GetLineCount();
+				lineCnt = rLayoutMgr.GetLineCount();
 				// 前回と今回の検索マッチ終端(ptOld, ptNew)と今回のマッチ先頭(ptNewFrom)
 				CLayoutPoint ptNew     = GetSelect().GetTo();
 				CLayoutPoint ptNewFrom = GetSelect().GetFrom();
@@ -1286,7 +1286,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				}
 			}
 
-			if( int nReplace = cRegexp.Replace(pLine, nLen, static_cast<ssize_t>(nIdx)) ){
+			if( int nReplace = cRegexp.Replace(pLine, nLen, nIdx) ){
 				nReplaceNum += nReplace;
 				CLogicInt exTail; // 置換せずに残す部分の長さ(置換対象となる選択範囲より右側の長さと、置換後文字列である CRegexp::GetString()から除外する長さを兼ねている)。
 				if ( !bConsecutiveAll ) { // 2006.04.01 かろと	// 2007.01.16 ryoji
@@ -1405,7 +1405,7 @@ void CViewCommander::Command_REPLACE_ALL()
 				// 置換前の検索文字列の最終位置は ptOld
 				// 置換後のカーソル位置
 				CLogicPoint ptTmp2 = GetCaret().GetCaretLogicPos();
-				int linDif_thistime = rDocLineMgr.GetLineCount() - lineCnt;	// 今回置換での行数変化
+				ssize_t linDif_thistime = rDocLineMgr.GetLineCount() - lineCnt;	// 今回置換での行数変化
 				linDif += linDif_thistime;
 				if( ptColLineP.y + linDif == ptTmp2.y)
 				{

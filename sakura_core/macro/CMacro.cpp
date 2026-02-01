@@ -2152,14 +2152,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 					}
 				}
 				const int nTabWidth = (Int)View->GetDocument()->m_cLayoutMgr.GetTabSpaceKetas();
-				int nPosX = varCopy2.Data.lVal - 1;
-				for( int i =0; i < nLen; ){
+				ssize_t nPosX = varCopy2.Data.lVal - 1;
+				for( ssize_t i =0; i < nLen; ){
 					if( pLine[i] == WCODE::TAB ){
 						nPosX += nTabWidth - (nPosX % nTabWidth);
 					}else{
-						nPosX += (Int)CNativeW::GetKetaOfChar(pLine, nLen, i);
+						nPosX += CNativeW::GetKetaOfChar(pLine, nLen, i);
 					}
-					i += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(pLine, nLen, i));
+					i += t_max(1, CNativeW::GetSizeOfChar(pLine, nLen, i));
 				}
 				nPosX -=  varCopy2.Data.lVal - 1;
 				Wrap( &Result )->Receive( nPosX );

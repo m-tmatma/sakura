@@ -48,7 +48,7 @@ void CDocOutline::MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml)
 	const wchar_t*	pLine;		//	pLine は処理中の文字以降の部分を指します。
 	CLogicInt		nLineLen;
 	int				i;
-	int				j;
+	ssize_t			j;
 	int				k;
 	bool			bEndTag;
 	bool			bCommentTag = false;

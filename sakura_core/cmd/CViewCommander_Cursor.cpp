@@ -1026,7 +1026,7 @@ void CViewCommander::Command_WndScrollUp(void)
 void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 {
 	const CDocLine* pcDocLine;
-	int nCaretPointer = 0;
+	ssize_t nCaretPointer = 0;
 	
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */
@@ -1102,7 +1102,7 @@ void CViewCommander::Command_GONEXTPARAGRAPH( bool bSelect )
 void CViewCommander::Command_GOPREVPARAGRAPH( bool bSelect )
 {
 	const CDocLine* pcDocLine;
-	int nCaretPointer = -1;
+	ssize_t nCaretPointer = -1;
 
 	bool nFirstLineIsEmptyLine = false;
 	/* まずは、現在位置が空行（スペース、タブ、改行記号のみの行）かどうか判別 */

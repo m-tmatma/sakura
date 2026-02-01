@@ -174,7 +174,7 @@ bool ReadRegistry(HKEY Hive, const WCHAR* Path, const WCHAR* Item, WCHAR* Buffer
 	@retval false コピー失敗。場合によってはクリップボードに元の内容が残る
 	@date 2004.02.17 Moca 各所のソースを統合
 */
-bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
+bool SetClipboardText( HWND hwnd, const WCHAR* pszText, ssize_t nLength )
 {
 	CClipboard cClipboard(hwnd);
 	if(!cClipboard){
