@@ -42,8 +42,8 @@ public:
 	CMyPoint GetDrawPos() const
 	{
 		return CMyPoint(
-			m_ptDrawOrigin.x + (Int)m_ptDrawLayout.x * m_nDx,
-			m_ptDrawOrigin.y + (Int)m_ptDrawLayout.y * m_nDy
+			m_ptDrawOrigin.x + static_cast<int>((Int)m_ptDrawLayout.x * m_nDx),
+			m_ptDrawOrigin.y + static_cast<int>((Int)m_ptDrawLayout.y * m_nDy)
 		);
 	}
 	int GetCharWidth() const

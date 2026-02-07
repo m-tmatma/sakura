@@ -20,11 +20,11 @@
 
 //! 整数型、または、intにキャスト可能な型
 template<typename T>
-concept IntOrCastable = std::is_integral_v<T> || std::is_convertible_v<T, int>;
+concept IntOrCastable = std::is_integral_v<T> || std::is_convertible_v<T, ssize_t>;
 
 //! 整数型、または、Int(CLazyInt)
 template<typename T>
-concept IntOrLazyInt = std::is_integral_v<T> || (!std::is_same_v<Int, int> && std::is_same_v<T, Int>);
+concept IntOrLazyInt = std::is_integral_v<T> || (!std::is_same_v<Int, ssize_t> && std::is_same_v<T, Int>);
 
 //! 暗黙の変換を許さない、整数クラス
 template <

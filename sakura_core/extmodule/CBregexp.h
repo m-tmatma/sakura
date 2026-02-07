@@ -101,7 +101,7 @@ public:
 	*/
 	CLogicInt GetIndex(void)
 	{
-		return CLogicInt(m_pRegExp->startp[0] - m_szTarget);
+		return CLogicInt{ m_pRegExp->startp[0] - m_szTarget };
 	}
 	/*!
 	    検索に一致した文字列の次の位置を返す
@@ -109,7 +109,7 @@ public:
 	*/
 	CLogicInt GetLastIndex(void)
 	{
-		return CLogicInt(m_pRegExp->endp[0] - m_szTarget);
+		return CLogicInt{ m_pRegExp->endp[0] - m_szTarget };
 	}
 	/*!
 		検索に一致した文字列の長さを返す
@@ -117,7 +117,7 @@ public:
 	*/
 	CLogicInt GetMatchLen(void)
 	{
-		return CLogicInt(m_pRegExp->endp[0] - m_pRegExp->startp[0]);
+		return CLogicInt{ m_pRegExp->endp[0] - m_pRegExp->startp[0] };
 	}
 	/*!
 		置換された文字列の長さを返す
@@ -133,9 +133,9 @@ public:
 		//	outpのNULLチェックが必要
 
 		if (m_pRegExp->outp == nullptr) {
-			return CLogicInt(0);
+			return CLogicInt{ 0 };
 		} else {
-			return CLogicInt(m_pRegExp->outendp - m_pRegExp->outp);
+			return CLogicInt{ m_pRegExp->outendp - m_pRegExp->outp };
 		}
 	}
 	/*!

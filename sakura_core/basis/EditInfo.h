@@ -31,8 +31,8 @@ struct EditInfo {
 	int 		m_nTypeId = -1;							//!< 文書タイプ(MRU)
 
 	//表示域
-	CLayoutInt	m_nViewTopLine = CLayoutInt(-1);		//!< 表示域の一番上の行(0開始)
-	CLayoutInt	m_nViewLeftCol = CLayoutInt(-1);		//!< 表示域の一番左の桁(0開始)
+	CLayoutInt	m_nViewTopLine = CLayoutInt{ -1 };		//!< 表示域の一番上の行(0開始)
+	CLayoutInt	m_nViewLeftCol = CLayoutInt{ -1 };		//!< 表示域の一番左の桁(0開始)
 
 	//キャレット
 	CLogicPoint m_ptCursor = {-1, -1};					//!< キャレット位置
