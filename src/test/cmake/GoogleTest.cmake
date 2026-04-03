@@ -36,7 +36,7 @@ add_custom_command(
     -S "${CMAKE_SOURCE_DIR}/externals/googletest"
     -B "${GTEST_BUILD_DIR}"
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-    "-DCMAKE_INSTALL_LIBDIR=lib$<$<CONFIG:Debug>:/Debug>"
+    [=[-DCMAKE_INSTALL_LIBDIR=lib$<$<CONFIG:Debug>:/Debug>]=]
     ${GENERATOR_ARGS_FOR_STATIC_LIBRARY}
     -DBUILD_GMOCK=ON
     -Dgtest_build_tests=OFF

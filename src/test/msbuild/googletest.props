@@ -6,13 +6,20 @@
     <GoogleTestInstallDir>$(CMakeToolsBuildDir)</GoogleTestInstallDir>
     <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
     <GoogleTestLibInstallDir Condition="'$(Configuration)'=='Debug'">$(GoogleTestInstallDir)lib\Debug</GoogleTestLibInstallDir>
-    <GoogleTestLibInstallDir Condition="'$(Configuration)'=='Release'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
+    <!-- Release の gtest/gmock は CMake のビルドツリー直下（install が lib\Release にコピーしない） -->
+    <GoogleTestLibInstallDir Condition="'$(Configuration)'=='Release'">$(GoogleTestBuildPath)\lib\Release</GoogleTestLibInstallDir>
     <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
     <GTestLibName>gtest.lib</GTestLibName>
     <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>
     <GMockLibName>gmock.lib</GMockLibName>
     <GMockLibPath>$(GoogleTestLibInstallDir)\$(GMockLibName)</GMockLibPath>
   </PropertyGroup>
+  <!-- LibraryPath だけではリンクが参照しないため、明示的に追加する -->
+  <ItemDefinitionGroup Label="GoogleTest.Link">
+    <Link>
+      <AdditionalLibraryDirectories>$(GoogleTestLibInstallDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Label="GoogleTest.Requirements">
     <ClCompile>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>

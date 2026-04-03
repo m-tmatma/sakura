@@ -514,7 +514,7 @@ void CNormalProcess::OpenFiles( HWND hwnd )
 	CCommandLine::getInstance()->GetEditInfo( &fi );
 	bool bViewMode = CCommandLine::getInstance()->IsViewMode();
 
-	int fileNum = CCommandLine::getInstance()->GetFileNum();
+	ssize_t fileNum = CCommandLine::getInstance()->GetFileNum();
 	if( fileNum > 0 ){
 		int nDropFileNumMax = GetDllShareData().m_Common.m_sFile.m_nDropFileNumMax - 1;
 		// ファイルドロップ数の上限に合わせる
@@ -522,8 +522,8 @@ void CNormalProcess::OpenFiles( HWND hwnd )
 			fileNum = nDropFileNumMax;
 		}
 
-		int i;
-		for( i = 0; i < fileNum; i++ ){
+		ssize_t i;
+		for( i = 0; i < fileNum; ++i ){
 			// ファイル名差し替え
 			wcscpy( fi.m_szPath, CCommandLine::getInstance()->GetFileName(i) );
 			bool ret = CControlTray::OpenNewEditor2( GetProcessInstance(), hwnd, &fi, bViewMode );

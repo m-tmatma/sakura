@@ -2895,7 +2895,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 					continue;
 				if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 					continue;
-				if (nSelfTab < 0 || std::ssize(pData) <= nSelfTab) {
+				if (nSelfTab < 0 || static_cast<ssize_t>(std::size(pData)) <= nSelfTab) {
 					continue;
 				}
 
@@ -2921,7 +2921,7 @@ LRESULT CTabWnd::TabListMenu( POINT pt, BOOL bSel/* = TRUE*/, BOOL bFull/* = FAL
 				continue;
 			if( pEditNode[i].m_bClosing )	// このあとすぐに閉じるウィンドウなのでタブ表示しない
 				continue;
-			if (nTab < 0 || std::ssize(pData) <= nTab) {
+			if (nTab < 0 || static_cast<ssize_t>(std::size(pData)) <= nTab) {
 				continue;
 			}
 

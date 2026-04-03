@@ -15,6 +15,7 @@
 
 #include "view/DispPos.h"
 #include "util/design_template.h"
+#include "util/ssize_compat.h"
 
 struct DispPos;
 
@@ -178,7 +179,7 @@ public:
 
 	//取得
 	CColorStrategy*	GetStrategy(int nIndex) const noexcept { return m_vStrategiesDisp[nIndex]; }
-	int				GetStrategyCount() const noexcept { return (int)m_vStrategiesDisp.size(); }
+	ssize_t				GetStrategyCount() const noexcept { return static_cast<ssize_t>(m_vStrategiesDisp.size()); }
 	CColorStrategy*	GetStrategyByColor(EColorIndexType eColor) const;
 
 	//特定取得

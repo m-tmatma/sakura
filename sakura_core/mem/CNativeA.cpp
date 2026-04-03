@@ -42,7 +42,7 @@ void CNativeA::SetString( const char* pData, size_t nDataLen )
 // バッファの内容を置き換える
 void CNativeA::SetNativeData( const CNativeA& cNative )
 {
-	SetRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
+	SetRawData( cNative.GetRawPtr(), static_cast<size_t>(cNative.GetRawLength()) );
 }
 
 // バッファの最後にデータを追加する
@@ -90,7 +90,7 @@ const CNativeA& CNativeA::operator = ( char cChar )
 //! バッファの最後にデータを追加する
 void CNativeA::AppendNativeData( const CNativeA& cNative )
 {
-	AppendRawData( cNative.GetRawPtr(), cNative.GetRawLength() );
+	AppendRawData( cNative.GetRawPtr(), static_cast<size_t>(cNative.GetRawLength()) );
 }
 
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
@@ -110,15 +110,15 @@ const CNativeA& CNativeA::operator += ( char ch )
 //              ネイティブ取得インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-int CNativeA::GetStringLength() const
+ssize_t CNativeA::GetStringLength() const
 {
-	return GetRawLength();
+	return static_cast<ssize_t>(static_cast<size_t>(GetRawLength()));
 }
 
 // 任意位置の文字取得。nIndexは文字単位。
 char CNativeA::operator[]( size_t nIndex ) const
 {
-	if( nIndex < static_cast<size_t>(GetStringLength()) ){
+	if( nIndex < GetStringLength() ){
 		return GetStringPtr()[nIndex];
 	}else{
 		return 0;

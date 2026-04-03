@@ -36,7 +36,7 @@ add_custom_command(
     -S "${CMAKE_SOURCE_DIR}/tools/darkmodelib"
     -B "${DARKMODE_LIB_BUILD_DIR}"
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-    "-DCMAKE_INSTALL_LIBDIR=lib$<$<CONFIG:Debug>:/Debug>"
+    [=[-DCMAKE_INSTALL_LIBDIR=lib$<$<CONFIG:Debug>:/Debug>]=]
     ${GENERATOR_ARGS_FOR_STATIC_LIBRARY}
   DEPENDS fetch_darkmodelib_source_files
   COMMENT "Configure DarkModeLib Library"

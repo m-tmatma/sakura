@@ -151,7 +151,7 @@ BOOL CSortedTagJumpList::AddParamA( const ACHAR* keyword, const ACHAR* filename,
 
 	@note 不要な情報の場合は引数に NULL を指定する。
 */
-BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir )
+BOOL CSortedTagJumpList::GetParam( ssize_t index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir )
 {
 	if( keyword  ) keyword[0] = L'\0';
 	if( filename ) filename[0] = L'\0';
@@ -188,11 +188,10 @@ BOOL CSortedTagJumpList::GetParam( int index, WCHAR* keyword, WCHAR* filename, i
 	@param[in] index 要素番号
 	@return タグジャンプ情報
 */
-CSortedTagJumpList::TagJumpInfo* CSortedTagJumpList::GetPtr( int index )
+CSortedTagJumpList::TagJumpInfo* CSortedTagJumpList::GetPtr( ssize_t index )
 {
 	TagJumpInfo*	p;
-	int	i;
-	i = 0;
+	ssize_t	i = 0;
 	for( p = m_pTagjump; p; p = p->next )
 	{
 		if( index == i ) return p;

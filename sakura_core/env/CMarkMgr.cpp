@@ -26,7 +26,7 @@
 
 	@param max 設定する最大件数
 */
-void CMarkMgr::SetMax(int max)
+void CMarkMgr::SetMax(ssize_t max)
 {
 	m_nMaxitem = max;
 	Expire();	//	指定した数に要素を減らす
@@ -41,7 +41,7 @@ void CMarkMgr::SetMax(int max)
 bool CMarkMgr::CheckCurrent(void) const
 {
 	if( m_nCurpos < Count() )
-		return m_cMarkChain[ m_nCurpos ].IsValid();
+		return m_cMarkChain[ static_cast<CMarkChain::size_type>(m_nCurpos) ].IsValid();
 
 	return false;
 }
@@ -54,8 +54,8 @@ bool CMarkMgr::CheckCurrent(void) const
 */
 bool CMarkMgr::CheckPrev(void) const
 {
-	for( int i = m_nCurpos - 1; i >= 0; i-- ){
-		if( m_cMarkChain[ i ].IsValid() )
+	for( ssize_t i = m_nCurpos - 1; i >= 0; --i ){
+		if( m_cMarkChain[ static_cast<CMarkChain::size_type>(i) ].IsValid() )
 			return true;
 	}
 	return false;
@@ -69,8 +69,8 @@ bool CMarkMgr::CheckPrev(void) const
 */
 bool CMarkMgr::CheckNext(void) const
 {
-	for( int i = m_nCurpos + 1; i < Count(); i++ ){
-		if( m_cMarkChain[ i ].IsValid() )
+	for( ssize_t i = m_nCurpos + 1; i < Count(); ++i ){
+		if( m_cMarkChain[ static_cast<CMarkChain::size_type>(i) ].IsValid() )
 			return true;
 	}
 	return false;
@@ -84,8 +84,8 @@ bool CMarkMgr::CheckNext(void) const
 */
 bool CMarkMgr::PrevValid(void)
 {
-	for( int i = m_nCurpos - 1; i >= 0; i-- ){
-		if( m_cMarkChain[ i ].IsValid() ){
+	for( ssize_t i = m_nCurpos - 1; i >= 0; --i ){
+		if( m_cMarkChain[ static_cast<CMarkChain::size_type>(i) ].IsValid() ){
 			m_nCurpos = i;
 			return true;
 		}
@@ -100,8 +100,8 @@ bool CMarkMgr::PrevValid(void)
 */
 bool CMarkMgr::NextValid(void)
 {
-	for( int i = m_nCurpos + 1; i < Count(); i++ ){
-		if( m_cMarkChain[ i ].IsValid() ){
+	for( ssize_t i = m_nCurpos + 1; i < Count(); ++i ){
+		if( m_cMarkChain[ static_cast<CMarkChain::size_type>(i) ].IsValid() ){
 			m_nCurpos = i;
 			return true;
 		}
@@ -136,9 +136,9 @@ void CMarkMgr::Flush(void)
 void CAutoMarkMgr::Add(const CMark& m)
 {
 	//	現在位置が途中の時
-	if( m_nCurpos < (int)m_cMarkChain.size() ){
+	if( m_nCurpos < Count() ){
 		//	現在位置まで要素を削除
-		m_cMarkChain.erase( m_cMarkChain.begin() + m_nCurpos, m_cMarkChain.end() );
+		m_cMarkChain.erase( m_cMarkChain.begin() + static_cast<CMarkChain::difference_type>(m_nCurpos), m_cMarkChain.end() );
 	}
 
 	//	要素の追加
@@ -155,14 +155,14 @@ void CAutoMarkMgr::Add(const CMark& m)
 */
 void CAutoMarkMgr::Expire(void)
 {
-	if (std::ssize(m_cMarkChain) <= m_nMaxitem) {
+	if (Count() <= m_nMaxitem) {
 		return;
 	}
 
 	//	最大値を超えている場合
-	const auto range = m_cMarkChain.size() - m_nMaxitem;
-	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.begin() + range );
-	m_nCurpos -= int(range);
+	const auto range = m_cMarkChain.size() - static_cast<CMarkChain::size_type>(m_nMaxitem);
+	m_cMarkChain.erase( m_cMarkChain.begin(), m_cMarkChain.begin() + static_cast<CMarkChain::difference_type>(range) );
+	m_nCurpos -= static_cast<ssize_t>(range);
 	if( m_nCurpos < 0 )
 		m_nCurpos = 0;
 }

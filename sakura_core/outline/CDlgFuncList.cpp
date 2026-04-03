@@ -1640,9 +1640,9 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 	//フォルダー一覧作成
 	CGrepEnumFilterFolders cGrepEnumFilterFolders;
 	cGrepEnumFilterFolders.Enumerates( basePath.c_str(), cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFolders );
-	int nItemCount = cGrepEnumFilterFolders.GetCount();
-	count = nItemCount;
-	for( int i = 0; i < nItemCount; i++ ){
+	ssize_t nItemCount = cGrepEnumFilterFolders.GetCount();
+	count = static_cast<int>(nItemCount);
+	for( int i = 0; i < static_cast<int>(nItemCount); i++ ){
 		TVINSERTSTRUCT tvis;
 		tvis.hParent      = hParent;
 		tvis.item.mask    = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
@@ -1656,8 +1656,8 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 	CGrepEnumFilterFiles cGrepEnumFilterFiles;
 	cGrepEnumFilterFiles.Enumerates( basePath.c_str(), cGrepEnumKeys, cGrepEnumOptions, cGrepExceptAbsFiles );
 	nItemCount = cGrepEnumFilterFiles.GetCount();
-	count += nItemCount;
-	for( int i = 0; i < nItemCount; i ++ ){
+	count += static_cast<int>(nItemCount);
+	for( int i = 0; i < static_cast<int>(nItemCount); i ++ ){
 		const WCHAR* pFile = cGrepEnumFilterFiles.GetFileName(i);
 		TVINSERTSTRUCT tvis;
 		tvis.hParent      = hParent;

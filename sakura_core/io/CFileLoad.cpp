@@ -171,15 +171,12 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	}
 	m_hFile = hFile;
 
-	// GetFileSizeEx は Win2K以上
-	fileSize.LowPart = ::GetFileSize( hFile, &fileSize.HighPart );
-	if( 0xFFFFFFFFU == fileSize.LowPart ){
-		DWORD lastError = ::GetLastError();
-		if( NO_ERROR != lastError ){
-			FileClose();
-			throw CError_FileOpen();
-		}
+	LARGE_INTEGER liSize{};
+	if( !::GetFileSizeEx( hFile, &liSize ) ){
+		FileClose();
+		throw CError_FileOpen();
 	}
+	fileSize.QuadPart = (ULONGLONG)liSize.QuadPart;
 	if (!CFileLoad::IsLoadableSize(fileSize.QuadPart, bBigFile)) {
 		// ファイルが大きすぎる(2GB位)
 		FileClose();
@@ -246,11 +243,11 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	m_pCodeBase->GetEol( &m_memEols[1], EEolType::line_separator );
 	m_pCodeBase->GetEol( &m_memEols[2], EEolType::paragraph_separator );
 	bool bEolEx = false;
-	int  nMaxEolLen = 0;
+	ssize_t nMaxEolLen = 0;
 	for( int k = 0; k < int(std::size(m_memEols)); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
-			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
+			nMaxEolLen = (std::max)(nMaxEolLen, m_memEols[k].GetRawLength());
 		}
 	}
 	m_bEolEx = bEolEx;

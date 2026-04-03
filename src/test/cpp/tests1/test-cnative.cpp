@@ -9,6 +9,7 @@
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
+#include "util/ssize_compat.h"
 
 /*!
 	CStringRefのテスト
@@ -20,13 +21,13 @@ TEST(CStringRef, CStringRef)
 
 	CStringRef v1;
 	EXPECT_EQ(NULL, v1.GetPtr());
-	EXPECT_EQ(0, v1.GetLength());
+	EXPECT_EQ(ssize_t{0}, v1.GetLength());
 	EXPECT_FALSE(v1.IsValid());
 	EXPECT_EQ(L'\0', v1.At(0));
 
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
-	EXPECT_EQ(cch, v2.GetLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), v2.GetLength());
 	EXPECT_TRUE(v2.IsValid());
 	EXPECT_EQ(L't', v2.At(0));
 	EXPECT_EQ(L'e', v2.At(1));
@@ -37,7 +38,7 @@ TEST(CStringRef, CStringRef)
 	CNativeW cmem(sz, cch);
 	CStringRef v3(cmem);
 	EXPECT_STREQ(sz, v3.GetPtr());
-	EXPECT_EQ(cch, v3.GetLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), v3.GetLength());
 	EXPECT_TRUE(v3.IsValid());
 	EXPECT_EQ(L't', v3.At(0));
 	EXPECT_EQ(L'e', v3.At(1));
@@ -56,7 +57,7 @@ TEST(CNativeW, ConstructWithoutParam)
 {
 	CNativeW value;
 	ASSERT_EQ(NULL, value.GetStringPtr());
-	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value.GetStringLength());
 	EXPECT_EQ(0, value.capacity());
 }
 
@@ -72,7 +73,7 @@ TEST(CNativeW, ConstructWithStringWithLength)
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 }
 
@@ -88,7 +89,7 @@ TEST(CNativeW, ConstructWithString)
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 }
 
@@ -101,7 +102,7 @@ TEST(CNativeW, ConstructWithStringEmpty)
 	constexpr const wchar_t sz[] = L"";
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value.GetStringLength());
 	EXPECT_LE(0, value.capacity());
 }
 
@@ -113,11 +114,11 @@ TEST(CNativeW, ConstructWithStringEmpty)
 TEST(CNativeW, ConstructWithStringNull)
 {
 	CNativeW value(NULL);
-	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value.GetStringLength());
 	EXPECT_EQ(NULL, value.GetStringPtr());
 
 	CNativeW value2(NULL);
-	EXPECT_EQ(0, value2.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value2.GetStringLength());
 	EXPECT_EQ(NULL, value2.GetStringPtr());
 }
 
@@ -151,12 +152,12 @@ TEST(CNativeW, ConstructFromOtherByMove)
 	CNativeW other(sz);
 	CNativeW value(std::move(other));
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 
 	// ムーブ元は抜け殻になる
 	ASSERT_EQ(NULL, other.GetStringPtr());
-	EXPECT_EQ(0, other.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, other.GetStringLength());
 	EXPECT_EQ(0, other.capacity());
 }
 
@@ -175,7 +176,7 @@ TEST(CNativeW, CopyFromOther)
 	CNativeW other(sz);
 	value = other;
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 
 	// コピー元バッファとは別に新しいバッファが確保される
@@ -197,12 +198,12 @@ TEST(CNativeW, MoveFromOther)
 	CNativeW other(sz);
 	value = std::move(other);
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 
 	// ムーブ元は抜け殻になる
 	ASSERT_EQ(NULL, other.GetStringPtr());
-	EXPECT_EQ(0, other.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, other.GetStringLength());
 	EXPECT_EQ(0, other.capacity());
 }
 
@@ -217,7 +218,7 @@ TEST(CNativeW, GetCharAtIndex)
 	constexpr const wchar_t sz[] = L"森鷗外";
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	for (size_t index = 0; index < cch; ++index) {
 		EXPECT_EQ(sz[index], value[index]);
 	}
@@ -238,7 +239,7 @@ TEST(CNativeW, AssignString)
 	CNativeW value;
 	value = sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 }
 
@@ -251,7 +252,7 @@ TEST(CNativeW, AssignStringNullPointer)
 {
 	CNativeW value(L"test");
 	value = nullptr;	// NULLではなくnullptrを使うよう修正
-	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value.GetStringLength());
 	EXPECT_EQ(NULL, value.GetStringPtr());
 }
 
@@ -265,7 +266,7 @@ TEST(CNativeW, AssignStringNullLiteral)
 	CNativeW value(L"test");
 	value = nullptr;	// NULLではなくnullptrを使うよう修正
 	ASSERT_EQ(NULL, value.GetStringPtr());
-	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value.GetStringLength());
 }
 
 /*!
@@ -281,7 +282,7 @@ TEST(CNativeW, AppendChar)
 	CNativeW value;
 	value += sz[0];
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(1, value.GetStringLength());
+	EXPECT_EQ(ssize_t{1}, value.GetStringLength());
 	EXPECT_LE(1, value.capacity());
 }
 
@@ -298,7 +299,7 @@ TEST(CNativeW, AppendString)
 	CNativeW value;
 	value += sz;
 	ASSERT_STREQ(sz, value.GetStringPtr());
-	EXPECT_EQ(cch, value.GetStringLength());
+	EXPECT_EQ(static_cast<ssize_t>(cch), value.GetStringLength());
 	EXPECT_LE(cch, value.capacity());
 }
 
@@ -550,7 +551,7 @@ TEST(CNativeW, ReplaceOfNullString)
 	CNativeW value;
 	value.Replace(L"置換前", L"置換後");
 	ASSERT_STREQ(L"", value.GetStringPtr());
-	EXPECT_EQ(0, value.GetStringLength());
+	EXPECT_EQ(ssize_t{0}, value.GetStringLength());
 	EXPECT_LE(0, value.capacity());
 }
 

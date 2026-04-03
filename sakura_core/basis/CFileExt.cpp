@@ -40,18 +40,18 @@ bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )
 	return true;
 }
 
-const WCHAR *CFileExt::GetName( int nIndex )
+const WCHAR *CFileExt::GetName( ssize_t nIndex )
 {
 	if( nIndex < 0 || nIndex >= GetCount() ) return nullptr;
 
-	return m_vFileExtInfo[nIndex].m_sTypeName.c_str();
+	return m_vFileExtInfo[static_cast<size_t>(nIndex)].m_sTypeName.c_str();
 }
 
-const WCHAR *CFileExt::GetExt( int nIndex )
+const WCHAR *CFileExt::GetExt( ssize_t nIndex )
 {
 	if( nIndex < 0 || nIndex >= GetCount() ) return nullptr;
 
-	return m_vFileExtInfo[nIndex].m_sExt.c_str();
+	return m_vFileExtInfo[static_cast<size_t>(nIndex)].m_sExt.c_str();
 }
 
 const WCHAR *CFileExt::GetExtFilter( void )
@@ -67,15 +67,15 @@ void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 	/* 拡張子フィルタの作成 */
 	output.resize(0);
 
-	for (int i = 0; i < GetCount(); i++)
+	for (ssize_t i = 0; i < GetCount(); ++i)
 	{
 		// "%s (%s)\0%s\0"
-		work = m_vFileExtInfo[i].m_sTypeName;
+		work = m_vFileExtInfo[static_cast<size_t>(i)].m_sTypeName;
 		work.append(L" (");
-		work.append(m_vFileExtInfo[i].m_sExt);
+		work.append(m_vFileExtInfo[static_cast<size_t>(i)].m_sExt);
 		work.append(L")");
 		work.append(L"\0", 1);
-		work.append(m_vFileExtInfo[i].m_sExt);
+		work.append(m_vFileExtInfo[static_cast<size_t>(i)].m_sExt);
 		work.append(L"\0", 1);
 
 		size_t pos = output.size();

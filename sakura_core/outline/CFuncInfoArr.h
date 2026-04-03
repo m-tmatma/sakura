@@ -24,6 +24,7 @@ class CFuncInfo;
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
 #include "basis/CMyString.h"
+#include "util/ssize_compat.h"
 
 // 標準的な付加情報定数
 #define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
@@ -48,7 +49,7 @@ public:
 	void AppendData( CLogicInt nFuncLineCRLF, CLayoutInt nFuncLineLAYOUT, const WCHAR* pszFuncName,
 					 int nInfo, int nDepth = 0 );	/* 配列の最後にデータを追加する 2002.04.01 YAZAKI 深さ導入*/
 	void AppendData( CLogicInt nLogicLine, CLogicInt nLogicCol, CLayoutInt nLayoutLine, CLayoutInt nLayoutCol, const WCHAR*, const WCHAR*, int, int nDepth = 0 );	/* 配列の最後にデータを追加する 2010.03.01 syat 桁導入*/
-	int	GetNum( void ){	return static_cast<int>(m_funcInfoArr.size()); }	/* 配列要素数を返す */
+	ssize_t	GetNum( void ){	return static_cast<ssize_t>(m_funcInfoArr.size()); }	/* 配列要素数を返す */
 	void Empty( void );
 	void DUMP( void );
 	void SetAppendText( int info, std::wstring s, bool overwrite );

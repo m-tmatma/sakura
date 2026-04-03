@@ -27,20 +27,24 @@ endif()
 
 message(STATUS "Found MSBuild: ${CMD_MSBUILD}")
 
-# Find PowerShell
+# Find PowerShell (vcpkg-bundled Core preferred; else pwsh or Windows PowerShell)
 find_program(CMD_PWSH pwsh.exe
   PATHS
     "${CMAKE_CURRENT_SOURCE_DIR}/../tools/vcpkg/downloads/tools"
   PATH_SUFFIXES
     "powershell-core-*-windows"
-  DOC "PowerShell Core"
+  DOC "PowerShell Core (vcpkg)"
 )
 
 if(NOT CMD_PWSH)
-  message(FATAL_ERROR "pwsh.exe was not found.")
+  find_program(CMD_PWSH NAMES pwsh.exe powershell.exe)
 endif()
 
-message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
+if(NOT CMD_PWSH)
+  message(FATAL_ERROR "PowerShell was not found (pwsh.exe or powershell.exe).")
+endif()
+
+message(STATUS "Found PowerShell: ${CMD_PWSH}")
 
 # Find HTML Help Compiler
 find_program(CMD_HHC hhc.exe

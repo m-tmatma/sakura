@@ -18,6 +18,7 @@
 #include "_main/global.h"
 #include "config/maxdata.h"
 #include "util/design_template.h"
+#include "util/ssize_compat.h"
 
 class CFileExt
 {
@@ -26,14 +27,14 @@ public:
 
 	bool AppendExt( const WCHAR *pszName, const WCHAR *pszExt );
 	bool AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt );
-	const WCHAR *GetName( int nIndex );
-	const WCHAR *GetExt( int nIndex );
+	const WCHAR *GetName( ssize_t nIndex );
+	const WCHAR *GetExt( ssize_t nIndex );
 
 	//ダイアログに渡す拡張子フィルタを取得する。(lpstrFilterに直接指定可能)
 	//2回呼び出すと古いバッファが無効になることがあるのに注意
 	const WCHAR *GetExtFilter( void );
 
-	[[nodiscard]] int GetCount() const { return static_cast<int>(m_vFileExtInfo.size()); }
+	[[nodiscard]] ssize_t GetCount() const { return static_cast<ssize_t>(m_vFileExtInfo.size()); }
 
 protected:
 	// 2014.10.30 syat ConvertTypesExtToDlgExtをCDocTypeManagerに移動

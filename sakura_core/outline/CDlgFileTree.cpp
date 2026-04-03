@@ -159,7 +159,7 @@ void CDlgFileTree::SetDataItem(LPARAM nItemIndex)
 {
 	HWND hwndDlg = GetHwnd();
 	bool bDummy = false;
-	if (nItemIndex < 0 || std::ssize(m_fileTreeSetting.m_aItems) <= nItemIndex) {
+	if (nItemIndex < 0 || static_cast<ssize_t>(std::size(m_fileTreeSetting.m_aItems)) <= nItemIndex) {
 		bDummy = true;
 	}
 	SFileTreeItem itemDummy;

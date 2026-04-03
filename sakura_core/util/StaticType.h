@@ -10,6 +10,7 @@
 #pragma once
 
 #include "util/string_ex.h"
+#include "util/ssize_compat.h"
 #include "debug/Debug2.h"
 
 //! ヒープを用いないvector
@@ -220,7 +221,7 @@ public:
 	Me& operator = (const WCHAR* src){ Assign(src); return *this; }
 
 	//各種メソッド
-	int Length() const noexcept { return static_cast<int>(length()); }
+	ssize_t Length() const noexcept { return static_cast<ssize_t>(length()); }
 
 private:
 	ArrayType	m_szData{};

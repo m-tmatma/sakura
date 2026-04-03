@@ -216,7 +216,10 @@ void CDlgProperty::SetData( void )
 		auto_sprintf( szWork, LS(STR_DLGFLPROP_DOS_NAME), wfd.cAlternateFileName );
 		cmemProp.AppendString( szWork );
 
-		auto_sprintf( szWork, LS(STR_DLGFLPROP_FILE_SIZE), wfd.nFileSizeLow );
+		ULARGE_INTEGER ulFileSize{};
+		ulFileSize.HighPart = wfd.nFileSizeHigh;
+		ulFileSize.LowPart = wfd.nFileSizeLow;
+		auto_sprintf( szWork, LS(STR_DLGFLPROP_FILE_SIZE), ulFileSize.QuadPart );
 		cmemProp.AppendString( szWork );
 
 		::FindClose( nFind );

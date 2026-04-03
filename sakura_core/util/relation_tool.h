@@ -13,6 +13,8 @@
 #pragma once
 
 #include <vector>
+
+#include "util/ssize_compat.h"
 class CSubject;
 class CListener;
 
@@ -30,7 +32,7 @@ public:
 	virtual ~CSubject();
 
 	//公開インターフェース
-	int GetListenerCount() const{ return (int)m_vListenersRef.size(); }
+	ssize_t GetListenerCount() const{ return static_cast<ssize_t>(m_vListenersRef.size()); }
 	CListener* GetListener(int nIndex) const{ return m_vListenersRef[nIndex]; }
 
 public:

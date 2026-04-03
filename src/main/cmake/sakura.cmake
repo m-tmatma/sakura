@@ -144,24 +144,30 @@ endif()
 
 message(STATUS "Found patch.exe: ${PATCH_EXECUTABLE}")
 
-# Find PowerShell Core(required)
-find_program(CMD_PWSH pwsh.exe
+# Find PowerShell (prefer PowerShell Core; Windows PowerShell is acceptable)
+find_program(CMD_PWSH NAMES pwsh.exe powershell.exe
   PATHS
     "$ENV{LOCALAPPDATA}/Microsoft/WindowsApps"
     "$ENV{ProgramFiles}/PowerShell/7"
-  DOC "PowerShell Core"
+    "$ENV{WINDIR}/System32/WindowsPowerShell/v1.0"
+  DOC "PowerShell (pwsh or Windows PowerShell)"
 )
 
 if(NOT CMD_PWSH)
-  message(FATAL_ERROR "pwsh.exe was not found.")
+  find_program(CMD_PWSH NAMES pwsh.exe powershell.exe)
 endif()
 
-message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
+if(NOT CMD_PWSH)
+  message(FATAL_ERROR "PowerShell was not found (pwsh.exe or powershell.exe).")
+endif()
+
+message(STATUS "Found PowerShell: ${CMD_PWSH}")
 
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
   PATHS
     "$ENV{ChocolateyInstall}"
+    "$ENV{ProgramFiles}/7-Zip"
 )
 
 if(NOT 7ZIP_EXECUTABLE)
@@ -374,7 +380,8 @@ if(MSVC)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
   # 静的リンクするライブラリの構築に使うパラメーターを作る
-  set(GENERATOR_ARGS_FOR_STATIC_LIBRARY "\"-DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}\"")
+  # ブラケット引用で親 CMake が解釈しないリテラルにし、子プロセスの cmake が MultiThreaded / MultiThreadedDebug を CONFIG ごとに解釈できるようにする
+  set(GENERATOR_ARGS_FOR_STATIC_LIBRARY [=[-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>]=])
 
   add_compile_options(
     /source-charset:utf-8

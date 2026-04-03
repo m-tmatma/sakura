@@ -225,7 +225,7 @@ bool CProfile::WriteProfile(
 	LPWSTR lpszName = nullptr;
 	if (const auto nLen = ::GetFullPathNameW(m_ProfilePath.c_str(), int(std::size(szPath)), szPath, &lpszName);
 		nLen < std::size(szPath) &&
-		lpszName - szPath + 11 < std::ssize(szMirrorFile)	// path\preuuuu.TMP
+		lpszName - szPath + 11 < static_cast<ssize_t>(std::size(szMirrorFile))	// path\preuuuu.TMP
 	)
 	{
 		*lpszName = L'\0';

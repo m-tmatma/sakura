@@ -415,7 +415,7 @@ DWORD CGrepAgent::DoGrep(
 				}
 			}
 			if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
-				CLogicInt len = cmemReplace.GetStringLength();
+				const CLogicInt len(cmemReplace.GetStringLength());
 				wchar_t	*pszConvertedText = new wchar_t[len * 2]; // 全文字\n→\r\n変換で最大の２倍になる
 				auto nConvertedTextLen = pcViewDst->m_cCommander.ConvertEol(cmemReplace.GetStringPtr(), len, pszConvertedText);
 				cmemReplace.SetString(pszConvertedText, nConvertedTextLen);
@@ -879,7 +879,7 @@ int CGrepAgent::DoGrepTree(
 )
 {
 	int			i;
-	int			count;
+	ssize_t		count;
 	LPCWSTR		lpFileName;
 	int			nWork = 0;
 	int			nHitCountOld = -100;
@@ -978,7 +978,7 @@ int CGrepAgent::DoGrepTree(
 		if( pcViewDst->GetDrawSwitch() ){
 			if( L'\0' != pszKey[0] ){
 				// データ検索のときファイルの合計が最大10MBを超えたら表示
-				nWork += ( cGrepEnumFilterFiles.GetFileSizeLow( i ) + 1023 ) / 1024;
+				nWork += static_cast<int>( ( cGrepEnumFilterFiles.GetFileSizeUInt64( i ) + 1023 ) / 1024 );
 			}
 			if( 10000 < nWork ){
 				nHitCountOld = -100; // 即表示

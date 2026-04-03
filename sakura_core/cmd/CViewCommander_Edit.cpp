@@ -302,8 +302,8 @@ void CViewCommander::Command_UNDO( void )
 	COpe*		pcOpe = nullptr;
 
 	COpeBlk*	pcOpeBlk;
-	int			nOpeBlkNum;
-	int			i;
+	ssize_t		nOpeBlkNum;
+	ssize_t		i;
 	bool		bIsModified;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
@@ -561,8 +561,8 @@ void CViewCommander::Command_REDO( void )
 
 	COpe*		pcOpe = nullptr;
 	COpeBlk*	pcOpeBlk;
-	int			nOpeBlkNum;
-	int			i;
+	ssize_t		nOpeBlkNum;
+	ssize_t		i;
 //	int			nNewLine;	/* 挿入された部分の次の位置の行 */
 //	int			nNewPos;	/* 挿入された部分の次の位置のデータ位置 */
 	bool		bIsModified;

@@ -1581,19 +1581,19 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 
 	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName.data(), StrEq(L""));
 	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName2.data(), StrEq(L""));
-	for (int i = 0; i < std::ssize(shareData.m_sCharWidth.m_nCharPxWidthCache); ++i) {
+	for (int i = 0; i < static_cast<ssize_t>(std::size(shareData.m_sCharWidth.m_nCharPxWidthCache)); ++i) {
 		EXPECT_THAT(shareData.m_sCharWidth.m_nCharPxWidthCache[i], 0) << L"Unexpected value at index " << i;
 	}
 	EXPECT_THAT(shareData.m_sCharWidth.m_nCharWidthCacheTest, 0);
 
-	for (int i = 0; i < std::ssize(shareData.m_dwCustColors); ++i) {
+	for (int i = 0; i < static_cast<ssize_t>(std::size(shareData.m_dwCustColors)); ++i) {
 		EXPECT_THAT(shareData.m_dwCustColors[i], RGB(255, 255, 255)) << L"Unexpected value at index " << i;
 	}
 
 	EXPECT_THAT(shareData.m_szPrivateIniFile, StrEq(privateIniPath));
 	EXPECT_THAT(shareData.m_szIniFile, StrEq(iniPath));
 
-	for (int i = 0; i < std::ssize(shareData.m_PlugCmdIcon); ++i) {
+	for (int i = 0; i < static_cast<ssize_t>(std::size(shareData.m_PlugCmdIcon)); ++i) {
 		EXPECT_THAT(shareData.m_PlugCmdIcon[i], 0) << L"Unexpected value at index " << i;
 	}
 
@@ -1643,7 +1643,7 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		EXPECT_THAT(shareData.m_TypeMini[i].m_encoding, type->m_encoding);
 	}
 
-	for (int i = 0; i < std::ssize(shareData.m_PrintSettingArr); ++i) {
+	for (int i = 0; i < static_cast<ssize_t>(std::size(shareData.m_PrintSettingArr)); ++i) {
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(std::format(L"{:s} {:d}", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceHan, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceZen, StrEq(L"ＭＳ 明朝"));
@@ -1809,14 +1809,14 @@ TEST_F(CShareDataTest, GetMacroFilename001)
 	std::wstring buffer(_MAX_PATH, L'\0');
 
 	// バッファにnullを指定した場合、格納すべき文字数を符号反転して返す
-	EXPECT_THAT(pcShareData->GetMacroFilename(-1, nullptr, 0), Eq(-std::ssize(keyMacoroPath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, nullptr, 0), Eq(-static_cast<ssize_t>(std::size(keyMacoroPath.native()))));
 
 	// 適切なバッファを指定した場合、キーマクロの文字数を返す
-	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(keyMacoroPath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(buffer))), Eq(static_cast<ssize_t>(std::size(keyMacoroPath.native()))));
 	EXPECT_THAT(buffer, StartsWith(keyMacoroPath.native()));
 
 	// バッファサイズが足りない場合、格納すべき文字数を符号反転して返す
-	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(keyMacoroPath.native()))), Eq(-std::ssize(keyMacoroPath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(keyMacoroPath.native()))), Eq(-static_cast<ssize_t>(std::size(keyMacoroPath.native()))));
 }
 
 /*!
@@ -1848,12 +1848,12 @@ TEST_F(CShareDataTest, GetMacroFilename003)
 	const auto testFilePath = GetIniFileName().replace_filename(L"test.mac"s);
 	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, testFilePath.c_str());
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(3, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, nullptr, 0), Eq(-static_cast<ssize_t>(std::size(testFilePath.native()))));
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(buffer))), Eq(static_cast<ssize_t>(std::size(testFilePath.native()))));
 	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-static_cast<ssize_t>(std::size(testFilePath.native()))));
 
 	// 共有データを元に戻す
 	::wcscpy_s(sMacro.m_MacroTable[1].m_szFile, L"");
@@ -1876,12 +1876,12 @@ TEST_F(CShareDataTest, GetMacroFilename004)
 	const auto testFilePath = GetIniFileName().remove_filename() / L"." / L"test.mac";
 	::wcscpy_s(sMacro.m_MacroTable[4].m_szFile, L"test.mac");
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(4, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, nullptr, 0), Eq(-static_cast<ssize_t>(std::size(testFilePath.native()))));
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(buffer))), Eq(static_cast<ssize_t>(std::size(testFilePath.native()))));
 	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-static_cast<ssize_t>(std::size(testFilePath.native()))));
 
 	// 共有データを元に戻す
 	::wcscpy_s(sMacro.m_MacroTable[4].m_szFile, L"");
@@ -1906,12 +1906,12 @@ TEST_F(CShareDataTest, GetMacroFilename005)
 	const auto testFilePath = tooLongPath / L"test.mac";
 	::wcscpy_s(sMacro.m_MacroTable[5].m_szFile, L"test.mac");
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(5, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, nullptr, 0), Eq(-static_cast<ssize_t>(std::size(testFilePath.native()))));
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(buffer))), Eq(static_cast<ssize_t>(std::size(testFilePath.native()))));
 	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
 
-	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-static_cast<ssize_t>(std::size(testFilePath.native()))));
 
 	// 共有データを元に戻す
 	::wcscpy_s(sMacro.m_MacroTable[5].m_szFile, L"");

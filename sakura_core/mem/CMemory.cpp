@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <limits>
 
 #include "_main/global.h"
 #include "config/app_constants.h"
@@ -72,8 +73,8 @@ CMemory::~CMemory() noexcept
 /* 等しい内容か */
 bool CMemory::IsEqual(const CMemory& cmem1, const CMemory& cmem2)
 {
-	const auto nLen1 = cmem1.GetRawLength();
-	const auto nLen2 = cmem2.GetRawLength();
+	const auto nLen1 = static_cast<size_t>(cmem1.GetRawLength());
+	const auto nLen2 = static_cast<size_t>(cmem2.GetRawLength());
 	if( nLen1 == nLen2 ){
 		const auto psz1 = cmem1.GetRawPtr();
 		const auto psz2 = cmem2.GetRawPtr();
@@ -111,7 +112,7 @@ void CMemory::SwapHLByte( char* pData, const size_t nDataLen ) noexcept
 void CMemory::SwapHLByte( void ) noexcept
 {
 	auto p0 = reinterpret_cast<uint16_t*>(GetRawPtr());
-	const auto p1 = p0 + GetRawLength() / 2;
+	const auto p1 = p0 + static_cast<size_t>(GetRawLength()) / 2;
 	std::for_each(p0, p1, []( auto& w ) { w = ::_byteswap_ushort( w ); } );
 }
 
@@ -139,22 +140,22 @@ void CMemory::AllocBuffer( size_t nNewDataLen )
 
 	void* pAllocated = nullptr;
 
-	if( m_nDataBufSize == 0 && nAllocSize <= INT_MAX ){
+	if( m_nDataBufSize == 0 ){
 		pAllocated = ::malloc( nAllocSize );
-	}else if( nAllocSize <= INT_MAX ){
+	}else{
 		pAllocated = ::realloc( m_pRawData, nAllocSize );
 	}
 
 	if( pAllocated != nullptr ){
 		m_pRawData = static_cast<std::byte*>(pAllocated);
-		m_nDataBufSize = static_cast<decltype(m_nDataBufSize)>(nAllocSize);
+		m_nDataBufSize = nAllocSize;
 	}else{
 		// "CMemory::AllocBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n"
 		TopCustomMessage(
 			nullptr,
 			MB_OKCANCEL | MB_ICONQUESTION,
 			LS(STR_ERR_DLGMEM1),
-			nNewDataLen
+			static_cast<int>((std::min)(nNewDataLen, static_cast<size_t>((std::numeric_limits<int>::max)())))
 		);
 
 		if( m_pRawData != nullptr && nAllocSize != 0 ){
@@ -182,7 +183,7 @@ void CMemory::SetRawData( const void* pData, size_t nDataLen )
 void CMemory::SetRawData( const CMemory& cmemData )
 {
 	// バッファの内容を置き換える
-	SetRawData( cmemData.GetRawPtr(), cmemData.GetRawLength() );
+	SetRawData( cmemData.GetRawPtr(), static_cast<size_t>(cmemData.GetRawLength()) );
 }
 
 /*! バッファの内容を置き換える */
@@ -201,7 +202,7 @@ void CMemory::SetRawDataHoldBuffer( const void* pData, size_t nDataLen )
 void CMemory::SetRawDataHoldBuffer( const CMemory& cmemData )
 {
 	// バッファの内容を置き換える
-	SetRawDataHoldBuffer( cmemData.GetRawPtr(), cmemData.GetRawLength() );
+	SetRawDataHoldBuffer( cmemData.GetRawPtr(), static_cast<size_t>(cmemData.GetRawLength()) );
 }
 
 /* バッファの最後にデータを追加する（publicメンバ）*/
@@ -236,7 +237,7 @@ void CMemory::_AppendSz( std::string_view str )
 void CMemory::_SetRawLength( size_t nLength )
 {
 	if( m_pRawData != nullptr && nLength + sizeof(wchar_t) <= m_nDataBufSize ){
-		m_nRawLen = static_cast<decltype(m_nRawLen)>(nLength);
+		m_nRawLen = nLength;
 		wchar_t chNul = L'\0'; //ワイド文字のNUL終端を付加する
 		::memcpy( &m_pRawData[m_nRawLen], &chNul, sizeof(wchar_t) );
 	}

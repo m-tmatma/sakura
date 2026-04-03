@@ -528,7 +528,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		CNativeW cLine;
 		CEol cEol;
 		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol ) ) {
-			const CLogicInt nLineLen = cLine.GetStringLength();
+			const CLogicInt nLineLen(cLine.GetStringLength());
 			const wchar_t* pLineData= cLine.GetStringPtr();
 			if( 0 == nLineLen || nullptr == pLineData ) break;
 			if( bBom ){

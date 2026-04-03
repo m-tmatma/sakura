@@ -5,6 +5,7 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
+#include <algorithm>
 #include <stdexcept>
 #include "charset/codechecker.h"
 #include "mem/CNativeW.h"
@@ -20,7 +21,7 @@
  */
 CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
 	: m_pData(pData)
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(nDataLen))
+	, m_nDataLen(nDataLen)
 {
 }
 
@@ -31,7 +32,10 @@ CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
  */
 CStringRef::CStringRef( const CNativeW& cmem ) noexcept
 	: m_pData(cmem.GetStringPtr())
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(cmem.GetStringLength()))
+	, m_nDataLen([&cmem] {
+		const ssize_t n = cmem.GetStringLength();
+		return static_cast<size_t>(n < 0 ? 0 : n);
+	}())
 {
 }
 
@@ -138,29 +142,30 @@ void CNativeW::AppendStringF( std::wstring_view format, ... )
 	const int additional = ::_vscwprintf( format.data(), v );
 
 	// 現在の文字列長を取得
-	const auto currentLength = GetStringLength();
+	const ssize_t curLenS = GetStringLength();
+	const size_t currentLength = (curLenS <= 0) ? 0u : static_cast<size_t>(curLenS);
 
 	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
-	const auto newCapacity = currentLength + additional;
+	const size_t newCapacity = currentLength + static_cast<size_t>(additional);
 	AllocStringBuffer( newCapacity );
 
 	int added = 0;
 	if( additional > 0 ){
 		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], static_cast<unsigned>(additional) + 1, _TRUNCATE, format.data(), v );
+		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], static_cast<size_t>(additional) + 1, _TRUNCATE, format.data(), v );
 	}
 
 	// 可変長引数のポインタを解放
 	va_end( v );
 
 	// 文字列終端を再設定する
-	_SetStringLength( currentLength + added );
+	_SetStringLength( currentLength + static_cast<size_t>(added) );
 }
 
 //! バッファの最後にデータを追加する
 void CNativeW::AppendNativeData( const CNativeW& cmemData )
 {
-	AppendRawData(cmemData.GetStringPtr(), cmemData.GetRawLength());
+	AppendRawData(cmemData.GetStringPtr(), static_cast<size_t>(cmemData.GetRawLength()));
 }
 
 /*!
@@ -199,7 +204,9 @@ CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
 // GetAt()と同機能
 [[nodiscard]] wchar_t CNativeW::operator[]( size_t nIndex ) const
 {
-	if( nIndex < static_cast<size_t>(GetStringLength()) ){
+	const ssize_t sl = GetStringLength();
+	const size_t len = (sl <= 0) ? 0u : static_cast<size_t>(sl);
+	if( nIndex < len ){
 		return GetStringPtr()[nIndex];
 	}else{
 		return 0;
@@ -226,13 +233,15 @@ int CNativeW::Compare(const CNativeW& rhs) const noexcept
 	const int lhsIsValid = static_cast<int>(IsValid());
 	const int rhsIsValid = static_cast<int>(rhs.IsValid());
 	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
-	// データ長が短い方を基準に比較を行う
-	const int lhsLength = static_cast<int>(GetStringLength());
-	const int rhsLength = static_cast<int>(rhs.GetStringLength());
-	const int minLength = std::min(lhsLength, rhsLength);
-	// データ長の範囲で文字列を比較する
+	const size_t lhsLength = static_cast<size_t>(std::max<ssize_t>(0, GetStringLength()));
+	const size_t rhsLength = static_cast<size_t>(std::max<ssize_t>(0, rhs.GetStringLength()));
+	const size_t minLength = std::min(lhsLength, rhsLength);
 	auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), minLength);
-	if (!cmp) cmp = lhsLength - rhsLength;
+	if (cmp == 0) {
+		if (lhsLength < rhsLength) return -1;
+		if (lhsLength > rhsLength) return 1;
+		return 0;
+	}
 	return cmp;
 }
 
@@ -253,7 +262,7 @@ int CNativeW::Compare(const wchar_t* rhs) const noexcept
 	const int rhsIsValid = rhs ? 1 : 0;
 	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
 	const wchar_t* lhs = GetStringPtr();
-	const size_t lhsLength = GetStringLength();
+	const size_t lhsLength = static_cast<size_t>(std::max<ssize_t>(0, GetStringLength()));
 	// NUL終端考慮のために終端を拡張し、比較自体はCRTに丸投げする
 	return wcsncmp(lhs, rhs, lhsLength + 1);
 }
@@ -263,8 +272,8 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 {
 	if(&cmem1==&cmem2)return true;
 
-	const int nLen1 = cmem1.GetStringLength();
-	const int nLen2 = cmem2.GetStringLength();
+	const size_t nLen1 = static_cast<size_t>(std::max<ssize_t>(0, cmem1.GetStringLength()));
+	const size_t nLen2 = static_cast<size_t>(std::max<ssize_t>(0, cmem2.GetStringLength()));
 	if( nLen1 == nLen2 ){
 		const wchar_t* psz1 = cmem1.GetStringPtr();
 		const wchar_t* psz2 = cmem2.GetStringPtr();
@@ -337,7 +346,8 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 	CNativeW	cmemWork(L"");
 	size_t		nBgn = 0;
 	size_t		nBgnOld = 0;
-	while( nBgn + strFrom.length() <= static_cast<size_t>(GetStringLength()) ){
+	const size_t nStrLen = static_cast<size_t>(std::max<ssize_t>(0, GetStringLength()));
+	while( nBgn + strFrom.length() <= nStrLen ){
 		if( 0 == wmemcmp( &GetStringPtr()[nBgn], strFrom.data(), strFrom.length() ) ){
 			if( nBgnOld  < nBgn ){
 				cmemWork.AppendString( &GetStringPtr()[nBgnOld], nBgn - nBgnOld );
@@ -349,8 +359,8 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 			nBgn++;
 		}
 	}
-	if( nBgnOld < static_cast<size_t>(GetStringLength()) ){
-		cmemWork.AppendString( &GetStringPtr()[nBgnOld], GetStringLength() - nBgnOld );
+	if( nBgnOld < nStrLen ){
+		cmemWork.AppendString( &GetStringPtr()[nBgnOld], nStrLen - nBgnOld );
 	}
 	SetRawDataHoldBuffer( cmemWork );
 }
@@ -367,22 +377,19 @@ void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* 
 //! 指定した位置の文字がwchar_t何個分かを返す
 CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t index )
 {
-	const auto nDataLen = int(cchData);
-	const auto nIdx = int(index);
-
-	if( nIdx >= nDataLen )
+	if( index >= cchData )
 		return CLogicInt(0);
 
 	// サロゲートチェック					2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
-		if (nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])) {
+	if (IsUTF16High(pData[index])) {
+		if (index + 1 < cchData && IsUTF16Low(pData[index + 1])) {
 			// サロゲートペア 2個分
 			return CLogicInt(2);
 		}
 	}
 
 	// IVSの異体字セレクタチェック
-	if (IsVariationSelector(std::wstring_view(pData + nIdx + 1, nDataLen - (nIdx + 1)))) {
+	if (IsVariationSelector(std::wstring_view(pData + index + 1, cchData - (index + 1)))) {
 		// 正字 + 異体字セレクタで3個分
 		return CLogicInt(3);
 	}
@@ -393,32 +400,29 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t 
 //! 指定した位置の文字が半角何個分かを返す
 CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, size_t cchData, size_t index, CCharWidthCache& cache)
 {
-	const auto nDataLen = int(cchData);
-	const auto nIdx = int(index);
-
 	//文字列範囲外なら 0
-	if( nIdx >= nDataLen )
+	if( index >= cchData )
 		return CKetaXInt(0);
 
 	// サロゲートチェック BMP 以外は全角扱い		2008/7/5 Uchi
-	if (IsUTF16High(pData[nIdx])) {
+	if (IsUTF16High(pData[index])) {
 		return CKetaXInt(2);	// 仮
 	}
-	if (IsUTF16Low(pData[nIdx])) {
-		if (nIdx > 0 && IsUTF16High(pData[nIdx - 1])) {
+	if (IsUTF16Low(pData[index])) {
+		if (index > 0 && IsUTF16High(pData[index - 1])) {
 			// サロゲートペア（下位）
 			return CKetaXInt(0);
 		}
 		// 単独（ブロークンペア）
 		// return CKetaXInt(2);
-		 if( IsBinaryOnSurrogate(pData[nIdx]) )
+		 if( IsBinaryOnSurrogate(pData[index]) )
 			return CKetaXInt(1);
 		else
 			return CKetaXInt(2);
 	}
 
 	//半角文字なら 1
-	if(WCODE::IsHankaku(pData[nIdx], cache))
+	if(WCODE::IsHankaku(pData[index], cache))
 		return CKetaXInt(1);
 
 	//全角文字なら 2
@@ -430,26 +434,23 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, size_t cchData, size_t 
 CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t index,
 	bool bEnableExtEol, CCharWidthCache& cache )
 {
-	const auto nDataLen = int(cchData);
-	const auto nIdx = int(index);
-
 	//文字列範囲外なら 0
-	if( nIdx >= nDataLen ){
+	if( index >= cchData ){
 		return CHabaXInt(0);
 	}
 	// HACK:改行コードに対して1を返す
-	if( WCODE::IsLineDelimiter(pData[nIdx], bEnableExtEol) ){
+	if( WCODE::IsLineDelimiter(pData[index], bEnableExtEol) ){
 		return CHabaXInt(1);
 	}
 
 	// サロゲートチェック
-	if(IsUTF16High(pData[nIdx]) && nIdx + 1 < nDataLen && IsUTF16Low(pData[nIdx + 1])){
-		return CHabaXInt(cache.CalcPxWidthByFont2(pData + nIdx));
-	}else if(IsUTF16Low(pData[nIdx]) && 0 < nIdx && IsUTF16High(pData[nIdx - 1])) {
+	if(IsUTF16High(pData[index]) && index + 1 < cchData && IsUTF16Low(pData[index + 1])){
+		return CHabaXInt(cache.CalcPxWidthByFont2(pData + index));
+	}else if(IsUTF16Low(pData[index]) && 0 < index && IsUTF16High(pData[index - 1])) {
 		// サロゲートペア（下位）
 		return CHabaXInt(0); // 不正位置
 	}
-	return CHabaXInt(cache.CalcPxWidthByFont(pData[nIdx]));
+	return CHabaXInt(cache.CalcPxWidthByFont(pData[index]));
 }
 
 /* ポインタで示した文字の次にある文字の位置を返します */

@@ -89,6 +89,7 @@
 #include <condition_variable>
 #include <cstdarg>
 #include <cstddef>
+#include "util/ssize_compat.h"
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>

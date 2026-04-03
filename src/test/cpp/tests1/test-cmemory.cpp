@@ -6,6 +6,7 @@
 */
 #include "pch.h"
 #include "mem/CMemory.h"
+#include "util/ssize_compat.h"
 
 /*!
 	_SetRawLength(0) を呼び出して落ちないことを確認する
@@ -35,7 +36,7 @@ TEST(CMemory, CheckEmpty)
 
 	// インスタンス化しただけ
 	// → データサイズが 0 であることを確認する。
-	EXPECT_EQ(0, memory.GetRawLength());
+	EXPECT_EQ(ssize_t{0}, memory.GetRawLength());
 }
 
 /*!
@@ -74,7 +75,7 @@ TEST(CMemory, SwapHLByte)
 
 	CMemory cmem1(source, int(std::size(source)) - 1);
 	cmem1.SwapHLByte();
-	ASSERT_TRUE(0 == memcmp(expected, cmem1.GetRawPtr(), cmem1.GetRawLength()));
+	ASSERT_TRUE(0 == memcmp(expected, cmem1.GetRawPtr(), static_cast<size_t>(cmem1.GetRawLength())));
 
 	std::string buff(source);
 	CMemory::SwapHLByte(buff.data(), buff.length());
@@ -97,7 +98,7 @@ TEST(CMemory, OverHeapMaxReq)
 	constexpr auto& data = L"テストデータ";
 	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(wchar_t));
 	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	ASSERT_EQ(static_cast<ssize_t>((int(std::size(data)) - 1) * sizeof(wchar_t)), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
 	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
@@ -106,25 +107,24 @@ TEST(CMemory, OverHeapMaxReq)
 
 /*!
 	CMemoryのテスト
-	仕様上の上限値を越えるサイズを要求した場合の挙動確認
+	INT_MAX を超えるサイズの要求（環境によっては確保に成功する）
  */
 TEST(CMemory, OverMaxSize)
 {
 	CMemory cmem;
 
-	// INT_MAXを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
-	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
+	const size_t overIntMax = static_cast<size_t>(INT_MAX) + 1;
+	cmem.AllocBuffer(overIntMax);
+	// 64bit 環境では成功して nullptr 以外になることがある
 
 	// 検証用のデータを入れる
 	constexpr auto& data = L"テストデータ";
 	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(wchar_t));
 	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	ASSERT_EQ(static_cast<ssize_t>((int(std::size(data)) - 1) * sizeof(wchar_t)), cmem.GetRawLength());
 
-	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
-	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
+	cmem.AllocBuffer(overIntMax);
+	// 同上
 }
 
 /*!
@@ -147,15 +147,15 @@ TEST(CMemory, AppendRawData)
 		{
 			cmem.AppendRawData(pData, i);
 			sum += i;
-			ASSERT_TRUE(cmem.GetRawLength() == sum);
+			ASSERT_EQ(static_cast<size_t>(cmem.GetRawLength()), sum);
 		}
 		{
 			// #1638 の修正に関連した試験
 			CMemory cmemTmp;
 			cmemTmp.AllocBuffer(1);
 			cmemTmp.AppendRawData(pData, i);
-			auto rawLen = cmemTmp.GetRawLength();
-			ASSERT_TRUE(rawLen == i);
+			const ssize_t rawLen = cmemTmp.GetRawLength();
+			ASSERT_EQ(static_cast<size_t>(rawLen), i);
 		}
 	}
 	ASSERT_TRUE(sum == sumAnswer);

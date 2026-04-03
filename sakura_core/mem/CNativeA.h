@@ -10,6 +10,7 @@
 #pragma once
 
 #include "CNative.h"
+#include "util/ssize_compat.h"
 
 class CNativeA final : public CNative{
 public:
@@ -28,7 +29,7 @@ public:
 	void AllocStringBuffer( size_t nDataLen );            //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
 	//ネイティブ取得
-	int GetStringLength() const;
+	ssize_t GetStringLength() const;
 	char operator[]( size_t nIndex ) const;                 //!< 任意位置の文字取得。nIndexは文字単位。
 	const char* GetStringPtr() const
 	{

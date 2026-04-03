@@ -20,6 +20,7 @@
 #include "charset/CCodeBase.h"
 #include "charset/CCodePage.h"
 #include "util/design_template.h"
+#include "util/ssize_compat.h"
 
 struct SEncodingConfig;
 class CCodeBase;
@@ -96,7 +97,7 @@ protected:
 	EEncodingTrait	m_encodingTrait;
 	CMemory			m_memEols[3];
 	bool	m_bEolEx;		//!< CR/LF以外のEOLが有効か
-	int		m_nMaxEolLen;	//!< EOLの長さ
+	ssize_t	m_nMaxEolLen = 0;	//!< 有効なEOLシーケンスの最大バイト長（`m_memEols[*].GetRawLength()` と同単位。従来 int 相当）
 	bool	m_bBomExist;	// ファイルのBOMが付いているか Jun. 08, 2003 Moca 
 	int		m_nFlag;		// 文字コードの変換オプション
 	//	Jun. 13, 2003 Moca

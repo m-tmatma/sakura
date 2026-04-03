@@ -22,8 +22,15 @@
 #include <Shlwapi.h>
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
+#include "util/ssize_compat.h"
 
-typedef std::pair< LPWSTR, DWORD > PairGrepEnumItem;
+// x64: second を ULONGLONG にして 64bit ファイルサイズを保持。
+// Win32: 従来どおり DWORD で pair のレイアウトを変えない（std::pair<LPWSTR,ULONGLONG> は 4+4pad+8 で 16B になる）。
+#if defined(_WIN64)
+typedef std::pair<LPWSTR, ULONGLONG> PairGrepEnumItem;
+#else
+typedef std::pair<LPWSTR, DWORD> PairGrepEnumItem;
+#endif
 typedef std::vector< PairGrepEnumItem > VPGrepEnumItem;
 
 class CGrepEnumOptions {
@@ -55,9 +62,9 @@ public:
 	}
 
 	void ClearItems( void ){
-		for( int i = 0; i < GetCount(); i++ ){
-			LPWSTR lp = m_vpItems[ i ].first;
-			m_vpItems[ i ].first = nullptr;
+		for( ssize_t i = 0; i < GetCount(); ++i ){
+			LPWSTR lp = m_vpItems[ static_cast<size_t>(i) ].first;
+			m_vpItems[ static_cast<size_t>(i) ].first = nullptr;
 			delete [] lp;
 		}
 		m_vpItems.clear();
@@ -65,8 +72,8 @@ public:
 	}
 
 	BOOL IsExist( LPCWSTR lpFileName ){
-		for( int i = 0; i < GetCount(); i++ ){
-			if( wcscmp( m_vpItems[ i ].first, lpFileName ) == 0 ){
+		for( ssize_t i = 0; i < GetCount(); ++i ){
+			if( wcscmp( m_vpItems[ static_cast<size_t>(i) ].first, lpFileName ) == 0 ){
 				return TRUE;
 			}
 		}
@@ -80,18 +87,22 @@ public:
 		return FALSE;
 	}
 
-	int GetCount( void ){
-		return (int)m_vpItems.size();
+	ssize_t GetCount( void ) const {
+		return static_cast<ssize_t>(m_vpItems.size());
 	}
 
-	LPCWSTR GetFileName( int i ){
+	LPCWSTR GetFileName( ssize_t i ){
 		if( i < 0 || i >= GetCount() ) return nullptr;
-		return m_vpItems[ i ].first;
+		return m_vpItems[ static_cast<size_t>(i) ].first;
 	}
 
-	DWORD GetFileSizeLow( int i ){
+	ULONGLONG GetFileSizeUInt64( ssize_t i ) const {
 		if( i < 0 || i >= GetCount() ) return 0;
-		return m_vpItems[ i ].second;
+#if defined(_WIN64)
+		return m_vpItems[ static_cast<size_t>(i) ].second;
+#else
+		return static_cast<ULONGLONG>(m_vpItems[ static_cast<size_t>(i) ].second);
+#endif
 	}
 
 	int Enumerates( LPCWSTR lpBaseFolder, VGrepEnumKeys& vecKeys, CGrepEnumOptions& option, CGrepEnumFileBase* pExceptItems = nullptr ){
@@ -146,11 +157,14 @@ public:
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
 						}else{
-							m_vpItems.emplace_back( lpName, w32fd.nFileSizeLow );
+							ULARGE_INTEGER ulSize{};
+							ulSize.HighPart = w32fd.nFileSizeHigh;
+							ulSize.LowPart = w32fd.nFileSizeLow;
+							m_vpItems.emplace_back( lpName, static_cast<PairGrepEnumItem::second_type>(ulSize.QuadPart) );
 							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
 								// フォルダーを含んだパスなら検索済みとして除外指定に追加する
-								pExceptItems->m_vpItems.emplace_back( lpFullPath, w32fd.nFileSizeLow );
+								pExceptItems->m_vpItems.emplace_back( lpFullPath, static_cast<PairGrepEnumItem::second_type>(ulSize.QuadPart) );
 							}else{
 								delete [] lpFullPath;
 							}

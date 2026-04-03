@@ -11,6 +11,7 @@
 #include "_main/CCommandLine.h"
 #include "env/CSakuraEnvironment.h"
 #include "util/string_ex.h"
+#include "util/ssize_compat.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -64,7 +65,7 @@ TEST(CCommandLine, ConstructWithoutParam)
 	EXPECT_STREQ(L"", cCommandLine.GetProfileName());	//不自然
 	EXPECT_FALSE(cCommandLine.IsSetProfile());
 	EXPECT_FALSE(cCommandLine.IsProfileMgr());
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
+	EXPECT_EQ(ssize_t{0}, cCommandLine.GetFileNum());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
 }
 
@@ -831,7 +832,7 @@ TEST(CCommandLine, EndOfOptionMark)
 	EXPECT_EQ(-1, cCommandLine.GetGroupId());
 	EXPECT_STREQ(GetLocalPath(L"-GROUP=2").data(), cCommandLine.GetOpenFile());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
+	EXPECT_EQ(ssize_t{0}, cCommandLine.GetFileNum());
 }
 
 /*!
@@ -846,7 +847,7 @@ TEST(CCommandLine, ParseOpenFile)
 	cCommandLine1.ParseCommandLine(strCmdLine1.data(), false);
 	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine1.GetOpenFile());
 	EXPECT_EQ(NULL, cCommandLine1.GetFileName(0));
-	EXPECT_EQ(0, cCommandLine1.GetFileNum());
+	EXPECT_EQ(ssize_t{0}, cCommandLine1.GetFileNum());
 
 	CCommandLine cCommandLine2;
 	std::wstring strCmdLine2 = L"test1.txt test2.txt";
@@ -854,7 +855,7 @@ TEST(CCommandLine, ParseOpenFile)
 	EXPECT_STREQ(GetLocalPath(L"test1.txt").data(), cCommandLine2.GetOpenFile());
 	EXPECT_STREQ(GetLocalPath(L"test2.txt").data(), cCommandLine2.GetFileName(0));
 	EXPECT_EQ(NULL, cCommandLine1.GetFileName(1));
-	EXPECT_EQ(1, cCommandLine2.GetFileNum());
+	EXPECT_EQ(ssize_t{1}, cCommandLine2.GetFileNum());
 }
 
 /*!
@@ -866,7 +867,7 @@ TEST(CCommandLine, UnterminatedQuotedFilename)
 	cCommandLine.ParseCommandLine(L"\"", false);
 	EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
+	EXPECT_EQ(ssize_t{0}, cCommandLine.GetFileNum());
 }
 
 /*!
@@ -893,7 +894,7 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 		cCommandLine.ParseCommandLine( badName.data(), false );
 		EXPECT_STREQ(L"", cCommandLine.GetOpenFile());
 		EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-		EXPECT_EQ(0, cCommandLine.GetFileNum());
+		EXPECT_EQ(ssize_t{0}, cCommandLine.GetFileNum());
 	}
 }
 
@@ -912,7 +913,7 @@ TEST(CCommandLine, ParseTooLongFilePath)
 	// 以下のチェックはMinGWで動作しないため、コメントアウトしておく
 	//EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetOpenFile());
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(0));
-	EXPECT_EQ(0, cCommandLine.GetFileNum());
+	EXPECT_EQ(ssize_t{0}, cCommandLine.GetFileNum());
 }
 
 // 以下のチェックはMinGWで動作しないため、コメントアウトしておく
@@ -936,7 +937,7 @@ TEST(CCommandLine, ParseMaxFilePath)
 	EXPECT_STREQ(strPath.data(), cCommandLine.GetOpenFile());
 	EXPECT_STREQ(GetLocalPath(L"test.txt").data(), cCommandLine.GetFileName(0));
 	EXPECT_EQ(NULL, cCommandLine.GetFileName(1));
-	EXPECT_EQ(1, cCommandLine.GetFileNum());
+	EXPECT_EQ(ssize_t{1}, cCommandLine.GetFileNum());
 }
 
 #endif //ifndef __MINGW32__

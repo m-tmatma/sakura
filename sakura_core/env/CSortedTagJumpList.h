@@ -17,6 +17,7 @@
 
 #include "basis/primitive.h"
 #include "util/design_template.h"
+#include "util/ssize_compat.h"
 
 #define MAX_TAG_STRING_LENGTH _MAX_PATH	//管理する文字列の最大長
 
@@ -30,8 +31,8 @@ public:
 
 	int		AddBaseDir(std::wstring_view baseDir);
 	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
-	BOOL GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
-	int GetCount( void ){ return m_nCount; }
+	BOOL GetParam( ssize_t index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
+	ssize_t GetCount( void ){ return m_nCount; }
 	void Empty( void );
 	bool IsOverflow( void ){ return m_bOverflow; }
 
@@ -46,7 +47,7 @@ public:
 		int		baseDirId;	//!< ファイル名のベースディレクトリ
 	} TagJumpInfo;
 
-	TagJumpInfo* GetPtr( int index );
+	TagJumpInfo* GetPtr( ssize_t index );
 
 	/*!	@brief 管理数の最大値を取得する
 
@@ -57,7 +58,7 @@ public:
 private:
 	TagJumpInfo*	m_pTagjump = nullptr;	//!< タグジャンプ情報
 	std::vector<std::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
-	int				m_nCount = 0;	//!< 個数
+	ssize_t				m_nCount = 0;	//!< 個数
 	bool			m_bOverflow = false;	//!< オーバーフロー
 	
 	//	2005.04.22 genta 最大値を可変に

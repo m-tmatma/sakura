@@ -20,7 +20,11 @@
 #define SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_
 #pragma once
 
+#include <algorithm>
+#include <limits>
+
 #include "util/design_template.h"
+#include "util/ssize_compat.h"
 #include "basis/CEol.h"
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
@@ -32,6 +36,16 @@
 
 class CDocLine;
 class COpeBlk;
+
+inline CLogicInt DocLineStringLenToLogic(ssize_t n) noexcept
+{
+	if (n <= 0) {
+		return CLogicInt(0);
+	}
+	const size_t u = static_cast<size_t>(n);
+	constexpr size_t kMax = static_cast<size_t>((std::numeric_limits<int>::max)());
+	return CLogicInt(static_cast<int>((std::min)(u, kMax)));
+}
 
 #pragma pack(push,1)
 
@@ -48,9 +62,17 @@ public:
 	bool			IsEmptyLine() const;		//	このCDocLineが空行（スペース、タブ、改行記号のみの行）かどうか。
 
 	//データ取得
-	CLogicInt		GetLengthWithoutEOL() const			{ return m_cLine.GetStringLength() - m_cEol.GetLen(); } //!< 戻り値は文字単位。
+	CLogicInt		GetLengthWithoutEOL() const			//!< 戻り値は文字単位（CLogicInt 上限で clamp）。
+	{
+		const ssize_t fullS = m_cLine.GetStringLength();
+		const size_t full = (fullS <= 0) ? 0u : static_cast<size_t>(fullS);
+		const int eolLen = m_cEol.GetLen();
+		const size_t e = (eolLen <= 0) ? 0u : static_cast<size_t>(eolLen);
+		const size_t body = full >= e ? full - e : 0;
+		return DocLineStringLenToLogic(body);
+	}
 	const wchar_t*	GetPtr() const						{ return m_cLine.GetStringPtr(); }
-	CLogicInt		GetLengthWithEOL() const			{ return m_cLine.GetStringLength(); }	//	CMemoryIterator用
+	CLogicInt		GetLengthWithEOL() const { return DocLineStringLenToLogic(m_cLine.GetStringLength()); }	//	CMemoryIterator用
 #ifdef USE_STRICT_INT
 	const wchar_t*	GetDocLineStrWithEOL(int* pnLen) const //###仮の名前、仮の対処
 	{
@@ -81,7 +103,8 @@ public:
 	CStringRef GetStringRefWithEOL() const //###仮の名前、仮の対処
 	{
 		if(this){ // TODO: Remove "this" check
-			return CStringRef(GetPtr(),GetLengthWithEOL());
+			const ssize_t n = m_cLine.GetStringLength();
+			return CStringRef(GetPtr(), static_cast<size_t>(n < 0 ? 0 : n));
 		}
 		else{
 			return CStringRef(nullptr,0);
@@ -104,7 +127,7 @@ public:
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
-	void SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol);
+	void SetDocLineString(const wchar_t* pData, ssize_t nLength, bool bEnableExtEol);
 	void SetDocLineString(const CNativeW& cData, bool bEnableExtEol);
 	void SetDocLineStringMove(CNativeW* pcData, bool bEnableExtEol);
 

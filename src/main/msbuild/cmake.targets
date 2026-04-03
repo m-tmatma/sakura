@@ -2,7 +2,8 @@
   <ItemGroup>
     <RcInclude Include="..\src\main\resources\sakura_rc.h" />
   </ItemGroup>
-  <Target Name="ConfigureCMakeTools" Condition="!Exists('$(CMakeToolsBuildDir)CMakeCache.txt')">
+  <!-- Re-run CMake when configure stopped early (e.g. missing 7z): cache exists but solution was never generated. -->
+  <Target Name="ConfigureCMakeTools" Condition="!Exists('$(CMakeToolsBuildDir)CMakeCache.txt') OR !Exists('$(CMakeToolsBuildDir)sakura.sln')">
     <SetEnv name="VisualStudioVersion" value="$(VisualStudioVersion)" prefix="false" />
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' -A $(Platform) -B '$(CMakeToolsPath)' -S '$([MSBuild]::NormalizePath('$(CMakeToolsSourceDir)', '.'))' -DCMAKE_CONFIGURATION_TYPES='Debug;Release'&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>

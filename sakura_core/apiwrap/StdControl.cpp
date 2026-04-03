@@ -115,7 +115,7 @@ namespace ApiWrap{
 		if (nCount < 0) {
 			return LB_ERR;
 		}
-		if (std::ssize(buffer) <= nCount) {
+		if (static_cast<ssize_t>(std::size(buffer)) <= nCount) {
 			return LB_ERRSPACE;
 		}
 		return ListBox_GetText(hwndList, nIndex, std::data(buffer));

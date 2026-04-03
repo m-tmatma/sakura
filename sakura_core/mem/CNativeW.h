@@ -11,6 +11,7 @@
 
 #include "CNative.h"
 #include "basis/SakuraBasis.h"
+#include "util/ssize_compat.h"
 #include "charset/charcode.h"
 #include "debug/Debug2.h" //assert
 
@@ -24,14 +25,14 @@ public:
 	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
-	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
+	[[nodiscard]] ssize_t GetLength() const noexcept { return static_cast<ssize_t>(m_nDataLen); }
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
 
 private:
 	const wchar_t*	m_pData = nullptr;
-	unsigned		m_nDataLen = 0;
+	size_t			m_nDataLen = 0;
 };
 
 // グローバル演算子の前方宣言
@@ -79,9 +80,10 @@ public:
 
 	//ネイティブ取得インターフェース
 	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
-	CLogicInt GetStringLength() const                        //!< 文字列長を返す。文字単位。
+	[[nodiscard]] ssize_t GetStringLength() const noexcept //!< 文字列長を返す。文字単位（非負。ssize_t は従来 int 相当 API との整合用）。
 	{
-		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
+		const auto raw = static_cast<size_t>(CNative::GetRawLength());
+		return static_cast<ssize_t>(raw / sizeof(wchar_t));
 	}
 	const wchar_t* GetStringPtr() const
 	{
@@ -100,10 +102,9 @@ public:
 	//末尾を1文字削る
 	void Chop()
 	{
-		int n = GetStringLength();
-		n-=1;
-		if(n>=0){
-			_SetStringLength(n);
+		const size_t n = GetStringLength();
+		if( n > 0 ){
+			_SetStringLength(n - 1);
 		}
 	}
 	//! メモリバッファを入れ替える
@@ -111,7 +112,7 @@ public:
 		CMemory::swap( left );
 	}
 	//! メモリ再確保を行わずに格納できる最大文字数を求める
-	[[nodiscard]] int capacity() const noexcept {
+	[[nodiscard]] size_t capacity() const noexcept {
 		return CMemory::capacity() / sizeof(wchar_t);
 	}
 

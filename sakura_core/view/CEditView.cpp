@@ -1414,7 +1414,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 		ReplaceData_CEditView(
 			GetSelectionInfo().m_sSelect,
 			cmemBuf.GetStringPtr(),		/* 挿入するデータ */ // 2002/2/10 aroka CMemory変更
-			cmemBuf.GetStringLength(),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
+			CLogicInt(cmemBuf.GetStringLength()),	/* 挿入するデータの長さ */ // 2002/2/10 aroka CMemory変更
 			false,
 			m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk()
 		);

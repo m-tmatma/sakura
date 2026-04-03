@@ -27,9 +27,9 @@ COpeBlk::COpeBlk()
 COpeBlk::~COpeBlk()
 {
 	/* 操作の配列を削除する */
-	int size = (int)m_ppCOpeArr.size();
-	for( int i = 0; i < size; ++i ){
-		SAFE_DELETE(m_ppCOpeArr[i]);
+	const ssize_t size = static_cast<ssize_t>(m_ppCOpeArr.size());
+	for( ssize_t i = 0; i < size; ++i ){
+		SAFE_DELETE(m_ppCOpeArr[static_cast<size_t>(i)]);
 	}
 	m_ppCOpeArr.clear();
 }
@@ -60,12 +60,12 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 }
 
 /* 操作を返す */
-COpe* COpeBlk::GetOpe( int nIndex )
+COpe* COpeBlk::GetOpe( ssize_t nIndex )
 {
-	if( GetNum() <= nIndex ){
+	if( nIndex < 0 || GetNum() <= nIndex ){
 		return nullptr;
 	}
-	return m_ppCOpeArr[nIndex];
+	return m_ppCOpeArr[static_cast<size_t>(nIndex)];
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -76,10 +76,10 @@ COpe* COpeBlk::GetOpe( int nIndex )
 void COpeBlk::DUMP( void )
 {
 #ifdef _DEBUG
-	int i;
-	int size = GetNum();
+	ssize_t i;
+	ssize_t size = GetNum();
 	for( i = 0; i < size; ++i ){
-		MYTRACE( L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", i );
+		MYTRACE( L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", static_cast<int>(i) );
 		m_ppCOpeArr[i]->DUMP();
 	}
 #endif

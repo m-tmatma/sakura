@@ -10,6 +10,7 @@
 #pragma once
 
 #include "doc/CDocListener.h"
+#include "util/ssize_compat.h"
 #include "cmd/COpeBuf.h"
 
 class CEditDoc;
@@ -85,7 +86,7 @@ public:
 	//                           操作                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//	May 15, 2000 genta
-	void AddLineStrX( const wchar_t*, int );	/* 末尾に行を追加 Ver1.5 */
+	void AddLineStrX( const wchar_t*, ssize_t );	/* 末尾に行を追加 Ver1.5 */
 
 private:
 	CDocLineMgr* m_pcDocLineMgr;
