@@ -64,9 +64,9 @@ BOOL CDlgFind::OnCbnDropDown( HWND hwndCtl, int wID )
 	switch( wID ){
 	case IDC_COMBO_TEXT:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
-			int nSize = m_pShareData->m_sSearchKeywords.m_aSearchKeys.size();
-			for (int i = 0; i < nSize; ++i) {
-				ApiWrap::Combo_AddString( hwndCtl, m_pShareData->m_sSearchKeywords.m_aSearchKeys[i] );
+			const auto& keys = m_pShareData->m_sSearchKeywords.m_aSearchKeys;
+			for (size_t i = 0; i < keys.size(); ++i) {
+				ApiWrap::Combo_AddString( hwndCtl, keys[i] );
 			}
 		}
 		break;

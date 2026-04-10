@@ -540,22 +540,21 @@ void CMainToolBar::AcceptSharedSearchKey()
 {
 	if( m_hwndSearchBox )
 	{
-		int	i;
 		// 2013.05.28 Combo_ResetContentだとちらつくのでDeleteStringでリストだけ削除
 		while (ApiWrap::Combo_GetCount(m_hwndSearchBox) > 0) {
 			ApiWrap::Combo_DeleteString(m_hwndSearchBox, 0);
 		}
-		int nSize = GetDllShareData().m_sSearchKeywords.m_aSearchKeys.size();
-		for( i = 0; i < nSize; i++ )
+		const auto& keys = GetDllShareData().m_sSearchKeywords.m_aSearchKeys;
+		for( size_t i = 0; i < keys.size(); i++ )
 		{
-			ApiWrap::Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
+			ApiWrap::Combo_AddString( m_hwndSearchBox, keys[i] );
 		}
 		const wchar_t* pszText;
 		if( (GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
 			&& m_pOwner->GetActiveView().m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence)
 				|| 0 == m_pOwner->GetActiveView().m_strCurSearchKey.size() ){
-			if( 0 < nSize ){
-				pszText = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];
+			if( 0 < keys.size() ){
+				pszText = keys[0];
 			}else{
 				pszText = L"";
 			}
@@ -564,7 +563,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 		}
 		std::wstring strText;
 		GetSearchKey(strText);
-		if( 0 < nSize && 0 != strText.compare(pszText) ){
+		if( 0 < keys.size() && 0 != strText.compare(pszText) ){
 			::SetWindowText(m_hwndSearchBox, pszText);
 		}
 	}
