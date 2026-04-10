@@ -78,6 +78,16 @@ bool CClipboard::SetText(
 		return false;
 	}
 
+	// P2: GlobalAlloc 引数の乗算・加算オーバーフロー防止（極端に長い選択範囲など）
+	if( nDataLen > SIZE_MAX / sizeof(wchar_t) - 1u ){
+		return false;
+	}
+	const size_t cbUnicode = (nDataLen + 1u) * sizeof(wchar_t);
+	if( cbUnicode > SIZE_MAX - sizeof(size_t) ){
+		return false;
+	}
+	const size_t cbSakura = sizeof(size_t) + cbUnicode;
+
 	/*
 	// テキスト形式のデータ (CF_OEMTEXT)
 	HGLOBAL hgClipText = ::GlobalAlloc(
@@ -100,7 +110,7 @@ bool CClipboard::SetText(
 		//領域確保
 		hgClipText = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			(nDataLen + 1) * sizeof(wchar_t)
+			cbUnicode
 		);
 		if( !hgClipText )break;
 
@@ -129,7 +139,7 @@ bool CClipboard::SetText(
 		//領域確保
 		hgClipSakura = ::GlobalAlloc(
 			GMEM_MOVEABLE | GMEM_DDESHARE,
-			sizeof(size_t) + (nDataLen + 1) * sizeof(wchar_t)
+			cbSakura
 		);
 		if( !hgClipSakura )break;
 

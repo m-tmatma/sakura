@@ -31,7 +31,7 @@
 ### P2: 座標・API 境界
 
 - [ ] **ドキュメント座標（64bit）**と **Win32 の `POINT` / `LONG`（32bit）**の混在箇所を整理し、変換境界を明示する（`CMyPoint` 等）。（**メモ**: `CMyPoint.h` に `POINT` と論理座標系の使い分け・GDI 境界の説明を追加済み。**進捗**: `CStrictPoint::GetPOINT` で `Int`→`LONG` を **`ClampIntToLongForGdi` で飽和**してから `POINT` に格納（巨大論理座標の単純 `static_cast` 縮小を避ける）。`TwoPointToRect` 等の他経路・呼び出し側の網羅は継続。）
-- [ ] ファイル I/O・クリップボード・外部コマンド等で **`DWORD` や 32bit 長前提**の箇所を洗い出し、2GB 超を扱う経路ではチャンク処理または 64bit API に切り替える。（**進捗**: `CFileLoad::FileOpen` のファイルサイズ取得を **`GetFileSize` + `ULARGE_INTEGER` から `GetFileSizeEx`（`LARGE_INTEGER`）**へ変更。クリップボード・外部コマンド等は未整理。）
+- [ ] ファイル I/O・クリップボード・外部コマンド等で **`DWORD` や 32bit 長前提**の箇所を洗い出し、2GB 超を扱う経路ではチャンク処理または 64bit API に切り替える。（**進捗**: `CFileLoad::FileOpen` のファイルサイズ取得を **`GetFileSizeEx`** に変更。`CClipboard::SetText` で **`GlobalAlloc` サイズの乗算・加算オーバーフロー**を検出して失敗させる。外部コマンド等は未整理。）
 
 ### P3: 厳格整数・ビルド設定
 
