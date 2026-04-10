@@ -146,7 +146,6 @@ void CFileLoad::Prepare( const CFileLoad& other, size_t nReadBufOffsetBegin, siz
 ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharCode, int nFlag, bool* pbBomExist )
 {
 	HANDLE	hFile;
-	ULARGE_INTEGER	fileSize;
 
 	// FileCloseを呼んでからにしてください
 	if( nullptr != m_hFile ){
@@ -171,21 +170,23 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	}
 	m_hFile = hFile;
 
-	// GetFileSizeEx は Win2K以上
-	fileSize.LowPart = ::GetFileSize( hFile, &fileSize.HighPart );
-	if( 0xFFFFFFFFU == fileSize.LowPart ){
-		DWORD lastError = ::GetLastError();
-		if( NO_ERROR != lastError ){
-			FileClose();
-			throw CError_FileOpen();
-		}
+	// 64bit 長を一発で取得（`GetFileSize` + High/Low より明確。P2）
+	LARGE_INTEGER liSize = {};
+	if (!::GetFileSizeEx(hFile, &liSize)) {
+		FileClose();
+		throw CError_FileOpen();
 	}
-	if (!CFileLoad::IsLoadableSize(fileSize.QuadPart, bBigFile)) {
+	if (liSize.QuadPart < 0) {
+		FileClose();
+		throw CError_FileOpen();
+	}
+	const ULONGLONG uFileSize = static_cast<ULONGLONG>(liSize.QuadPart);
+	if (!CFileLoad::IsLoadableSize(uFileSize, bBigFile)) {
 		// ファイルが大きすぎる(2GB位)
 		FileClose();
 		throw CError_FileOpen(CError_FileOpen::TOO_BIG);
 	}
-	m_nFileSize = fileSize.QuadPart;
+	m_nFileSize = liSize.QuadPart;
 //	m_eMode = FLMODE_OPEN;
 
 	m_pReadBufTop = nullptr;

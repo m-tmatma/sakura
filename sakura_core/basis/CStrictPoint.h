@@ -11,6 +11,20 @@
 
 #include "basis/primitive.h"
 
+//! 論理座標（`Int`）を Win32 `LONG` に収める。GDI／`POINT` へ渡す直前の境界（P2）。超過は飽和。
+inline LONG ClampIntToLongForGdi(Int v) noexcept
+{
+	constexpr Int kLo = static_cast<Int>(LONG_MIN);
+	constexpr Int kHi = static_cast<Int>(LONG_MAX);
+	if (v < kLo) {
+		return LONG_MIN;
+	}
+	if (v > kHi) {
+		return LONG_MAX;
+	}
+	return static_cast<LONG>(v);
+}
+
 //単位が明示的に区別されたポイント型。※POINTは継承しないことにした
 /*
 template <int TYPE> class CStrictPoint : public CMyPoint{
@@ -97,7 +111,7 @@ public:
 	//特殊
 	POINT GetPOINT() const
 	{
-		POINT pt = { static_cast<LONG>((Int)x), static_cast<LONG>((Int)y) };
+		POINT pt = { ClampIntToLongForGdi(Int(x)), ClampIntToLongForGdi(Int(y)) };
 		return pt;
 	}
 };
