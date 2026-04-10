@@ -767,8 +767,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				szPathTo[0] = L'\0';
 				strMsg = LS(STR_FILETREE_REPLACE_PATH_TO);
 				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathTo)) - 1, szPathTo) ){
-					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();
-					for( int i = 0; i < nItemsCount; i++ ){
+					for( size_t i = 0; i < m_fileTreeSetting.m_aItems.size(); i++ ){
 						SFileTreeItem& item =  m_fileTreeSetting.m_aItems[i];
 						CNativeW str(item.m_szTargetPath);
 						str.Replace(szPathFrom, szPathTo);

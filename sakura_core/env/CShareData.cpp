@@ -82,7 +82,7 @@ CShareData::~CShareData()
 		CloseHandle( m_hFileMap );
 	}
 	if( m_pvTypeSettings ){
-		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
+		for( size_t i = 0; i < m_pvTypeSettings->size(); i++ ){
 			delete (*m_pvTypeSettings)[i];
 			(*m_pvTypeSettings)[i] = nullptr;
 		}
