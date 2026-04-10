@@ -13,7 +13,7 @@
 ### P1: インデックス・ループの一貫性
 
 - [x] `CLayout::CalcLayoutOffset`（`CLayout.cpp`）— 行長・ループを `CLogicInt` / `size_t` に。
-- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。（進捗例: `CNativeW::Compare`、`CGrepAgent` のパス走査ループ。**追加分**: `CDlgGrep` / `CGrepEnumFileBase` / `CGrepEnumKeys` / `CDlgFileTree` / `CDlgWindowList` の `vector` 走査を `size_t` に。`CFigure::Match` / `CFigureManager::GetFigure` の文字列長を `ssize_t` にし描画パスの縮小を回避。`CEditView_Search`、`CColor_Quote` / `CColor_Heredoc`、`CStringRef_comp`（行ソート用）の長さ取り扱いを整理。）
+- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。（進捗例: `CNativeW::Compare`、`CGrepAgent` のパス走査ループ。**追加分**: `CDlgGrep` / `CGrepEnumFileBase` / `CGrepEnumKeys` / `CDlgFileTree` / `CDlgWindowList` の `vector` 走査を `size_t` に。`CFigure::Match` / `CFigureManager::GetFigure` の文字列長を `ssize_t` にし描画パスの縮小を回避。`CEditView_Search`、`CColor_Quote` / `CColor_Heredoc`、`CStringRef_comp`（行ソート用）の長さ取り扱いを整理。**さらに**: `CEditView_Paint`（描画領域マージ）、`CFigureManager`、`COpeBuf`、`CDlgFileTree` / `CDlgFuncList`（ツリー親スタック）、`CEditView_Ime`（行長を `CLogicInt`）。）
 - [x] **`Int` / `ssize_t` / `CLogicInt` の使い分け**をドキュメント化し、新規コードの基準を揃える（下記「型の使い分け」）。
 
 #### 型の使い分け（新規コード・リファクタ時の目安）
@@ -30,7 +30,7 @@
 
 ### P2: 座標・API 境界
 
-- [ ] **ドキュメント座標（64bit）**と **Win32 の `POINT` / `LONG`（32bit）**の混在箇所を整理し、変換境界を明示する（`CMyPoint` 等）。
+- [ ] **ドキュメント座標（64bit）**と **Win32 の `POINT` / `LONG`（32bit）**の混在箇所を整理し、変換境界を明示する（`CMyPoint` 等）。（**メモ**: `CMyPoint.h` に `POINT` と論理座標系の使い分け・GDI 境界の説明を追加済み。残りは呼び出し側の整理。）
 - [ ] ファイル I/O・クリップボード・外部コマンド等で **`DWORD` や 32bit 長前提**の箇所を洗い出し、2GB 超を扱う経路ではチャンク処理または 64bit API に切り替える。
 
 ### P3: 厳格整数・ビルド設定
@@ -39,7 +39,7 @@
 
 ### P4: 検証
 
-- [ ] 巨大行・巨大ファイル（**2GB 境界付近および超**）の回帰テストを追加または手動手順を記載する。
+- [ ] 巨大行・巨大ファイル（**2GB 境界付近および超**）の回帰テストを追加または手動手順を記載する。（**手動手順の例**: x64 ビルドの `sakura.exe` で 2GB 級ファイルまたは極端に長い行を含むファイルを開き、スクロール・行末移動・検索・保存など主要操作で異常終了しないことを確認する。単体テストでは `CMemory.OverMaxSize` / `OverHeapMaxReq` が加算オーバーフロー防止境界をカバー。）
 - [ ] メモリ使用量・主要操作のパフォーマンスを計測し、退行がないことを確認する。
 - [x] `tests1` の **`CMemory.OverHeapMaxReq` / `CMemory.OverMaxSize`** を P0 後の `AllocBuffer` 仕様に合わせて更新（下記「テスト」）。
 

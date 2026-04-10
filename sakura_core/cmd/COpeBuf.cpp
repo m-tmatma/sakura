@@ -30,8 +30,8 @@ COpeBuf::COpeBuf()
 COpeBuf::~COpeBuf()
 {
 	/* 操作ブロックの配列を削除する */
-	int size = (int)m_vCOpeBlkArr.size();
-	for( int i = 0; i < size; ++i ){
+	const size_t nBlk = m_vCOpeBlkArr.size();
+	for( size_t i = 0; i < nBlk; ++i ){
 		SAFE_DELETE(m_vCOpeBlkArr[i]);
 	}
 	m_vCOpeBlkArr.clear();
@@ -50,7 +50,7 @@ bool COpeBuf::IsEnableUndo() const
 /* Redo可能な状態か */
 bool COpeBuf::IsEnableRedo() const
 {
-	return 0 < m_vCOpeBlkArr.size() && m_nCurrentPointer < (int)m_vCOpeBlkArr.size();
+	return 0 < m_vCOpeBlkArr.size() && static_cast<size_t>(m_nCurrentPointer) < m_vCOpeBlkArr.size();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -61,9 +61,9 @@ bool COpeBuf::IsEnableRedo() const
 bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 {
 	/* 現在位置より後ろ（アンドゥ対象）がある場合は、消去 */
-	int size = (int)m_vCOpeBlkArr.size();
-	if( m_nCurrentPointer < size ){
-		for( int i = m_nCurrentPointer; i < size; ++i ){
+	const size_t sz = m_vCOpeBlkArr.size();
+	if( static_cast<size_t>(m_nCurrentPointer) < sz ){
+		for( size_t i = static_cast<size_t>(m_nCurrentPointer); i < sz; ++i ){
 			SAFE_DELETE(m_vCOpeBlkArr[i]);
 		}
 		m_vCOpeBlkArr.resize(m_nCurrentPointer);
@@ -78,8 +78,8 @@ bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 void COpeBuf::ClearAll()
 {
 	/* 操作ブロックの配列を削除する */
-	int size = (int)m_vCOpeBlkArr.size();
-	for( int i = 0; i < size; ++i ){
+	const size_t nBlk = m_vCOpeBlkArr.size();
+	for( size_t i = 0; i < nBlk; ++i ){
 		SAFE_DELETE(m_vCOpeBlkArr[i]);
 	}
 	m_vCOpeBlkArr.clear();
@@ -139,11 +139,10 @@ COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 void COpeBuf::DUMP()
 {
 #ifdef _DEBUG
-	int i;
 	MYTRACE( L"COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
-	int size = (int)m_vCOpeBlkArr.size();
-	for( i = 0; i < size; ++i ){
-		MYTRACE( L"COpeBuf.m_vCOpeBlkArr[%d]----\n", i );
+	const size_t nDump = m_vCOpeBlkArr.size();
+	for( size_t i = 0; i < nDump; ++i ){
+		MYTRACE( L"COpeBuf.m_vCOpeBlkArr[%d]----\n", static_cast<int>(i) );
 		m_vCOpeBlkArr[i]->DUMP();
 	}
 	MYTRACE( L"COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );

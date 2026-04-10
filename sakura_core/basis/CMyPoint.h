@@ -12,6 +12,9 @@
 #include <Windows.h> //POINT
 #include "basis/primitive.h"
 
+//! Win32 の `POINT` を継承するピクセル／簡易座標用ラッパ。
+//! 論理行・桁など 64bit 幅のドキュメント座標は `CLogicPoint` / `CLayoutPoint`（`CStrictPoint`）を使い、
+//! GDI や `RECT`（`LONG`）へ渡すときは `TwoPointToRect` や `GetX()`/`GetY()` の `int` 化で境界を明示する（巨大ドキュメントでは飽和の検討）。
 class CMyPoint : public POINT{
 public:
 	//コンストラクタ・デストラクタ

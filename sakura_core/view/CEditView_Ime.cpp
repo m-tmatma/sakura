@@ -199,7 +199,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 		return 0;
 
 	//テキスト取得 -> pLine, nLineLen
-	const int nLineLen = pcCurDocLine->GetLengthWithoutEOL();
+	const CLogicInt nLineLen = pcCurDocLine->GetLengthWithoutEOL();
 	if ( 0 == nLineLen )
 		return 0;
 	const wchar_t* pLine = pcCurDocLine->GetPtr();

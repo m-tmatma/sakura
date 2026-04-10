@@ -32,8 +32,8 @@ CFigureManager::~CFigureManager()
 {
 	m_vFiguresDisp.clear();
 
-	int size = (int)m_vFigures.size();
-	for(int i = 0; i < size; i++){
+	const size_t nFigures = m_vFigures.size();
+	for(size_t i = 0; i < nFigures; ++i){
 		SAFE_DELETE(m_vFigures[i]);
 	}
 	m_vFigures.clear();
@@ -42,8 +42,8 @@ CFigureManager::~CFigureManager()
 //$$ 高速化可能
 CFigure& CFigureManager::GetFigure(const wchar_t* pText, ssize_t nTextLen)
 {
-	int size = (int)m_vFiguresDisp.size();
-	for(int i = 0; i < size; i++){
+	const size_t nDisp = m_vFiguresDisp.size();
+	for(size_t i = 0; i < nDisp; ++i){
 		CFigure* pcFigure = m_vFiguresDisp[i];
 		if(pcFigure->Match(pText, nTextLen)){
 			return *pcFigure;
@@ -60,9 +60,8 @@ void CFigureManager::OnChangeSetting(void)
 {
 	m_vFiguresDisp.clear();
 
-	int size = (int)m_vFigures.size();
-	int i;
-	for(i = 0; i < size; i++){
+	const size_t nFigures = m_vFigures.size();
+	for(size_t i = 0; i < nFigures; ++i){
 		m_vFigures[i]->Update();
 		// 色分け表示対象のみを登録
 		if( m_vFigures[i]->Disp() ){

@@ -123,13 +123,13 @@ void CDlgFileTree::SetData()
 	m_aItemRemoveList.clear();
 	TreeView_DeleteAllItems(hwndTree);
 	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
-	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
+	for( size_t i = 0; i < m_fileTreeSetting.m_aItems.size(); ++i ){
 		const auto nMaxCount = int(std::size(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems));
-		if( bSaveShareData && nMaxCount < i + 1 ){
+		if( bSaveShareData && nMaxCount < static_cast<int>(i) + 1 ){
 			::InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT), nMaxCount);
 		}
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
-		while( item.m_nDepth < (int)hParentTree.size() - 1 ){
+		while( item.m_nDepth + 1 < static_cast<int>(hParentTree.size()) ){
 			hParentTree.resize(hParentTree.size() - 1);
 		}
 		TVINSERTSTRUCT tvis;
