@@ -7,7 +7,14 @@
 #include "pch.h"
 #include "mem/CMemory.h"
 
+#include <cstdint>
+
 #include "_main/CNormalProcess.h"
+
+namespace {
+// CMemory::AllocBuffer は nNewDataLen > SIZE_MAX - sizeof(wchar_t) - 7 のとき確保しない（加算のオーバーフロー防止）
+constexpr size_t kMinRawLenRejectedByAllocBuffer = SIZE_MAX - sizeof(wchar_t) - 6;
+}
 
 /*!
 	_SetRawLength(0) を呼び出して落ちないことを確認する
@@ -85,7 +92,7 @@ TEST(CMemory, SwapHLByte)
 
 /*!
 	CMemoryのテスト
-	ヒープに確保できる限界量を越えるサイズを要求した場合の挙動確認
+	AllocBuffer の生データ長上限（size_t 加算オーバーフロー防止）を越える要求の挙動確認
  */
 TEST(CMemory, OverHeapMaxReq)
 {
@@ -95,8 +102,8 @@ TEST(CMemory, OverHeapMaxReq)
 	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
 	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
 
-	// _HEAP_MAXREQを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
+	// 旧 INT_MAX / _HEAP_MAXREQ 前提の制限は撤廃。境界を越えると確保しない。
+	cmem.AllocBuffer(kMinRawLenRejectedByAllocBuffer);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
@@ -106,13 +113,13 @@ TEST(CMemory, OverHeapMaxReq)
 	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
+	cmem.AllocBuffer(kMinRawLenRejectedByAllocBuffer);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
 
 /*!
 	CMemoryのテスト
-	仕様上の上限値を越えるサイズを要求した場合の挙動確認
+	AllocBuffer の生データ長上限（size_t 加算オーバーフロー防止）を越える要求の挙動確認
  */
 TEST(CMemory, OverMaxSize)
 {
@@ -122,8 +129,9 @@ TEST(CMemory, OverMaxSize)
 	// 「アプリ名」を取得するためにプロセスのインスタンスが必要。
 	CNormalProcess cProcess(::GetModuleHandle(nullptr), L"");
 
-	// INT_MAXを越える値を指定すると、メモリは確保されない
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
+	// 旧「INT_MAX 超は不可」は撤廃。64bit では INT_MAX+1 バイトも malloc され得る。
+	// 実装どおり、加算オーバーフロー防止境界を越えると確保しない。
+	cmem.AllocBuffer(kMinRawLenRejectedByAllocBuffer);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
@@ -133,7 +141,7 @@ TEST(CMemory, OverMaxSize)
 	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
-	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);
+	cmem.AllocBuffer(kMinRawLenRejectedByAllocBuffer);
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 }
 
