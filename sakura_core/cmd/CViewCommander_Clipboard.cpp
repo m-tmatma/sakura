@@ -1063,10 +1063,10 @@ CColorStrategy* CViewCommander::GetColorStrategyHTML(
 
 	//色開始
 	if(!*ppStrategy){
-		int size = pool->GetStrategyCount();
-		for(int i = 0; i < size; i++ ){
-			if(pool->GetStrategy(i)->BeginColor(cStringLine, iLogic)){
-				*ppStrategy = pool->GetStrategy(i);
+		for( size_t i = 0; i < static_cast<size_t>(pool->GetStrategyCount()); ++i ){
+			const int ii = static_cast<int>(i);
+			if(pool->GetStrategy(ii)->BeginColor(cStringLine, iLogic)){
+				*ppStrategy = pool->GetStrategy(ii);
 				bChange = true;
 				break;
 			}

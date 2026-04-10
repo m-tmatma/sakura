@@ -80,10 +80,10 @@ bool SColorStrategyInfo::CheckChangeColor(const CStringRef& cLineStr)
 
 	//色開始
 	if(!m_pStrategy){
-		int size = pool->GetStrategyCount();
-		for(int i = 0; i < size; i++ ){
-			if(pool->GetStrategy(i)->BeginColor(cLineStr,this->GetPosInLogic())){
-				m_pStrategy = pool->GetStrategy(i);
+		for( size_t i = 0; i < static_cast<size_t>(pool->GetStrategyCount()); ++i ){
+			const int ii = static_cast<int>(i);
+			if(pool->GetStrategy(ii)->BeginColor(cLineStr,this->GetPosInLogic())){
+				m_pStrategy = pool->GetStrategy(ii);
 				bChange = true;
 				break;
 			}

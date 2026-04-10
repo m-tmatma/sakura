@@ -1850,9 +1850,10 @@ CColorStrategy* CPrintPreview::GetColorStrategy(
 		}
 	}
 	if (!pStrategy) {
-		for (int i=0; i < m_pool->GetStrategyCount(); i++) {
-			if (m_pool->GetStrategy(i)->BeginColor(cStringLine, iLogic)) {
-				pStrategy = m_pool->GetStrategy(i);
+		for (size_t i = 0; i < static_cast<size_t>(m_pool->GetStrategyCount()); ++i) {
+			const int ii = static_cast<int>(i);
+			if (m_pool->GetStrategy(ii)->BeginColor(cStringLine, iLogic)) {
+				pStrategy = m_pool->GetStrategy(ii);
 				bChange = true;
 				break;
 			}

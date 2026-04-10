@@ -67,7 +67,7 @@ void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 	/* 拡張子フィルタの作成 */
 	output.resize(0);
 
-	for (int i = 0; i < GetCount(); i++)
+	for (size_t i = 0; i < m_vFileExtInfo.size(); ++i)
 	{
 		// "%s (%s)\0%s\0"
 		work = m_vFileExtInfo[i].m_sTypeName;
@@ -82,7 +82,7 @@ void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 		output.resize(pos + work.length());
 		wmemcpy(&output[pos], &work[0], work.length());
 	}
-	if( 0 == GetCount() ){
+	if( m_vFileExtInfo.empty() ){
 		output.push_back( L'\0' );
 	}
 	output.push_back( L'\0' );
