@@ -538,6 +538,12 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MS
 endif()
 
 if(MINGW)
+  # MSVC と同様、Windows.h の min/max マクロを無効化（std::min 等・ビルド安定化。CI MinGW）
+  target_compile_definitions(sakura_core
+    PUBLIC
+      NOMINMAX
+  )
+
   # Set RC flags for MinGW (windres uses decimal)
   set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -c 65001 -l 1041 --use-temp-file")
 
