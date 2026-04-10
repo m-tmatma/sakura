@@ -840,9 +840,9 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 	assert( m_pvTypeSettings != nullptr );
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
-	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){
+	for( size_t typeIdx = 0; typeIdx < GetTypeSettings().size(); typeIdx++ ){
 		index = indexBackup;
-		STypeConfig& type = *(GetTypeSettings()[i]);
+		STypeConfig& type = *(GetTypeSettings()[typeIdx]);
 		ConvertLangValue2( type.m_szTypeName, STR_TYPE_NAME_BASIS );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_RICHTEXT );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_TEXT );
@@ -850,12 +850,12 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_ASM );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_INI );
 		index = indexBackup;
-		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_BASIS );
-		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_RICHTEXT );
-		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_TEXT );
-		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_DOS );
-		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_ASM );
-		ConvertLangValue2( shareData.m_TypeMini[i].m_szTypeName, STR_TYPE_NAME_INI );
+		ConvertLangValue2( shareData.m_TypeMini[typeIdx].m_szTypeName, STR_TYPE_NAME_BASIS );
+		ConvertLangValue2( shareData.m_TypeMini[typeIdx].m_szTypeName, STR_TYPE_NAME_RICHTEXT );
+		ConvertLangValue2( shareData.m_TypeMini[typeIdx].m_szTypeName, STR_TYPE_NAME_TEXT );
+		ConvertLangValue2( shareData.m_TypeMini[typeIdx].m_szTypeName, STR_TYPE_NAME_DOS );
+		ConvertLangValue2( shareData.m_TypeMini[typeIdx].m_szTypeName, STR_TYPE_NAME_ASM );
+		ConvertLangValue2( shareData.m_TypeMini[typeIdx].m_szTypeName, STR_TYPE_NAME_INI );
 		if( bSetValues ){
 			break;
 		}

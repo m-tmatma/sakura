@@ -329,16 +329,15 @@ void CPropCommon::ApplyData( int* tempTypeKeywordSet )
 {
 	m_pShareData->m_Common = m_Common;
 
-	int i;
-	const int nSize = (int)m_Types_nKeyWordSetIdx.size();
-	int nBegin = 0;
+	const size_t nSize = m_Types_nKeyWordSetIdx.size();
+	size_t nBegin = 0;
 	if( tempTypeKeywordSet ){
 		for( int j = 0; j < MAX_KEYWORDSET_PER_TYPE; j++ ){
 			tempTypeKeywordSet[j] = m_Types_nKeyWordSetIdx[0].index[j];
 		}
 		nBegin = 1;
 	}
-	for( i = nBegin; i < nSize; ++i ){
+	for( size_t i = nBegin; i < nSize; ++i ){
 		CTypeConfig configIdx = CDocTypeManager().GetDocumentTypeOfId( m_Types_nKeyWordSetIdx[i].typeId );
 		if( configIdx.IsValidType() ){
 			STypeConfig type;

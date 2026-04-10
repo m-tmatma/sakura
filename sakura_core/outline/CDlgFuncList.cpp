@@ -1528,7 +1528,7 @@ void CDlgFuncList::SetTreeFile()
 	int nFuncInfo = 0;
 	std::vector<HTREEITEM> hParentTree;
 	hParentTree.push_back(TVI_ROOT);
-	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
+	for( size_t i = 0; i < m_fileTreeSetting.m_aItems.size(); i++ ){
 		WCHAR szPath[_MAX_PATH];
 		WCHAR szPath2[_MAX_PATH];
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
