@@ -463,10 +463,19 @@ target_include_directories(sakura_core
 )
 
 # Add link directories for sakura_core
-target_link_directories(sakura_core
-  PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/lib$<$<CONFIG:Debug>:/Debug>>"
-)
+# GoogleTest is installed to ${CMAKE_BINARY_DIR}/lib (CMAKE_INSTALL_LIBDIR). MinGW single-config
+# has no lib/Debug; Debug builds must still search lib or -lgtest/-lgmock fails at link time.
+if(MINGW)
+  target_link_directories(sakura_core
+    PUBLIC
+      "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/lib>"
+  )
+else()
+  target_link_directories(sakura_core
+    PUBLIC
+      "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/lib$<$<CONFIG:Debug>:/Debug>>"
+  )
+endif()
 
 # link libraries
 target_link_libraries(sakura_core
