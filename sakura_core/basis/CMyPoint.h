@@ -11,6 +11,7 @@
 
 #include <Windows.h> //POINT
 #include "basis/primitive.h"
+#include "basis/Win32GdiClamp.h"
 
 //! Win32 の `POINT` を継承するピクセル／簡易座標用ラッパ。
 //! 論理行・桁など 64bit 幅のドキュメント座標は `CLogicPoint` / `CLayoutPoint`（`CStrictPoint`）を使い、
@@ -82,7 +83,7 @@ inline int PointCompare(const POINT_T& pt1,const POINT_T& pt2)
 	return static_cast<int>((Int)(pt1.x-pt2.x));
 }
 
-//! 2点を対角とする矩形を求める
+//! 2点を対角とする矩形を求める（`RECT` の `LONG` へ渡す前に飽和。P2）
 template <class POINT_T>
 inline void TwoPointToRect(
 	RECT*	prcRect,
@@ -91,18 +92,18 @@ inline void TwoPointToRect(
 )
 {
 	if( pt1.y < pt2.y ){
-		prcRect->top	= static_cast<LONG>(pt1.y);
-		prcRect->bottom	= static_cast<LONG>(pt2.y);
+		prcRect->top	= ClampIntToLongForGdi(Int(pt1.y));
+		prcRect->bottom	= ClampIntToLongForGdi(Int(pt2.y));
 	}else{
-		prcRect->top	= static_cast<LONG>(pt2.y);
-		prcRect->bottom	= static_cast<LONG>(pt1.y);
+		prcRect->top	= ClampIntToLongForGdi(Int(pt2.y));
+		prcRect->bottom	= ClampIntToLongForGdi(Int(pt1.y));
 	}
 	if( pt1.x < pt2.x ){
-		prcRect->left	= static_cast<LONG>(pt1.x);
-		prcRect->right	= static_cast<LONG>(pt2.x);
+		prcRect->left	= ClampIntToLongForGdi(Int(pt1.x));
+		prcRect->right	= ClampIntToLongForGdi(Int(pt2.x));
 	}else{
-		prcRect->left	= static_cast<LONG>(pt2.x);
-		prcRect->right	= static_cast<LONG>(pt1.x);
+		prcRect->left	= ClampIntToLongForGdi(Int(pt2.x));
+		prcRect->right	= ClampIntToLongForGdi(Int(pt1.x));
 	}
 }
 #endif /* SAKURA_CMYPOINT_267964EB_3FB3_4AC3_AA75_58B756396229_H_ */

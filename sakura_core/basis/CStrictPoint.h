@@ -10,19 +10,7 @@
 #pragma once
 
 #include "basis/primitive.h"
-
-//! 論理座標（`Int`）を Win32 `LONG` に収める。GDI／`POINT` へ渡す直前の境界（P2）。超過は飽和。
-//! `USE_STRICT_INT` 時も `constexpr Int` は使えないため、境界は実行時比較のみとする。
-inline LONG ClampIntToLongForGdi(Int v) noexcept
-{
-	if (v < static_cast<Int>(LONG_MIN)) {
-		return LONG_MIN;
-	}
-	if (v > static_cast<Int>(LONG_MAX)) {
-		return LONG_MAX;
-	}
-	return static_cast<LONG>(v);
-}
+#include "basis/Win32GdiClamp.h"
 
 //単位が明示的に区別されたポイント型。※POINTは継承しないことにした
 /*
