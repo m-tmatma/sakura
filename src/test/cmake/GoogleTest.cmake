@@ -63,18 +63,29 @@ add_custom_target(configure_gtest
     "${GTEST_BUILD_DIR}/CMakeCache.txt"
 )
 
-add_custom_command(
-  OUTPUT "${GTEST_PC}"
-  COMMAND ${CMAKE_COMMAND} --build "${GTEST_BUILD_DIR}" --config $<CONFIG>
-  COMMAND ${CMAKE_COMMAND} --install "${GTEST_BUILD_DIR}" --config $<CONFIG>
-  # install は常に CMAKE_INSTALL_PREFIX/lib に上書きするため、MSBuild が Debug/Release を切替えても
-  # 直前にビルドした構成の .lib が残る。tests1 は $(Configuration) 別フォルダを参照する。
-  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/lib/$<CONFIG>"
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/lib/gtest.lib" "${CMAKE_BINARY_DIR}/lib/$<CONFIG>/gtest.lib"
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/lib/gmock.lib" "${CMAKE_BINARY_DIR}/lib/$<CONFIG>/gmock.lib"
-  DEPENDS configure_gtest
-  COMMENT "Building GoogleTest Library"
-)
+# MinGW は gtest.lib ではなく libgtest.a を lib/ にインストールする。MSVC/clang-cl だけ構成別フォルダへ複製する。
+if(MINGW)
+  add_custom_command(
+    OUTPUT "${GTEST_PC}"
+    COMMAND ${CMAKE_COMMAND} --build "${GTEST_BUILD_DIR}" --config $<CONFIG>
+    COMMAND ${CMAKE_COMMAND} --install "${GTEST_BUILD_DIR}" --config $<CONFIG>
+    DEPENDS configure_gtest
+    COMMENT "Building GoogleTest Library"
+  )
+else()
+  add_custom_command(
+    OUTPUT "${GTEST_PC}"
+    COMMAND ${CMAKE_COMMAND} --build "${GTEST_BUILD_DIR}" --config $<CONFIG>
+    COMMAND ${CMAKE_COMMAND} --install "${GTEST_BUILD_DIR}" --config $<CONFIG>
+    # install は常に CMAKE_INSTALL_PREFIX/lib に上書きするため、MSBuild が Debug/Release を切替えても
+    # 直前にビルドした構成の .lib が残る。tests1 は $(Configuration) 別フォルダを参照する。
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/lib/$<CONFIG>"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/lib/gtest.lib" "${CMAKE_BINARY_DIR}/lib/$<CONFIG>/gtest.lib"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/lib/gmock.lib" "${CMAKE_BINARY_DIR}/lib/$<CONFIG>/gmock.lib"
+    DEPENDS configure_gtest
+    COMMENT "Building GoogleTest Library"
+  )
+endif()
 
 add_custom_target(generate_gtest
   DEPENDS
