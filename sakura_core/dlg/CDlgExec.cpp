@@ -134,24 +134,24 @@ void CDlgExec::SetData( void )
 	*****************************/
 	hwndCombo = GetItemHwnd( IDC_COMBO_m_szCommand );
 	ApiWrap::Combo_ResetContent( hwndCombo );
-	const int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
-	if( 0 < nCommandsCount ){
-		::wcsncpy_s(m_szCommand, m_pShareData->m_sHistory.m_aCommands[0], _TRUNCATE);
+	const auto& commands = m_pShareData->m_sHistory.m_aCommands;
+	if( 0 < commands.size() ){
+		::wcsncpy_s(m_szCommand, commands[0], _TRUNCATE);
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
-		for( i = 0; i < nCommandsCount; ++i ){
-			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
+		for( size_t idx = 0; idx < commands.size(); ++idx ){
+			ApiWrap::Combo_AddString( hwndCombo, commands[idx] );
 		}
 		ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 	}
 
 	hwndCombo = GetItemHwnd( IDC_COMBO_CUR_DIR );
 	ApiWrap::Combo_ResetContent( hwndCombo );
-	const int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
-	if( 0 < nCurDirsCount ){
-		::wcsncpy_s(m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0], _TRUNCATE);
+	const auto& curDirs = m_pShareData->m_sHistory.m_aCurDirs;
+	if( 0 < curDirs.size() ){
+		::wcsncpy_s(m_szCurDir, curDirs[0], _TRUNCATE);
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
-		for( i = 0; i < nCurDirsCount; ++i ){
-			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
+		for( size_t idx = 0; idx < curDirs.size(); ++idx ){
+			ApiWrap::Combo_AddString( hwndCombo, curDirs[idx] );
 		}
 		ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
 	}

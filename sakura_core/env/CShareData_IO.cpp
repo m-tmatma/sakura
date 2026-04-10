@@ -381,22 +381,19 @@ void CShareData_IO::ShareData_IO_Cmd( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = L"Cmd";
-	int		i;
 	WCHAR	szKeyName[64];
 
 	cProfile.IOProfileData( pszSecName, L"nCmdArrNum", pShare->m_sHistory.m_aCommands._GetSizeRef() );
 	pShare->m_sHistory.m_aCommands.SetSizeLimit();
-	int nSize = pShare->m_sHistory.m_aCommands.size();
-	for( i = 0; i < nSize; ++i ){
-		auto_snprintf_s(szKeyName, _TRUNCATE, L"szCmdArr[%02d]", i);
+	for( size_t i = 0; i < pShare->m_sHistory.m_aCommands.size(); ++i ){
+		auto_snprintf_s(szKeyName, _TRUNCATE, L"szCmdArr[%02d]", static_cast<int>(i));
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCommands[i] );
 	}
 
 	cProfile.IOProfileData( pszSecName, L"nCurDirArrNum", pShare->m_sHistory.m_aCurDirs._GetSizeRef() );
 	pShare->m_sHistory.m_aCurDirs.SetSizeLimit();
-	nSize = pShare->m_sHistory.m_aCurDirs.size();
-	for( i = 0; i < nSize; ++i ){
-		auto_snprintf_s(szKeyName, _TRUNCATE, L"szCurDirArr[%02d]", i);
+	for( size_t i = 0; i < pShare->m_sHistory.m_aCurDirs.size(); ++i ){
+		auto_snprintf_s(szKeyName, _TRUNCATE, L"szCurDirArr[%02d]", static_cast<int>(i));
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sHistory.m_aCurDirs[i] );
 	}
 }
@@ -2258,7 +2255,6 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	DLLSHAREDATA* pShare = &GetDllShareData();
 
 	const WCHAR* pszSecName = L"Other";	//セクションを1個作成した。2003.05.12 MIK
-	int		i;	
 	WCHAR	szKeyName[64];
 
 	/* **** その他のダイアログ **** */
@@ -2279,13 +2275,9 @@ void CShareData_IO::ShareData_IO_Other( CDataProfile& cProfile )
 	
 	//From Here 2005.04.03 MIK キーワード指定タグジャンプ
 	cProfile.IOProfileData( pszSecName, L"_TagJumpKeyword_Counts", pShare->m_sTagJump.m_aTagJumpKeywords._GetSizeRef() );
-	pShare->m_sHistory.m_aCommands.SetSizeLimit();
-	int nSize = pShare->m_sTagJump.m_aTagJumpKeywords.size();
-	for( i = 0; i < nSize; ++i ){
-		auto_snprintf_s(szKeyName, _TRUNCATE, L"TagJumpKeyword[%02d]", i);
-		if( i >= nSize ){
-			pShare->m_sTagJump.m_aTagJumpKeywords[i][0] = L'\0';
-		}
+	pShare->m_sTagJump.m_aTagJumpKeywords.SetSizeLimit();
+	for( size_t i = 0; i < pShare->m_sTagJump.m_aTagJumpKeywords.size(); ++i ){
+		auto_snprintf_s(szKeyName, _TRUNCATE, L"TagJumpKeyword[%02d]", static_cast<int>(i));
 		cProfile.IOProfileData( pszSecName, szKeyName, pShare->m_sTagJump.m_aTagJumpKeywords[i] );
 	}
 	cProfile.IOProfileData( pszSecName, L"m_bTagJumpICase"		, pShare->m_sTagJump.m_bTagJumpICase );
