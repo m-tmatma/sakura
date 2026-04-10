@@ -198,8 +198,8 @@ CColorStrategyPool::~CColorStrategyPool()
 	SAFE_DELETE(m_pcSelectStrategy);
 	SAFE_DELETE(m_pcFoundStrategy);
 	m_vStrategiesDisp.clear();
-	int size = (int)m_vStrategies.size();
-	for(int i = 0; i < size; i++ ){
+	const size_t nStrategies = m_vStrategies.size();
+	for(size_t i = 0; i < nStrategies; ++i ){
 		delete m_vStrategies[i];
 	}
 	m_vStrategies.clear();
@@ -210,8 +210,8 @@ CColorStrategy*	CColorStrategyPool::GetStrategyByColor(EColorIndexType eColor) c
 	if( COLORIDX_SEARCH <= eColor && eColor <= COLORIDX_SEARCHTAIL ){
 		return m_pcFoundStrategy;
 	}
-	int size = (int)m_vStrategiesDisp.size();
-	for(int i = 0; i < size; i++ ){
+	const size_t nDisp = m_vStrategiesDisp.size();
+	for(size_t i = 0; i < nDisp; ++i ){
 		if(m_vStrategiesDisp[i]->GetStrategyColor()==eColor){
 			return m_vStrategiesDisp[i];
 		}
@@ -223,8 +223,8 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 {
 	m_pcSelectStrategy->OnStartScanLogic();
 	m_pcFoundStrategy->OnStartScanLogic();
-	int size = GetStrategyCount();
-	for(int i = 0; i < size; i++ ){
+	const int nStrat = GetStrategyCount();
+	for(int i = 0; i < nStrat; i++ ){
 		GetStrategy(i)->OnStartScanLogic();
 	}
 }
@@ -265,8 +265,8 @@ void CColorStrategyPool::OnChangeSetting(void)
 
 	m_pcSelectStrategy->Update();
 	m_pcFoundStrategy->Update();
-	int size = (int)m_vStrategies.size();
-	for(int i = 0; i < size; i++){
+	const size_t nStrategies = m_vStrategies.size();
+	for(size_t i = 0; i < nStrategies; ++i){
 		m_vStrategies[i]->Update();
 
 		// 色分け表示対象であれば登録

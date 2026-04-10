@@ -646,7 +646,6 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	bool		bBeginBoxSelectOld;
 		const wchar_t*	pLine;
 	CLogicInt		nLineLen;
-	ssize_t			j;
 	std::vector<SORTDATA*> sta;
 
 	if( !m_pCommanderView->GetSelectionInfo().IsTextSelected() ){			/* テキストが選択されているか */
@@ -745,10 +744,10 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 		}
 	}
 	COpeLineData repData;
-	j=(int)sta.size();
-	repData.resize(sta.size());
+	const size_t nSta = sta.size();
+	repData.resize(nSta);
 	int opeSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNextSeq();
-	for (int i=0; i<j; i++){
+	for (size_t i = 0; i < nSta; ++i){
 		repData[i].nSeq = opeSeq;
 		repData[i].cmemLine.SetString( sta[i]->pCmemLine->GetStringPtr(), sta[i]->pCmemLine->GetStringLength() );
 		if( pStrLast == sta[i]->pCmemLine->GetStringPtr() ){
@@ -769,8 +768,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	}
 	{
 		// 2016.03.04 Moca sta内データの削除忘れ修正
-		int nSize = (int)sta.size();
-		for(int k = 0; k < nSize; k++){
+		for(size_t k = 0; k < sta.size(); ++k){
 			delete sta[k];
 		}
 	}
@@ -898,10 +896,10 @@ void CViewCommander::Command_MERGE(void)
 	}
 	if( bMerge ){
 		COpeLineData repData;
-		int nSize = (int)lineArr.size();
-		repData.resize(nSize);
+		const size_t nLine = lineArr.size();
+		repData.resize(nLine);
 		int opeSeq = GetDocument()->m_cDocEditor.m_cOpeBuf.GetNextSeq();
-		for( int idx = 0; idx < nSize; idx++ ){
+		for( size_t idx = 0; idx < nLine; ++idx ){
 			repData[idx].nSeq = opeSeq;
 			repData[idx].cmemLine.SetString( lineArr[idx].GetPtr(), lineArr[idx].GetLength() );
 		}

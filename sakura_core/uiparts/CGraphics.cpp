@@ -112,8 +112,8 @@ void CGraphics::ClearClipping()
 		::SelectClipRgn(m_hdc,m_vClippingRgns[0]);
 	}
 	//領域をすべて削除
-	int nSize = (int)m_vClippingRgns.size();
-	for(int i=0;i<nSize;i++){
+	const size_t nClip = m_vClippingRgns.size();
+	for(size_t i = 0; i < nClip; ++i){
 		::DeleteObject(m_vClippingRgns[i]);
 	}
 	m_vClippingRgns.clear();
@@ -278,8 +278,8 @@ void CGraphics::ClearPen()
 		SelectObject(m_hdc,m_hpnOrg);
 		m_hpnOrg = nullptr;
 	}
-	int nSize = (int)m_vPens.size();
-	for(int i=0;i<nSize;i++){
+	const size_t nPens = m_vPens.size();
+	for(size_t i = 0; i < nPens; ++i){
 		DeleteObject(m_vPens[i]);
 	}
 	m_vPens.clear();
@@ -344,11 +344,11 @@ void CGraphics::ClearBrush()
 		::SelectObject(m_hdc,m_vBrushes[0]);
 	}
 	//ブラシをすべて削除 (0番要素以外)
-	int nSize = (int)m_vBrushes.size();
-	for(int i=1;i<nSize;i++){
+	const size_t nBrushes = m_vBrushes.size();
+	for(size_t i = 1; i < nBrushes; ++i){
 		::DeleteObject(m_vBrushes[i]);
 	}
-	m_vBrushes.resize(t_min(1,(int)m_vBrushes.size()));
+	m_vBrushes.resize(t_min(size_t(1), m_vBrushes.size()));
 }
 
 // ドロップ先矩形描画用のリージョンを作成する

@@ -9,6 +9,11 @@ set(GTEST_BUILD_DIR "${CMAKE_BINARY_DIR}/GoogleTest")
 # インストール先は lib に統一（-D のジェネレータ式は展開されず失敗するため）。--install の --config で Debug/Release を切り替える。
 set(GTEST_PC "${CMAKE_BINARY_DIR}/lib/pkgconfig/gtest.pc")
 
+# GoogleTest サブプロジェクトの CMakeCache に CMAKE_INSTALL_LIBDIR=lib$<$<CONFIG:Debug>:/Debug> のような
+# 誤った文字列が入ると cmake --install が失敗する。初期キャッシュで lib に固定する。
+set(GTEST_INIT_CACHE "${CMAKE_BINARY_DIR}/gtest-init.cmake")
+file(WRITE "${GTEST_INIT_CACHE}" "set(CMAKE_INSTALL_LIBDIR \"lib\" CACHE PATH \"Object code libraries (gtest)\" FORCE)\n")
+
 message(STATUS "GoogleTest config: cmake -G \"${CMAKE_GENERATOR}\" ${GENERATOR_ARGS} -S \"${CMAKE_SOURCE_DIR}/externals/googletest\" -B \"${GTEST_BUILD_DIR}\" \"-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}\" ${GENERATOR_ARGS_FOR_STATIC_LIBRARY}")
 
 add_custom_command(
@@ -37,6 +42,7 @@ endif()
 add_custom_command(
   OUTPUT "${GTEST_BUILD_DIR}/CMakeCache.txt"
   COMMAND ${CMAKE_COMMAND}
+    -C "${GTEST_INIT_CACHE}"
     -G "${CMAKE_GENERATOR}"
     ${GENERATOR_ARGS}
     -S "${CMAKE_SOURCE_DIR}/externals/googletest"
