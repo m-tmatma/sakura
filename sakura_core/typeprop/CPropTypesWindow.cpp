@@ -373,11 +373,11 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 		int		j = 0;
 		hCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_DEFAULT_CODETYPE );
 		CCodeTypesForCombobox cCodeTypes;
-		for (i = 0; i < int(cCodeTypes.GetCount()); ++i) {
-			if (CCodeTypeName( cCodeTypes.GetCode(i) ).CanDefault()) {
-				int idx = ApiWrap::Combo_AddString( hCombo, cCodeTypes.GetName(i) );
-				ApiWrap::Combo_SetItemData( hCombo, idx, cCodeTypes.GetCode(i) );
-				if (m_Types.m_encoding.m_eDefaultCodetype == cCodeTypes.GetCode(i)) {
+		for (size_t ci = 0; ci < cCodeTypes.GetCount(); ++ci) {
+			if (CCodeTypeName( cCodeTypes.GetCode(ci) ).CanDefault()) {
+				int idx = ApiWrap::Combo_AddString( hCombo, cCodeTypes.GetName(ci) );
+				ApiWrap::Combo_SetItemData( hCombo, idx, cCodeTypes.GetCode(ci) );
+				if (m_Types.m_encoding.m_eDefaultCodetype == cCodeTypes.GetCode(ci)) {
 					nSel = j;
 				}
 				j++;

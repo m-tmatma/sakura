@@ -337,16 +337,12 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 
 			/* 文字コード選択コンボボックス初期化 */
 			nIdxSel = -1;
-			if( pData->m_bIsSaveDialog ){	/* 保存のダイアログか */
-				i = 1; // 「自動選択」飛ばし
-			}else{
-				i = 0;
-			}
 			CCodeTypesForCombobox cCodeTypes;
-			for( /*i = 0*/; i < int(cCodeTypes.GetCount()); ++i ){
-				nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboCODES, cCodeTypes.GetName(i) );
-				ApiWrap::Combo_SetItemData( pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
-				if( cCodeTypes.GetCode(i) == pData->m_nCharCode ){
+			const size_t codeStart = pData->m_bIsSaveDialog ? 1u : 0u; /* 保存ダイアログは「自動選択」飛ばし */
+			for( size_t codeIdx = codeStart; codeIdx < cCodeTypes.GetCount(); ++codeIdx ){
+				nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboCODES, cCodeTypes.GetName(codeIdx) );
+				ApiWrap::Combo_SetItemData( pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(codeIdx) );
+				if( cCodeTypes.GetCode(codeIdx) == pData->m_nCharCode ){
 					nIdxSel = nIdx;
 				}
 			}

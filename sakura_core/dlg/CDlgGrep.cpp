@@ -632,10 +632,10 @@ void CDlgGrep::SetData( void )
 		HWND	hWndCombo = GetItemHwnd( IDC_COMBO_CHARSET );
 		int nCurIdx = ApiWrap::Combo_GetCurSel( hWndCombo );
 		CCodeTypesForCombobox cCodeTypes;
-		for (int nIdx = 0; nIdx < int(cCodeTypes.GetCount()); ++nIdx) {
-			const auto nCharSet = (ECodeType)ApiWrap::Combo_GetItemData( hWndCombo, nIdx );
+		for (size_t nIdx = 0; nIdx < cCodeTypes.GetCount(); ++nIdx) {
+			const auto nCharSet = (ECodeType)ApiWrap::Combo_GetItemData( hWndCombo, static_cast<int>(nIdx) );
 			if( nCharSet == m_nGrepCharSet ){
-				nCurIdx = nIdx;
+				nCurIdx = static_cast<int>(nIdx);
 			}
 		}
 		if( nCurIdx != -1 ){
