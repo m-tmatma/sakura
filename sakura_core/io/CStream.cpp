@@ -1,4 +1,4 @@
-﻿﻿/*! @file */
+/*! @file */
 /*
 	Copyright (C) 2018-2022, Sakura Editor Organization
 
