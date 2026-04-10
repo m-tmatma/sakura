@@ -13,8 +13,20 @@
 ### P1: インデックス・ループの一貫性
 
 - [x] `CLayout::CalcLayoutOffset`（`CLayout.cpp`）— 行長・ループを `CLogicInt` / `size_t` に。
-- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。
-- [ ] **`Int` / `ssize_t` / `CLogicInt` の使い分け**をドキュメント化し、新規コードの基準を揃える。
+- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。（進捗例: `CNativeW::Compare`、`CGrepAgent` のパス走査ループ）
+- [x] **`Int` / `ssize_t` / `CLogicInt` の使い分け**をドキュメント化し、新規コードの基準を揃える（下記「型の使い分け」）。
+
+#### 型の使い分け（新規コード・リファクタ時の目安）
+
+| 概念 | 推奨型 | メモ |
+|------|--------|------|
+| バッファの生のバイト数・`capacity()` | `size_t` | 負にならない長さ。Win32 API の「文字数」引数に渡すときだけ `int` 等へ **境界で** 変換。 |
+| 文字列の論理長（行内文字数など） | `ssize_t` または **`CLogicInt`** | ドキュメント／レイアウトの「桁・行内位置」は **`CLogicInt` / `CLayoutInt`** で単位を区別。 |
+| 汎用の「そこそこ大きいが単位なし」 | **`Int`**（`primitive.h`） | 既定で `ssize_t`。厳格整数モードでは `CLaxInteger`。 |
+| 配列・コンテナのインデックス | `size_t` またはループ対象に合わせた符号付き | `v.size()` 周りは **`size_t` で `for (size_t i = 0; i < v.size(); ++i)`** を優先し、`(int)v.size()` を避ける。 |
+| Win32 の座標・ピクセル | `LONG` / `int`（API 定義どおり） | ドキュメント座標から渡すときは **`static_cast` で明示**し、巨大ドキュメントでは **飽和・クリップ**を検討（P2）。 |
+
+**避けたい例:** 論理長を `static_cast<int>` してから `memcmp` 系に渡す（2GB 超で誤比較）。**代わりに** 長さは `size_t` / `ssize_t` のまま比較し、戻り値が `int` だけの API では「-1 / 0 / 1」に正規化する（`CNativeW::Compare` がそのパターン）。
 
 ### P2: 座標・API 境界
 
@@ -48,4 +60,6 @@
 - **`CShareData_IO` の `swscanf_s`**: `CKetaXInt` 向けに **`int` 一時変数**へ読み取り後代入。
 - **`CType_Cpp` の `SCommentBlock`**: ループ変数 `ssize_t n` と `CLogicInt` 混在を **`static_cast<int>`** で集約。
 - **`CViewCommander_Search`**: `CLayoutInt::GetValue()` 前提を **`static_cast<ssize_t>(GetLineCount())`** に変更。
+- **`CNativeW::Compare`**: 比較長を `int` に落とさず **`ssize_t` / `size_t`** で `wmemcmp`し、長さ差は **-1/0/1** で返す。
+- **`CGrepAgent`**: 複数パス走査のループ変数を **`(int)vPaths.size()` から `size_t` インデックス**に変更。
 - x64 **Release ビルド成功**（`build-sln.bat x64 Release`）。

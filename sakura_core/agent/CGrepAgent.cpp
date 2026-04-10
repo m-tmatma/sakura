@@ -768,7 +768,7 @@ DWORD CGrepAgent::DoGrep(
 		}
 		nHitCount = nGrepTreeResult;
 	}else{
-		for( int nPath = 0; nPath < (int)vPaths.size(); nPath++ ){
+		for( size_t nPath = 0; nPath < vPaths.size(); nPath++ ){
 			bool bOutputBaseFolder = false;
 			std::wstring sPath = ChopYen( vPaths[nPath] );
 			int nTreeRet = DoGrepTree(

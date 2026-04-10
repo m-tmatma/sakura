@@ -226,13 +226,16 @@ int CNativeW::Compare(const CNativeW& rhs) const noexcept
 	const int lhsIsValid = static_cast<int>(IsValid());
 	const int rhsIsValid = static_cast<int>(rhs.IsValid());
 	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
-	// データ長が短い方を基準に比較を行う
-	const int lhsLength = static_cast<int>(GetStringLength());
-	const int rhsLength = static_cast<int>(rhs.GetStringLength());
-	const int minLength = std::min(lhsLength, rhsLength);
-	// データ長の範囲で文字列を比較する
+	// データ長が短い方を基準に比較を行う（巨大行でも int に縮めない）
+	const ssize_t lhsLength = GetStringLength();
+	const ssize_t rhsLength = rhs.GetStringLength();
+	const size_t minLength = static_cast<size_t>((std::min)(lhsLength, rhsLength));
 	auto cmp = wmemcmp(GetStringPtr(), rhs.GetStringPtr(), minLength);
-	if (!cmp) cmp = lhsLength - rhsLength;
+	if (!cmp) {
+		if (lhsLength < rhsLength) return -1;
+		if (lhsLength > rhsLength) return 1;
+		return 0;
+	}
 	return cmp;
 }
 
