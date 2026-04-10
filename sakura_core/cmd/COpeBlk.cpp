@@ -27,8 +27,8 @@ COpeBlk::COpeBlk()
 COpeBlk::~COpeBlk()
 {
 	/* 操作の配列を削除する */
-	int size = (int)m_ppCOpeArr.size();
-	for( int i = 0; i < size; ++i ){
+	const size_t nOpe = m_ppCOpeArr.size();
+	for( size_t i = 0; i < nOpe; ++i ){
 		SAFE_DELETE(m_ppCOpeArr[i]);
 	}
 	m_ppCOpeArr.clear();
@@ -76,9 +76,8 @@ COpe* COpeBlk::GetOpe( int nIndex )
 void COpeBlk::DUMP( void )
 {
 #ifdef _DEBUG
-	int i;
-	int size = GetNum();
-	for( i = 0; i < size; ++i ){
+	const int nDump = GetNum();
+	for( int i = 0; i < nDump; ++i ){
 		MYTRACE( L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", i );
 		m_ppCOpeArr[i]->DUMP();
 	}

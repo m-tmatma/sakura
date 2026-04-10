@@ -132,8 +132,8 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
 		// 他のファイルは新規ウィンドウ
-		int nSize = (int)files.size();
-		for( int i = 1; i < nSize; i++ ){
+		const size_t nFiles = files.size();
+		for( size_t i = 1; i < nFiles; ++i ){
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(

@@ -134,7 +134,7 @@ public:
 			if( pBstrName ){
 				*pBstrName = SysAllocString( m_sName.c_str() );
 			}
-		}else if( 0 <= memid && memid < (int)m_MethodsRef.size() ){
+		}else if( 0 <= memid && static_cast<size_t>(memid) < m_MethodsRef.size() ){
 			if( pBstrName ){
 				*pBstrName = SysAllocString( m_MethodsRef[memid].Name );
 			}

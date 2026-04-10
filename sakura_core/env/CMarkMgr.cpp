@@ -136,7 +136,7 @@ void CMarkMgr::Flush(void)
 void CAutoMarkMgr::Add(const CMark& m)
 {
 	//	現在位置が途中の時
-	if( m_nCurpos < (int)m_cMarkChain.size() ){
+	if( 0 <= m_nCurpos && static_cast<size_t>(m_nCurpos) < m_cMarkChain.size() ){
 		//	現在位置まで要素を削除
 		m_cMarkChain.erase( m_cMarkChain.begin() + m_nCurpos, m_cMarkChain.end() );
 	}

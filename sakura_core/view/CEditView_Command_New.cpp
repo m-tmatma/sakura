@@ -407,14 +407,14 @@ void CEditView::DeleteData2(
 	GetCaret().m_nCaretPosX_Prev = GetCaret().GetCaretLayoutPos().GetX();
 
 	if( pcMem ){
-		int size = (int)memDeleted.size();
+		const size_t nDel = memDeleted.size();
 		size_t bufSize = 0;
-		for(int i = 0; i < size; i++){
+		for(size_t i = 0; i < nDel; ++i){
 			bufSize += memDeleted[i].cmemLine.GetStringLength();
 		}
 		pcMem->SetString(L"");
 		pcMem->AllocStringBuffer( bufSize );
-		for(int i = 0; i < size; i++){
+		for(size_t i = 0; i < nDel; ++i){
 			pcMem->AppendNativeData(memDeleted[i].cmemLine);
 		}
 	}
