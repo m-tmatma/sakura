@@ -14,7 +14,6 @@
 void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 {
 	int i;
-	unsigned int ui;
 
 	m_tabLength.clear();
 	if (m_nTsvMode == TSV_MODE_NONE) return;
@@ -61,7 +60,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 		}
 	}
 
-	for (ui = 0; ui<m_tabLength.size(); ui++) {
+	for (size_t ui = 0; ui < m_tabLength.size(); ++ui) {
 		if (ui == 0) {
 			m_tabLength[0] += 2;
 		} else {
@@ -73,8 +72,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 // 指定したレイアウト位置のタブ幅を取得（折り返しは考慮しない）
 CLayoutInt CTsvModeInfo::GetActualTabLength(CLayoutInt pos, CLayoutInt px) const
 {
-	unsigned int i;
-	for (i = 0; i < m_tabLength.size(); i++) {
+	for (size_t i = 0; i < m_tabLength.size(); ++i) {
 		if (pos < m_tabLength[i] * px) {
 			return CLayoutInt(m_tabLength[i] * px) - pos;
 		}

@@ -75,7 +75,7 @@ ERegisterPlugResult CJackManager::RegisterPlug( std::wstring pszJack, CPlug* plu
 	if( plugs.empty()  ||  (*(plugs.end() - 1))->GetFunctionCode() < plugid ){
 		plugs.push_back( plug );
 	} else {
-		for( unsigned int index=0; index<plugs.size(); index++ ){
+		for( size_t index=0; index<plugs.size(); index++ ){
 			if( plugid < plugs[index]->GetFunctionCode() ){
 				plugs.insert( plugs.begin() + index, plug );
 				break;
@@ -136,7 +136,7 @@ bool CJackManager::UnRegisterPlug( std::wstring pszJack, CPlug* plug )
 		break;
 	}
 
-	for( unsigned int index=0; index<m_Jacks[ ppId ].plugs.size(); index++ ){
+	for( size_t index=0; index<m_Jacks[ ppId ].plugs.size(); index++ ){
 		if( m_Jacks[ ppId ].plugs[index] == plug ){
 			m_Jacks[ ppId ].plugs.erase( m_Jacks[ ppId ].plugs.begin() + index );
 			break;
@@ -149,10 +149,9 @@ bool CJackManager::UnRegisterPlug( std::wstring pszJack, CPlug* plug )
 //ジャック名をジャック番号に変換する
 EJack CJackManager::GetJackFromName( std::wstring sName )
 {
-	unsigned int i;
 	const WCHAR* szName = sName.c_str();
 
-	for( i=0; i < m_Jacks.size(); i++ ){
+	for( size_t i=0; i < m_Jacks.size(); i++ ){
 		if( wcscmp( m_Jacks[i].szName, szName ) == 0 ){
 			return m_Jacks[i].ppId;
 		}
@@ -193,7 +192,7 @@ EFunctionCode CJackManager::GetCommandCode( int index ) const
 {
 	CPlug::Array commands = m_Jacks[ PP_COMMAND ].plugs;
 
-	if( (unsigned int)index < commands.size() ){
+	if( static_cast<size_t>(index) < commands.size() ){
 		return ( commands[index] )->GetFunctionCode();
 	}else{
 		return F_INVALID;

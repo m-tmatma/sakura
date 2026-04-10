@@ -68,11 +68,10 @@ bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfil
 // @date 2011.08.20 syat Plugセクションも複数定義可能とする
 bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
-	unsigned int i;
 	std::vector<JackDef> jacks = CJackManager::getInstance()->GetJackDef();
 	wchar_t szIndex[8];
 
-	for( i=0; i<jacks.size(); i++ ){
+	for( size_t i=0; i<jacks.size(); i++ ){
 		const std::wstring sKey = jacks[i].szName;
 		for( int nCount = 0; nCount < MAX_PLUG_CMD; nCount++ ){
 			if( nCount == 0 ){
