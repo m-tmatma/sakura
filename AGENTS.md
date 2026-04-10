@@ -41,11 +41,12 @@
 
 - [ ] 巨大行・巨大ファイル（**2GB 境界付近および超**）の回帰テストを追加または手動手順を記載する。
 - [ ] メモリ使用量・主要操作のパフォーマンスを計測し、退行がないことを確認する。
+- [x] `tests1` の **`CMemory.OverHeapMaxReq` / `CMemory.OverMaxSize`** を P0 後の `AllocBuffer` 仕様に合わせて更新（下記「テスト」）。
 
 ### 参考（現状の把握）
 
 - `CLogicInt` / `CLayoutInt` は通常 **`ssize_t`**（`sakura_core/basis/SakuraBasis.h`）。
-- **P0 適用後**は `CMemory` の長さが **`size_t`**、`AllocBuffer` は **`INT_MAX` 未満のみ確保**していた制限を撤廃（オーバーフロー時はメッセージして `Reset`）。
+- **P0 適用後**は `CMemory` の長さが **`size_t`**、`AllocBuffer` は旧来の **`INT_MAX` 未満のみ**といった制限を撤廃。代わりに **`nNewDataLen > SIZE_MAX - sizeof(wchar_t) - 7`** のときは加算オーバーフロー防止のため確保せずメッセージして `Reset`。
 
 ### 実装メモ（P0 付随変更）
 
@@ -62,4 +63,11 @@
 - **`CViewCommander_Search`**: `CLayoutInt::GetValue()` 前提を **`static_cast<ssize_t>(GetLineCount())`** に変更。
 - **`CNativeW::Compare`**: 比較長を `int` に落とさず **`ssize_t` / `size_t`** で `wmemcmp`し、長さ差は **-1/0/1** で返す。
 - **`CGrepAgent`**: 複数パス走査のループ変数を **`(int)vPaths.size()` から `size_t` インデックス**に変更。
-- x64 **Release ビルド成功**（`build-sln.bat x64 Release`）。
+- **GoogleTest（CMake / MSBuild）**: `src/test/cmake/GoogleTest.cmake` で MSVC 時 **`CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>`** を明示（Debug の gtest/gmock が `/MTd` になり **`tests1` と LNK2038 にならない**）。**`CMAKE_INSTALL_LIBDIR` は `lib` に固定**（`-D` にジェネレータ式を書くと install が失敗するため）。`src/test/msbuild/googletest.props` は Debug/Release とも **`$(CMakeToolsBuildDir)lib`** を参照（`cmake --install` の `--config` と対応。**`lib` 内の `.lib` は最後に install した構成**になるので、Debug/Release を切り替えたら必要に応じて再ビルドで `BuildGoogleTest` を走らせる）。
+- x64 **Release / Debug ビルド成功**（`build-sln.bat x64 Release` / `x64 Debug`）。
+
+#### テスト（`test-cmemory.cpp`）
+
+- **`CMemory.OverMaxSize`**: 旧仕様「`INT_MAX` を超えると必ず失敗」は P0 後は成立しない（64bit プロセスでは `INT_MAX+1` バイトの確保が**あり得る**）。**`AllocBuffer` が拒否する最小の `nNewDataLen`** として `SIZE_MAX - sizeof(wchar_t) - 6` を使い、**`GetRawPtr() == nullptr`** を検証する。
+- **`CMemory.OverHeapMaxReq`**: **`_HEAP_MAXREQ` を `unsigned` に落として +1** する旧テストは x64 で意図と異なる。上記と同じ **加算オーバーフロー防止境界**で検証する。
+- 手元の XML 出力例: `.\tests1.exe --gtest_output=xml:tests1.exe-googletest-x64-Debug.xml`（作業ディレクトリは `x64\Debug` など `tests1.exe` がある場所）。
