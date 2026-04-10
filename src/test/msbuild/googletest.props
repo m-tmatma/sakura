@@ -5,8 +5,8 @@
     <GoogleTestBuildPath>$([MSBuild]::NormalizePath('$(GoogleTestBuildDir)', '.'))</GoogleTestBuildPath>
     <GoogleTestInstallDir>$(CMakeToolsBuildDir)</GoogleTestInstallDir>
     <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
-    <!-- gtest/gmock は cmake install が Debug/Release とも lib に配置。BuildGoogleTest が Configuration に合わせて install する。 -->
-    <GoogleTestLibInstallDir>$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
+    <!-- gtest/gmock: GoogleTest.cmake が lib/$(Configuration)/ にもコピー。install 直後の lib/ だけだと構成が混線し LNK2038 になる。 -->
+    <GoogleTestLibInstallDir>$(GoogleTestInstallDir)lib\$(Configuration)</GoogleTestLibInstallDir>
     <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
     <GTestLibName>gtest.lib</GTestLibName>
     <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>

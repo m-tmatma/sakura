@@ -67,6 +67,11 @@ add_custom_command(
   OUTPUT "${GTEST_PC}"
   COMMAND ${CMAKE_COMMAND} --build "${GTEST_BUILD_DIR}" --config $<CONFIG>
   COMMAND ${CMAKE_COMMAND} --install "${GTEST_BUILD_DIR}" --config $<CONFIG>
+  # install は常に CMAKE_INSTALL_PREFIX/lib に上書きするため、MSBuild が Debug/Release を切替えても
+  # 直前にビルドした構成の .lib が残る。tests1 は $(Configuration) 別フォルダを参照する。
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/lib/$<CONFIG>"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/lib/gtest.lib" "${CMAKE_BINARY_DIR}/lib/$<CONFIG>/gtest.lib"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/lib/gmock.lib" "${CMAKE_BINARY_DIR}/lib/$<CONFIG>/gmock.lib"
   DEPENDS configure_gtest
   COMMENT "Building GoogleTest Library"
 )
