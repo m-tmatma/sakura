@@ -1470,11 +1470,13 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 	::wcsncpy_s(szKeyName, L"nInts", _TRUNCATE);
 	if( cProfile.IsReadingMode() ){
 		if( cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData)) ){
+			int nMaxLineKetasTmp = 0;
+			int nTabSpaceTmp = 0;
 			::swscanf_s(szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%hhu,%d,%hhu,%d,%d",
 				&types.m_nIdx,
-				&types.m_nMaxLineKetas,
+				&nMaxLineKetasTmp,
 				&types.m_nColumnSpace,
-				&types.m_nTabSpace,
+				&nTabSpaceTmp,
 				&types.m_nKeyWordSetIdx[0],
 				&types.m_nKeyWordSetIdx[1],
 				&types.m_nStringType,
@@ -1484,6 +1486,8 @@ void CShareData_IO::ShareData_IO_Type_One( CDataProfile& cProfile, STypeConfig& 
 				&types.m_nCurrentPrintSetting,
 				&types.m_nTsvMode
 			);
+			types.m_nMaxLineKetas = CKetaXInt(nMaxLineKetasTmp);
+			types.m_nTabSpace = CKetaXInt(nTabSpaceTmp);
 		}
 		// 折り返し幅の最小値は10。少なくとも４ないとハングアップする。 // 20050818 aroka
 		if( types.m_nMaxLineKetas < CKetaXInt(MINLINEKETAS) ){

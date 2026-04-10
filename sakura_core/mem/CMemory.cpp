@@ -21,6 +21,7 @@
 #include "mem/CMemory.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdlib>
 
 #include "_main/global.h"
@@ -125,7 +126,19 @@ void CMemory::AllocBuffer( size_t nNewDataLen )
 {
 	// 確保サイズは 8byte 単位に切り上げる
 	// また、必要サイズは 2byte 多く見積もっておく(終端L'\0'を入れるため)
-	size_t nAllocSize = ((nNewDataLen + sizeof(wchar_t)) + 7) & (~7);
+	if( nNewDataLen > SIZE_MAX - sizeof( wchar_t ) - 7 ){
+		TopCustomMessage(
+			nullptr,
+			MB_OKCANCEL | MB_ICONQUESTION,
+			LS(STR_ERR_DLGMEM1),
+			nNewDataLen
+		);
+		if( m_pRawData != nullptr ){
+			Reset();
+		}
+		return;
+	}
+	const size_t nAllocSize = ((nNewDataLen + sizeof(wchar_t)) + 7) & (~static_cast<size_t>(7));
 
 	// 既に必要サイズを確保できている場合、直ちに抜ける
 	if( nAllocSize < m_nDataBufSize ){
@@ -139,15 +152,15 @@ void CMemory::AllocBuffer( size_t nNewDataLen )
 
 	void* pAllocated = nullptr;
 
-	if( m_nDataBufSize == 0 && nAllocSize <= INT_MAX ){
+	if( m_nDataBufSize == 0 ){
 		pAllocated = ::malloc( nAllocSize );
-	}else if( nAllocSize <= INT_MAX ){
+	}else{
 		pAllocated = ::realloc( m_pRawData, nAllocSize );
 	}
 
 	if( pAllocated != nullptr ){
 		m_pRawData = static_cast<std::byte*>(pAllocated);
-		m_nDataBufSize = static_cast<decltype(m_nDataBufSize)>(nAllocSize);
+		m_nDataBufSize = nAllocSize;
 	}else{
 		// "CMemory::AllocBuffer(nNewDataLen==%d)\nメモリ確保に失敗しました。\n"
 		TopCustomMessage(
@@ -208,6 +221,9 @@ void CMemory::SetRawDataHoldBuffer( const CMemory& cmemData )
 void CMemory::AppendRawData( const void* pData, size_t nDataLen )
 {
 	// メモリが足りなければ確保する
+	if( m_nRawLen > SIZE_MAX - nDataLen - sizeof(wchar_t) ){
+		return;
+	}
 	if( m_nDataBufSize <= m_nRawLen + nDataLen + sizeof(wchar_t) ){
 		AllocBuffer( m_nRawLen + nDataLen );
 	}
@@ -236,7 +252,7 @@ void CMemory::_AppendSz( std::string_view str )
 void CMemory::_SetRawLength( size_t nLength )
 {
 	if( m_pRawData != nullptr && nLength + sizeof(wchar_t) <= m_nDataBufSize ){
-		m_nRawLen = static_cast<decltype(m_nRawLen)>(nLength);
+		m_nRawLen = nLength;
 		wchar_t chNul = L'\0'; //ワイド文字のNUL終端を付加する
 		::memcpy( &m_pRawData[m_nRawLen], &chNul, sizeof(wchar_t) );
 	}

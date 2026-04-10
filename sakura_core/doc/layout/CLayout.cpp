@@ -65,14 +65,14 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nSt
 	CLayoutInt nRet = nStartOffset;
 	if(this->GetLogicOffset()){
 		const wchar_t* pLine = this->m_pCDocLine->GetPtr();
-		int nLineLen = this->m_pCDocLine->GetLengthWithEOL();
-		const int nOffset = GetLogicOffset();
-		for(int i = (Int)nStartPos; i < nOffset; i++){
+		const CLogicInt nLineLen = this->m_pCDocLine->GetLengthWithEOL();
+		const CLogicInt nOffset = GetLogicOffset();
+		for( CLogicInt i = nStartPos; i < nOffset; ++i ){
 			if(pLine[i]==WCODE::TAB || pLine[i] == L','){
 				nRet+=cLayoutMgr.GetActualTsvSpace(nRet, pLine[i]);
 			}
 			else{
-				nRet+=CNativeW::GetKetaOfChar(pLine,nLineLen,i);
+				nRet+=CNativeW::GetKetaOfChar(pLine, static_cast<size_t>(nLineLen), static_cast<size_t>(i));
 			}
 		}
 	}

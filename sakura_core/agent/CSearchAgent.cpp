@@ -959,8 +959,9 @@ void CSearchAgent::ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol )
 				// 2002/2/10 aroka CMemory変更 何度も GetLength,GetPtr をよばない。
 				ssize_t nNewLen = nLineLen - nWorkLen + nInsLen;
 				ssize_t nAfterLen = nLineLen - (nWorkPos + nWorkLen);
-				if( pCDocLine->_GetDocLineData().capacity() * 9 / 10 < nNewLen
-					&& nNewLen <= pCDocLine->_GetDocLineData().capacity() ){
+				const size_t nCap = pCDocLine->_GetDocLineData().capacity();
+				if( nCap * 9 / 10 < static_cast<size_t>(nNewLen)
+					&& static_cast<size_t>(nNewLen) <= nCap ){
 					CNativeW& ref = pCDocLine->_GetDocLineData();
 					WCHAR* pBuf = const_cast<WCHAR*>(ref.GetStringPtr());
 					if( nWorkLen != nInsLen ){
@@ -1112,9 +1113,12 @@ prev_line:;
 			else{
 				/* 挿入データを行終端で区切った行数カウンタ */
 				if( 0 == nCount && !bInsertLineMode ){
-					if( cmemCurLine.GetStringLength() - cPrevLine.GetLength() < cmemCurLine.GetStringLength() / 100
-						&& cPrevLine.GetLength() + cmemLine.GetStringLength() <= cmemCurLine.GetStringLength()
-						&& static_cast<size_t>(cmemCurLine.capacity()) / 2 <= static_cast<size_t>(cPrevLine.GetLength()) + static_cast<size_t>(cmemLine.GetStringLength()) ){
+					const CLogicInt curStrLen = cmemCurLine.GetStringLength();
+					const CLogicInt prevLen = static_cast<CLogicInt>(cPrevLine.GetLength());
+					const CLogicInt insLen = cmemLine.GetStringLength();
+					if( curStrLen - prevLen < curStrLen / 100
+						&& prevLen + insLen <= curStrLen
+						&& cmemCurLine.capacity() / 2 <= static_cast<size_t>(prevLen + insLen) ){
 						// 行のうちNextになるのが1%以下で行が短くなるなら再利用する(長い一行を分割する場合の最適化)
 						CNativeW tmp; // Nextを退避
 						tmp.SetString(cNextLine.GetPtr(), cNextLine.GetLength());

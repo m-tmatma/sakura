@@ -1047,7 +1047,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			if ( bBeginBoxSelect )
 			{
 				// 検索時の行数を記憶
-				lineCnt = rLayoutMgr.GetLineCount().GetValue();
+				lineCnt = static_cast<ssize_t>(rLayoutMgr.GetLineCount());
 				// 前回と今回の検索マッチ終端(ptOld, ptNew)と今回のマッチ先頭(ptNewFrom)
 				CLayoutPoint ptNew     = GetSelect().GetTo();
 				CLayoutPoint ptNewFrom = GetSelect().GetFrom();
@@ -1399,7 +1399,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			if( bBeginBoxSelect )
 			{
 				colDif += GetCaret().GetCaretLogicPos().x - Int(ptOld.x); // 矩形でもLogic
-				linDif += (Int)(rLayoutMgr.GetLineCount().GetValue() - lineCnt);
+				linDif += static_cast<int>(static_cast<ssize_t>(rLayoutMgr.GetLineCount()) - lineCnt);
 			}
 			else{
 				// 置換前の検索文字列の最終位置は ptOld

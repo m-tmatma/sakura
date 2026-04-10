@@ -294,7 +294,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	dwReconvTextLen     = nReconvLen;
 	dwReconvTextInsLen  = dwReconvTextLen + nCompInsStr;                 //reconv文字列長。文字単位。
 	cbReconvLenWithNull = (dwReconvTextInsLen + 1) * sizeof(wchar_t);    //reconvデータ長。バイト単位。
-	dwCompStrOffset     = (Int)(ptSelect.x - nReconvIndex) * sizeof(wchar_t);    //compオフセット。バイト単位。
+	dwCompStrOffset     = static_cast<DWORD>((Int)(ptSelect.x - nReconvIndex) * sizeof(wchar_t));    //compオフセット。バイト単位。
 	dwCompStrLen        = nSelectedLen + nCompInsStr;                            //comp文字列長。文字単位。
 	pszReconv           = reinterpret_cast<const void*>(pLine + nReconvIndex);   //reconv文字列へのポインタ。
 	pszInsBuffer        = pszCompInsStr;

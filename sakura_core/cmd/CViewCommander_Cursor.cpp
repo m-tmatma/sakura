@@ -104,7 +104,7 @@ int CViewCommander::Command_UP( bool bSelect, bool bRepeat, LPARAM lparam1 )
 			i = -1 * GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
 		}
 		GetCaret().Cursor_UPDOWN( i, bSelect );
-		nRepeat = -1 * (Int)i;
+		nRepeat = static_cast<int>(-1 * (Int)i);
 	}
 	else{
 		++nRepeat;
@@ -133,7 +133,7 @@ int CViewCommander::Command_DOWN( bool bSelect, bool bRepeat )
 			i = GetDllShareData().m_Common.m_sGeneral.m_nRepeatedScrollLineNum;	/* キーリピート時のスクロール行数 */
 		}
 		GetCaret().Cursor_UPDOWN( i, bSelect );
-		nRepeat = (Int)i;
+		nRepeat = static_cast<int>((Int)i);
 	}else{
 		++nRepeat;
 		if( GetCaret().Cursor_UPDOWN(CLayoutInt(1),bSelect)!=0 && bRepeat ){

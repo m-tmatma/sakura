@@ -174,7 +174,7 @@ void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayou
 		}
 		int fontNo = WCODE::GetFontNo(*szText);
 		int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
-		int nDx[1] = {(Int)width};
+		int nDx[1] = { static_cast<int>((Int)width) };
 
 		//描画
 		::ExtTextOut(

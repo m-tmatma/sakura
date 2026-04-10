@@ -6,14 +6,14 @@
 
 ### P0: メモリバッファ層
 
-- [ ] `CMemory`: `m_nRawLen` / `m_nDataBufSize` を 32bit `unsigned` から **`size_t`（または同等の 64bit 幅）**へ変更し、巨大バッファを正しく表現できるようにする。
-- [ ] `CMemory::AllocBuffer`: **`nAllocSize <= INT_MAX` 制限**と `malloc` / `realloc` の扱いを見直し、64bit プロセスで実用的な上限まで確保できるようにする（失敗時のメッセージ・リセット挙動も確認）。
-- [ ] `CStringRef`: `m_nDataLen` が **`unsigned`（32bit）**のため、巨大データの参照長を **`size_t` 等**に揃える。
+- [x] `CMemory`: `m_nRawLen` / `m_nDataBufSize` を 32bit `unsigned` から **`size_t`（または同等の 64bit 幅）**へ変更し、巨大バッファを正しく表現できるようにする。
+- [x] `CMemory::AllocBuffer`: **`nAllocSize <= INT_MAX` 制限**と `malloc` / `realloc` の扱いを見直し、64bit プロセスで実用的な上限まで確保できるようにする（失敗時のメッセージ・リセット挙動も確認）。
+- [x] `CStringRef`: `m_nDataLen` が **`unsigned`（32bit）**のため、巨大データの参照長を **`size_t` 等**に揃える。
 
 ### P1: インデックス・ループの一貫性
 
-- [ ] 行・文字位置のループを **`int` から `CLogicInt` / `size_t` / 方針で決めた単一のインデックス型**へ置換する（例: `CLayout::CalcLayoutOffset` の `int nLineLen` / `for (int i = ...)` など）。
-- [ ] `static_cast<int>(長さ)` や **`GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。
+- [x] `CLayout::CalcLayoutOffset`（`CLayout.cpp`）— 行長・ループを `CLogicInt` / `size_t` に。
+- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。
 - [ ] **`Int` / `ssize_t` / `CLogicInt` の使い分け**をドキュメント化し、新規コードの基準を揃える。
 
 ### P2: 座標・API 境界
@@ -33,4 +33,19 @@
 ### 参考（現状の把握）
 
 - `CLogicInt` / `CLayoutInt` は通常 **`ssize_t`**（`sakura_core/basis/SakuraBasis.h`）。
-- 一方 **`CMemory` の `INT_MAX` ガードと `unsigned` メンバ**が、実質的な上限の主因になりうる（`sakura_core/mem/CMemory.cpp` / `CMemory.h`）。
+- **P0 適用後**は `CMemory` の長さが **`size_t`**、`AllocBuffer` は **`INT_MAX` 未満のみ確保**していた制限を撤廃（オーバーフロー時はメッセージして `Reset`）。
+
+### 実装メモ（P0 付随変更）
+
+- `CMemory::GetRawLength` / `CMemory::capacity` / `CNativeW::capacity` を **`size_t`** に。
+- `CStringRef::m_nDataLen` は **`size_t`** のまま、**`GetLength()` の戻り値は `ssize_t`**（既存の比較・算術との互換のため。極端に長い行では縮小の可能性あり）。
+- `AppendRawData` で **`m_nRawLen + nDataLen` オーバーフロー**時は追加をスキップ。
+- `CSearchAgent.cpp`: `capacity()` が `size_t` になったことに合わせて比較を修正。
+- **`CStrictPoint`**: 非 `USE_STRICT_INT` 時も **`IntType` 2 引数コンストラクタ**（`CCommandLine.h` の `CLayoutPoint` 返却などの縮小変換エラー回避）。
+- **`CRuler` / `CTextDrawer`**: `t_max` / `t_min` / `std::max` の型不一致を修正。
+- **`StdAfx.h`**: MSVC で **`C4244` を一時的に無効化**（`CLogicInt`/`Int` とレガシー `int` の混在が多数のため。段階的に型を揃えたら外す）。
+- **`CStrictPoint`**: 非 `USE_STRICT_INT` では **`(int,int)` コンストラクタを置かず `IntType` のみ**（曖昧性解消）。`GetPOINT()` は **`LONG` へ `static_cast`**。
+- **`CShareData_IO` の `swscanf_s`**: `CKetaXInt` 向けに **`int` 一時変数**へ読み取り後代入。
+- **`CType_Cpp` の `SCommentBlock`**: ループ変数 `ssize_t n` と `CLogicInt` 混在を **`static_cast<int>`** で集約。
+- **`CViewCommander_Search`**: `CLayoutInt::GetValue()` 前提を **`static_cast<ssize_t>(GetLineCount())`** に変更。
+- x64 **Release ビルド成功**（`build-sln.bat x64 Release`）。

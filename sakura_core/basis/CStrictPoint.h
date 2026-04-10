@@ -34,9 +34,12 @@ public:
 	using SUPER::y;
 	//コンストラクタ・デストラクタ
 	CStrictPoint(){ x=SuperIntType(0); y=SuperIntType(0); }
-	CStrictPoint(int _x,int _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
 #ifdef USE_STRICT_INT
+	CStrictPoint(int _x,int _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
 	CStrictPoint(IntType _x,IntType _y){ x=SuperIntType(_x); y=SuperIntType(_y); }
+#else
+	//! IntType のみとする（int と IntType の二重オーバーロードは (0, CLogicInt) 等で曖昧になる）
+	CStrictPoint(IntType _x, IntType _y){ x = SuperIntType(_x); y = SuperIntType(_y); }
 #endif
 	CStrictPoint(const SUPER& rhs){ x=rhs.x; y=rhs.y; }
 
@@ -94,7 +97,7 @@ public:
 	//特殊
 	POINT GetPOINT() const
 	{
-		POINT pt={(Int)x,(Int)y};
+		POINT pt = { static_cast<LONG>((Int)x), static_cast<LONG>((Int)y) };
 		return pt;
 	}
 };

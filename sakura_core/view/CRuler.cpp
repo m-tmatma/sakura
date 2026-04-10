@@ -142,13 +142,13 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	//	2005.11.10 Moca 1dot足りない
 	CLayoutXInt	nMaxLineColum = m_pEditDoc->m_cLayoutMgr.GetMaxLineLayout();
 	CKetaXInt	nMaxLineKetas = m_pEditDoc->m_cLayoutMgr.GetMaxLineKetas();
-	int nToX = m_pEditView->GetTextArea().GetAreaLeft() + m_pEditView->GetTextMetrics().GetCharPxWidth(nMaxLineColum - m_pEditView->GetTextArea().GetViewLeftCol()) + 1;
+	int nToX = m_pEditView->GetTextArea().GetAreaLeft() + static_cast<int>(m_pEditView->GetTextMetrics().GetCharPxWidth(nMaxLineColum - m_pEditView->GetTextArea().GetViewLeftCol())) + 1;
 	if( nToX > m_pEditView->GetTextArea().GetAreaRight() ){
 		nToX = m_pEditView->GetTextArea().GetAreaRight();
 	}
 
 	//目盛を描画
-	const int oneColumn = (Int)m_pEditView->GetTextMetrics().GetLayoutXDefault();
+	const int oneColumn = static_cast<int>(m_pEditView->GetTextMetrics().GetLayoutXDefault());
 	CLayoutXInt i  = m_pEditView->GetTextArea().GetViewLeftCol();
 	CKetaXInt keta = CKetaXInt(((Int)i) / oneColumn);
 	const int dx = m_pEditView->GetTextMetrics().GetHankakuDx(); // PPでもDx
@@ -162,7 +162,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 
 	// 目盛り線を1本ずつ描画するのではなく後述する PolyPolyline でまとめて描画を行う
 	const int nWidth = (Int)(m_pEditView->GetTextArea().GetRightCol() - i);
-	const size_t nLinesToDraw = 1 + std::min<int>((nWidth + 1 + 1 + oneColumn - 1) / oneColumn, std::max(nMaxLineKetas - keta, 0) + 1);
+	const size_t nLinesToDraw = 1 + std::min<int>((nWidth + 1 + 1 + oneColumn - 1) / oneColumn, static_cast<int>(std::max<CKetaXInt>(nMaxLineKetas - keta, CKetaXInt(0)) + CKetaXInt(1)));
 	auto& apt = m_apt;
 	auto& asz = m_asz;
 	apt.resize(nLinesToDraw * 2);

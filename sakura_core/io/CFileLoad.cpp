@@ -1,4 +1,4 @@
-﻿﻿/*!	@file
+﻿/*!	@file
 	@brief ファイル読み込みクラス
 
 	@author Moca
@@ -257,7 +257,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	for( int k = 0; k < int(std::size(m_memEols)); k++ ){
 		if( 0 != m_memEols[k].GetRawLength() ){
 			bEolEx = true;
-			nMaxEolLen = t_max(nMaxEolLen, m_memEols[k].GetRawLength());
+			nMaxEolLen = static_cast<ssize_t>(t_max(static_cast<size_t>(nMaxEolLen), m_memEols[k].GetRawLength()));
 		}
 	}
 	m_bEolEx = bEolEx;

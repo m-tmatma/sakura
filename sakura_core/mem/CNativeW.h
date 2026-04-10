@@ -24,6 +24,7 @@ public:
 	explicit CStringRef( const CNativeW& cmem ) noexcept;
 
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
+	//! 文字数。内部は size_t だが、既存コードの比較・算術は ssize_t 前提のため戻り値は ssize_t（極端に長い行では縮小の可能性あり）
 	[[nodiscard]] ssize_t GetLength() const noexcept { return static_cast<ssize_t>(m_nDataLen); }
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
@@ -31,7 +32,7 @@ public:
 
 private:
 	const wchar_t*	m_pData = nullptr;
-	unsigned		m_nDataLen = 0;
+	size_t			m_nDataLen = 0;
 };
 
 // グローバル演算子の前方宣言
@@ -111,7 +112,7 @@ public:
 		CMemory::swap( left );
 	}
 	//! メモリ再確保を行わずに格納できる最大文字数を求める
-	[[nodiscard]] ssize_t capacity() const noexcept {
+	[[nodiscard]] size_t capacity() const noexcept {
 		return CMemory::capacity() / sizeof(wchar_t);
 	}
 

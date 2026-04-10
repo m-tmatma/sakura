@@ -172,8 +172,8 @@ void CTextDrawer::DispVerticalLines(
 		nRightCol = nWrapLayout;
 	}
 	const int nPosXOffset = GetDllShareData().m_Common.m_sWindow.m_nVertLineOffset + pView->GetTextArea().GetAreaLeft();
-	const int nPosXLeft   = t_max(pView->GetTextMetrics().GetCharPxWidth(pView->GetTextArea().GetAreaLeft() + (nLeftCol  - nViewLeftCol)), pView->GetTextArea().GetAreaLeft() );
-	const int nPosXRight  = t_min(pView->GetTextMetrics().GetCharPxWidth(pView->GetTextArea().GetAreaLeft() + (nRightCol - nViewLeftCol)), pView->GetTextArea().GetAreaRight() );
+	const int nPosXLeft   = static_cast<int>(t_max<ssize_t>(pView->GetTextMetrics().GetCharPxWidth(CLayoutXInt(static_cast<CLayoutXInt>(pView->GetTextArea().GetAreaLeft()) + (nLeftCol - nViewLeftCol))), static_cast<ssize_t>(pView->GetTextArea().GetAreaLeft())));
+	const int nPosXRight  = static_cast<int>(t_min<ssize_t>(pView->GetTextMetrics().GetCharPxWidth(CLayoutXInt(static_cast<CLayoutXInt>(pView->GetTextArea().GetAreaLeft()) + (nRightCol - nViewLeftCol))), static_cast<ssize_t>(pView->GetTextArea().GetAreaRight())));
 	const int nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	bool bOddLine = ((((nLineHeight % 2) ? (Int)pView->GetTextArea().GetViewTopLine() : Int(0)) + pView->GetTextArea().GetAreaTop() + nTop) % 2 == 1);
 

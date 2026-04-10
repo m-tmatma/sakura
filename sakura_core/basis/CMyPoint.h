@@ -75,8 +75,8 @@ public:
 template <class POINT_T>
 inline int PointCompare(const POINT_T& pt1,const POINT_T& pt2)
 {
-	if(pt1.y!=pt2.y)return (Int)(pt1.y-pt2.y);
-	return (Int)(pt1.x-pt2.x);
+	if(pt1.y!=pt2.y)return static_cast<int>((Int)(pt1.y-pt2.y));
+	return static_cast<int>((Int)(pt1.x-pt2.x));
 }
 
 //! 2点を対角とする矩形を求める
@@ -88,18 +88,18 @@ inline void TwoPointToRect(
 )
 {
 	if( pt1.y < pt2.y ){
-		prcRect->top	= (Int)pt1.y;
-		prcRect->bottom	= (Int)pt2.y;
+		prcRect->top	= static_cast<LONG>(pt1.y);
+		prcRect->bottom	= static_cast<LONG>(pt2.y);
 	}else{
-		prcRect->top	= (Int)pt2.y;
-		prcRect->bottom	= (Int)pt1.y;
+		prcRect->top	= static_cast<LONG>(pt2.y);
+		prcRect->bottom	= static_cast<LONG>(pt1.y);
 	}
 	if( pt1.x < pt2.x ){
-		prcRect->left	= (Int)pt1.x;
-		prcRect->right	= (Int)pt2.x;
+		prcRect->left	= static_cast<LONG>(pt1.x);
+		prcRect->right	= static_cast<LONG>(pt2.x);
 	}else{
-		prcRect->left	= (Int)pt2.x;
-		prcRect->right	= (Int)pt1.x;
+		prcRect->left	= static_cast<LONG>(pt2.x);
+		prcRect->right	= static_cast<LONG>(pt1.x);
 	}
 }
 #endif /* SAKURA_CMYPOINT_267964EB_3FB3_4AC3_AA75_58B756396229_H_ */

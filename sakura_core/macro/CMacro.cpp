@@ -2159,7 +2159,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 					}else{
 						nPosX += CNativeW::GetKetaOfChar(pLine, nLen, i);
 					}
-					i += t_max(1, CNativeW::GetSizeOfChar(pLine, nLen, i));
+					i += t_max<CLogicInt>(CLogicInt(1), CNativeW::GetSizeOfChar(pLine, nLen, i));
 				}
 				nPosX -=  varCopy2.Data.lVal - 1;
 				Wrap( &Result )->Receive( nPosX );

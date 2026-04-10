@@ -208,5 +208,10 @@ typedef int ssize_t;
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"
 
+// CLogicInt / ssize_t とレガシー int の混在による C4244（/WX でエラー）。段階的に型を揃える。
+#if defined(_MSC_VER)
+#pragma warning(disable:4244)
+#endif
+
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ は前行の直前に追加の宣言を挿入します。

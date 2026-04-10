@@ -424,7 +424,10 @@ CColor3Setting CEditView::GetColorIndex(
 
 	const CLayout* pcLayoutNext = pcLayoutLineFirst->GetNextLayout();
 	CLayoutYInt nLineNumScan = nLineNumFirst;
-	ssize_t nPosTo = pcLayout->GetLogicOffset() + t_min(nIndex, pcLayout->GetLengthWithEOL() - 1);
+	ssize_t nPosTo = static_cast<ssize_t>(
+		pcLayout->GetLogicOffset()
+		+ t_min<CLogicInt>(CLogicInt(nIndex), pcLayout->GetLengthWithEOL() - CLogicInt(1))
+	);
 	while(pInfo->m_nPosInLogic <= nPosTo){
 		if( bPrev && pInfo->m_nPosInLogic == nPosTo )
 			break;
