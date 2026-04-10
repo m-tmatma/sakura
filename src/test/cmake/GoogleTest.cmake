@@ -54,7 +54,7 @@ add_custom_command(
     -DBUILD_GMOCK=ON
     -Dgtest_build_tests=OFF
     -Dgtest_build_samples=OFF
-  DEPENDS fetch_gtest_source_files
+  DEPENDS fetch_gtest_source_files "${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake"
   COMMENT "Configure GoogleTest Library"
 )
 
