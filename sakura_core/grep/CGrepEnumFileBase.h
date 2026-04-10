@@ -98,7 +98,7 @@ public:
 		int found = 0;
 
 		const auto cchBaseFolder = lpBaseFolder ? wcsnlen_s(lpBaseFolder, 4096 - 1) : 0; // FIXME: パス長の上限は暫定値。
-		for( int i = 0; i < (int)vecKeys.size(); i++ ){
+		for( size_t i = 0; i < vecKeys.size(); ++i ){
 			const auto baseLen = cchBaseFolder;
 			std::filesystem::path fileNamePattern{ lpBaseFolder };
 			fileNamePattern /= vecKeys[i];

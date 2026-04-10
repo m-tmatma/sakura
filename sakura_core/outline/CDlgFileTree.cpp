@@ -734,7 +734,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 						htiInsert = TVI_LAST;
 					}
 					HTREEITEM htiItemFirst = nullptr;
-					for( int i = 0; i < (int)aFileNames.size(); i++ ){
+					for( size_t i = 0; i < aFileNames.size(); ++i ){
 						CNativeW cmemFile = aFileNames[i].c_str();
 						cmemFile.Replace(L"%", L"%%");
 						SFileTreeItem item;

@@ -1083,7 +1083,7 @@ bool CEditView::DrawLayoutLine(SColorStrategyInfo* pInfo)
 			nPosLength = nPosInLogic - nPosBgn;
 			//1文字情報取得
 			CFigure& cFigure = pcFigureManager->GetFigure(&cLineStr.GetPtr()[nPosInLogic],
-				static_cast<int>(cLineStr.GetLength() - nPosInLogic));
+				cLineStr.GetLength() - nPosInLogic);
 			FigureRenderType nextRenderType = CFigure_Text::RenderType_None;
 			bool is_text = (typeid(cFigure) == typeid(CFigure_Text));
 			if (is_text) {

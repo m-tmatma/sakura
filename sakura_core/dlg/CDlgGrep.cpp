@@ -457,7 +457,7 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
 					szFolder[0] = L'\0';
-					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
+					for( size_t i = 0; i < vPaths.size(); ++i ){
 						WCHAR szFolderItem[nMaxPath];
 						::wcsncpy_s(szFolderItem, vPaths[i].c_str(), _TRUNCATE);
 						if( wcschr( szFolderItem, L';' ) ){
@@ -881,7 +881,7 @@ int CDlgGrep::GetData( void )
 		const int nMaxPath = MAX_GREP_PATH;
 		WCHAR szFolder[nMaxPath];
 		szFolder[0] = L'\0';
-		for( int i = 0 ; i < (int)vPaths.size(); i ++ ){
+		for( size_t i = 0; i < vPaths.size(); ++i ){
 			// 相対パス→絶対パス
 			if( !::SetCurrentDirectory( vPaths[i].c_str() ) ){
 				WarningMessage(	GetHwnd(), LS(STR_DLGGREP5) );

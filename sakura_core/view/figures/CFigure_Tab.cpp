@@ -19,7 +19,7 @@ void _DrawTabArrow( CGraphics& gr, int nPosX, int nPosY, int nWidth, int nHeight
 //                         CFigure_Tab                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Tab::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
+bool CFigure_Tab::Match(const wchar_t* pText, [[maybe_unused]] ssize_t nTextLen) const
 {
 	if( pText[0] == WCODE::TAB ){
 		return true;

@@ -15,7 +15,7 @@
 class CFigure_CtrlCode : public CFigureSpace{
 public:
 	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const override;
+	bool Match(const wchar_t* pText, ssize_t nTextLen) const override;
 
 	//action
 	bool DrawImp(SColorStrategyInfo* pInfo) override;

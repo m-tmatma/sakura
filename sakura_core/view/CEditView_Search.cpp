@@ -485,9 +485,9 @@ int CEditView::IsSearchString(
 		return 0; // 指定位置の単語と検索文字列に含まれる単語は一致しなかった。
 	}
 	else {
-		const wchar_t* pHit = CSearchAgent::SearchString(cStr.GetPtr(), static_cast<int>(cStr.GetLength()), nPos, m_sSearchPattern);
+		const wchar_t* pHit = CSearchAgent::SearchString(cStr.GetPtr(), cStr.GetLength(), nPos, m_sSearchPattern);
 		if( pHit ){
-			*pnSearchStart = int(pHit - cStr.GetPtr());
+			*pnSearchStart = CLogicInt(pHit - cStr.GetPtr());
 			*pnSearchEnd = *pnSearchStart + m_sSearchPattern.GetLen();
 			return 1;
 		}

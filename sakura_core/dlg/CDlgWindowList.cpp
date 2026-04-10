@@ -120,7 +120,7 @@ void CDlgWindowList::CommandSave()
 {
 	std::vector<HWND> aHwndList;
 	GetDataListView(aHwndList);
-	for (int i = 0; i < (int)aHwndList.size(); i++) {
+	for (size_t i = 0; i < aHwndList.size(); ++i) {
 		DWORD dwPid;
 		::GetWindowThreadProcessId(aHwndList[i], &dwPid);
 		::AllowSetForegroundWindow(dwPid);
@@ -133,7 +133,7 @@ void CDlgWindowList::CommandClose()
 {
 	std::vector<HWND> aHwndList;
 	GetDataListView(aHwndList);
-	for (int i = 0; i < (int)aHwndList.size(); i++) {
+	for (size_t i = 0; i < aHwndList.size(); ++i) {
 		DWORD dwPid;
 		::GetWindowThreadProcessId(aHwndList[i], &dwPid);
 		::AllowSetForegroundWindow(dwPid);

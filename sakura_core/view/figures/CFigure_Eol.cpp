@@ -32,7 +32,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 //                        CFigure_Eol                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Eol::Match(const wchar_t* pText, int nTextLen) const
+bool CFigure_Eol::Match(const wchar_t* pText, ssize_t nTextLen) const
 {
 	// 2014.06.18 折り返し・最終行だとDrawImpでcEol.GetLen()==0になり無限ループするので
 	// もしも行の途中に改行コードがあった場合はMatchさせない

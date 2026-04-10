@@ -13,7 +13,7 @@
 ### P1: インデックス・ループの一貫性
 
 - [x] `CLayout::CalcLayoutOffset`（`CLayout.cpp`）— 行長・ループを `CLogicInt` / `size_t` に。
-- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。（進捗例: `CNativeW::Compare`、`CGrepAgent` のパス走査ループ）
+- [ ] その他の **`int` ループ**や **`static_cast<int>(長さ)` / `GetStringLength()` / `GetLengthWithEOL()` 周りの `int` 縮小**を洗い出し、必要箇所を 64bit 安全にする。（進捗例: `CNativeW::Compare`、`CGrepAgent` のパス走査ループ。**追加分**: `CDlgGrep` / `CGrepEnumFileBase` / `CGrepEnumKeys` / `CDlgFileTree` / `CDlgWindowList` の `vector` 走査を `size_t` に。`CFigure::Match` / `CFigureManager::GetFigure` の文字列長を `ssize_t` にし描画パスの縮小を回避。`CEditView_Search`、`CColor_Quote` / `CColor_Heredoc`、`CStringRef_comp`（行ソート用）の長さ取り扱いを整理。）
 - [x] **`Int` / `ssize_t` / `CLogicInt` の使い分け**をドキュメント化し、新規コードの基準を揃える（下記「型の使い分け」）。
 
 #### 型の使い分け（新規コード・リファクタ時の目安）

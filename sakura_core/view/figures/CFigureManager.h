@@ -22,7 +22,7 @@ public:
 	//! 描画するCFigureを取得
 	//	@param	pText	対象文字列の先頭
 	//	@param	nTextLen	pTextから行末までの長さ(ただしCRLF==2)
-	CFigure& GetFigure(const wchar_t* pText, int nTextLen);
+	CFigure& GetFigure(const wchar_t* pText, ssize_t nTextLen);
 
 	// 設定変更
 	void OnChangeSetting(void);

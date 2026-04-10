@@ -279,7 +279,7 @@ ssize_t CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, ss
 {
 	int nCharChars;
 	ssize_t i;
-	const int nCompLen = static_cast<int>(cLineStr.GetLength() - nQuoteLen + 1);
+	const ssize_t nCompLen = cLineStr.GetLength() - nQuoteLen + 1;
 	const WCHAR quote1 = pszQuote[0];
 	const WCHAR* pLine = cLineStr.GetPtr();
 	for( i = nPos; i < nCompLen; i += nCharChars ){

@@ -193,7 +193,7 @@ private:
 		return;
 	}
 	void ClearEnumKeys( VGrepEnumKeys& keys ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
+		for( size_t i = 0; i < keys.size(); ++i ){
 			delete [] keys[ i ];
 		}
 		keys.clear();
@@ -209,7 +209,7 @@ private:
 	}
 
 	BOOL IsExist( VGrepEnumKeys& keys, LPCWSTR addKey ){
-		for( int i = 0; i < (int)keys.size(); i++ ){
+		for( size_t i = 0; i < keys.size(); ++i ){
 			if( wcscmp( keys[ i ], addKey ) == 0 ){
 				return TRUE;
 			}
