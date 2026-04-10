@@ -1833,25 +1833,26 @@ void CShareData_IO::ShareData_IO_KeyWords( CDataProfile& cProfile )
 		}
 	}else{
 		auto strMem = std::wstring();
-		int nSize = pCKeyWordSetMgr->m_nKeyWordSetNum;
-		for( int i = 0; i < nSize; ++i ){
-			auto_snprintf_s(szKeyName, _TRUNCATE, L"szSN[%02d]", i);
-			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pCKeyWordSetMgr->m_szSetNameArr[i]));
-			auto_snprintf_s(szKeyName, _TRUNCATE, L"nCASE[%02d]", i);
-			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_bKEYWORDCASEArr[i] );
-			auto_snprintf_s(szKeyName, _TRUNCATE, L"nKWN[%02d]", i);
-			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKeyWordNumArr[i] );
+		const int nKwSets = pCKeyWordSetMgr->m_nKeyWordSetNum;
+		for( size_t i = 0; nKwSets > 0 && i < static_cast<size_t>(nKwSets); ++i ){
+			const int ii = static_cast<int>(i);
+			auto_snprintf_s(szKeyName, _TRUNCATE, L"szSN[%02d]", ii);
+			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pCKeyWordSetMgr->m_szSetNameArr[ii]));
+			auto_snprintf_s(szKeyName, _TRUNCATE, L"nCASE[%02d]", ii);
+			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_bKEYWORDCASEArr[ii] );
+			auto_snprintf_s(szKeyName, _TRUNCATE, L"nKWN[%02d]", ii);
+			cProfile.IOProfileData( pszSecName, szKeyName, pCKeyWordSetMgr->m_nKeyWordNumArr[ii] );
 			
 			strMem.clear();
-			for( int j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[i]; ++j ){
-				strMem += pCKeyWordSetMgr->GetKeyWord( i, j );
+			for( int j = 0; j < pCKeyWordSetMgr->m_nKeyWordNumArr[ii]; ++j ){
+				strMem += pCKeyWordSetMgr->GetKeyWord( ii, j );
 				strMem += L'\t';
 			}
 			auto nMemLen = static_cast<int>(strMem.length() + 1);
 			auto pszMem = strMem.data();
-			auto_snprintf_s(szKeyName, _TRUNCATE, L"szKW[%02d].Size", i);
+			auto_snprintf_s(szKeyName, _TRUNCATE, L"szKW[%02d].Size", ii);
 			cProfile.IOProfileData( pszSecName, szKeyName, nMemLen );
-			auto_snprintf_s(szKeyName, _TRUNCATE, L"szKW[%02d]", i);
+			auto_snprintf_s(szKeyName, _TRUNCATE, L"szKW[%02d]", ii);
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(pszMem, nMemLen));
 		}
 	}

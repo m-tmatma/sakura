@@ -223,9 +223,8 @@ void CColorStrategyPool::NotifyOnStartScanLogic()
 {
 	m_pcSelectStrategy->OnStartScanLogic();
 	m_pcFoundStrategy->OnStartScanLogic();
-	const int nStrat = GetStrategyCount();
-	for(int i = 0; i < nStrat; i++ ){
-		GetStrategy(i)->OnStartScanLogic();
+	for( size_t i = 0; i < m_vStrategiesDisp.size(); ++i ){
+		m_vStrategiesDisp[i]->OnStartScanLogic();
 	}
 }
 
