@@ -201,7 +201,7 @@ void CMRUFile::Add( EditInfo* pEditInfo )
 	// すでに登録されている場合は、除外指定を無視する
 	if( -1 == m_cRecentFile.FindItemByPath( pEditInfo->m_szPath ) ){
 		const auto& except = m_pShareData->m_sHistory.m_aExceptMRU;
-		for( size_t i = 0 ; i < except.size(); i++ ){
+		for( int i = 0 ; i < except.size(); i++ ){
 			WCHAR szExceptMRU[_MAX_PATH];
 			CFileNameManager::ExpandMetaToFolder( except[i], szExceptMRU, int(std::size(szExceptMRU)) );
 			if( nullptr != wcsistr( pEditInfo->m_szPath,  szExceptMRU) ){

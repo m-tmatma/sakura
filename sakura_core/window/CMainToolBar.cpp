@@ -545,7 +545,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 			ApiWrap::Combo_DeleteString(m_hwndSearchBox, 0);
 		}
 		const auto& keys = GetDllShareData().m_sSearchKeywords.m_aSearchKeys;
-		for( size_t i = 0; i < keys.size(); i++ )
+		for( int i = 0; i < keys.size(); i++ )
 		{
 			ApiWrap::Combo_AddString( m_hwndSearchBox, keys[i] );
 		}

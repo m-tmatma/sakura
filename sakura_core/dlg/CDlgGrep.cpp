@@ -193,7 +193,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	case IDC_COMBO_TEXT:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aSearchKeys;
-			for( size_t i = 0; i < keys.size(); ++i ){
+			for( int i = 0; i < keys.size(); ++i ){
 				ApiWrap::Combo_AddString( hwndCtl, keys[i] );
 			}
 		}
@@ -201,7 +201,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	case IDC_COMBO_FILE:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aGrepFiles;
-			for( size_t i = 0; i < keys.size(); ++i ){
+			for( int i = 0; i < keys.size(); ++i ){
 				ApiWrap::Combo_AddString( hwndCtl, keys[i] );
 			}
 		}
@@ -209,7 +209,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	case IDC_COMBO_FOLDER:
 		if ( ::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aGrepFolders;
-			for( size_t i = 0; i < keys.size(); ++i ){
+			for( int i = 0; i < keys.size(); ++i ){
 				ApiWrap::Combo_AddString( hwndCtl, keys[i] );
 			}
 		}
@@ -217,7 +217,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	case IDC_COMBO_EXCLUDE_FILE:
 		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aExcludeFiles;
-			for (size_t i = 0; i < keys.size(); ++i) {
+			for (int i = 0; i < keys.size(); ++i) {
 				ApiWrap::Combo_AddString(hwndCtl, keys[i]);
 			}
 		}
@@ -225,7 +225,7 @@ BOOL CDlgGrep::OnCbnDropDown( HWND hwndCtl, int wID )
 	case IDC_COMBO_EXCLUDE_FOLDER:
 		if (::SendMessage(hwndCtl, CB_GETCOUNT, 0L, 0L) == 0) {
 			const auto& keys = m_pShareData->m_sSearchKeywords.m_aExcludeFolders;
-			for (size_t i = 0; i < keys.size(); ++i) {
+			for (int i = 0; i < keys.size(); ++i) {
 				ApiWrap::Combo_AddString(hwndCtl, keys[i]);
 			}
 		}

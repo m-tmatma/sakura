@@ -138,7 +138,7 @@ void CDlgExec::SetData( void )
 	if( 0 < commands.size() ){
 		::wcsncpy_s(m_szCommand, commands[0], _TRUNCATE);
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
-		for( size_t idx = 0; idx < commands.size(); ++idx ){
+		for( int idx = 0; idx < commands.size(); ++idx ){
 			ApiWrap::Combo_AddString( hwndCombo, commands[idx] );
 		}
 		ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
@@ -150,7 +150,7 @@ void CDlgExec::SetData( void )
 	if( 0 < curDirs.size() ){
 		::wcsncpy_s(m_szCurDir, curDirs[0], _TRUNCATE);
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
-		for( size_t idx = 0; idx < curDirs.size(); ++idx ){
+		for( int idx = 0; idx < curDirs.size(); ++idx ){
 			ApiWrap::Combo_AddString( hwndCombo, curDirs[idx] );
 		}
 		ApiWrap::Combo_SetCurSel( hwndCombo, 0 );
