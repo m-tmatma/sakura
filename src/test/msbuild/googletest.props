@@ -5,8 +5,8 @@
     <GoogleTestBuildPath>$([MSBuild]::NormalizePath('$(GoogleTestBuildDir)', '.'))</GoogleTestBuildPath>
     <GoogleTestInstallDir>$(CMakeToolsBuildDir)</GoogleTestInstallDir>
     <IncludePath>$(GoogleTestInstallDir)include;$(IncludePath)</IncludePath>
-    <GoogleTestLibInstallDir Condition="'$(Configuration)'=='Debug'">$(GoogleTestInstallDir)lib\Debug</GoogleTestLibInstallDir>
-    <GoogleTestLibInstallDir Condition="'$(Configuration)'=='Release'">$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
+    <!-- gtest/gmock は cmake install が Debug/Release とも lib に配置。BuildGoogleTest が Configuration に合わせて install する。 -->
+    <GoogleTestLibInstallDir>$(GoogleTestInstallDir)lib</GoogleTestLibInstallDir>
     <LibraryPath>$(GoogleTestLibInstallDir);$(LibraryPath)</LibraryPath>
     <GTestLibName>gtest.lib</GTestLibName>
     <GTestLibPath>$(GoogleTestLibInstallDir)\$(GTestLibName)</GTestLibPath>

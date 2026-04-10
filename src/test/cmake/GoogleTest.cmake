@@ -6,7 +6,8 @@
 
 # Define the GoogleTest's path
 set(GTEST_BUILD_DIR "${CMAKE_BINARY_DIR}/GoogleTest")
-set(GTEST_PC "${CMAKE_BINARY_DIR}/lib$<$<CONFIG:Debug>:/Debug>/pkgconfig/gtest.pc")
+# インストール先は lib に統一（-D のジェネレータ式は展開されず失敗するため）。--install の --config で Debug/Release を切り替える。
+set(GTEST_PC "${CMAKE_BINARY_DIR}/lib/pkgconfig/gtest.pc")
 
 message(STATUS "GoogleTest config: cmake -G \"${CMAKE_GENERATOR}\" ${GENERATOR_ARGS} -S \"${CMAKE_SOURCE_DIR}/externals/googletest\" -B \"${GTEST_BUILD_DIR}\" \"-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}\" ${GENERATOR_ARGS_FOR_STATIC_LIBRARY}")
 
@@ -28,6 +29,11 @@ add_custom_target(fetch_gtest_source_files
     "${CMAKE_SOURCE_DIR}/externals/googletest/.git"
 )
 
+# サクラ本体と同じ静的ランタイム（/MT と /MTd）を明示。GENERATOR_ARGS だけだと展開失敗時に MultiThreaded 固定になり LNK2038 になる。
+if(MSVC)
+  set(GTEST_MSVC_RUNTIME_LIB "-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 add_custom_command(
   OUTPUT "${GTEST_BUILD_DIR}/CMakeCache.txt"
   COMMAND ${CMAKE_COMMAND}
@@ -36,7 +42,8 @@ add_custom_command(
     -S "${CMAKE_SOURCE_DIR}/externals/googletest"
     -B "${GTEST_BUILD_DIR}"
     "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}"
-    "-DCMAKE_INSTALL_LIBDIR=lib$<$<CONFIG:Debug>:/Debug>"
+    "-DCMAKE_INSTALL_LIBDIR=lib"
+    ${GTEST_MSVC_RUNTIME_LIB}
     ${GENERATOR_ARGS_FOR_STATIC_LIBRARY}
     -DBUILD_GMOCK=ON
     -Dgtest_build_tests=OFF
