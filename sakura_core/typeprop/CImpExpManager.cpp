@@ -12,6 +12,7 @@
 */
 
 #include "StdAfx.h"
+#include <climits>
 #include <memory>
 #include "CImpExpManager.h"
 #include "typeprop/CDlgTypeAscertain.h"
@@ -1307,11 +1308,10 @@ bool CImpExpFileTree::Export( const std::wstring& sFileName, std::wstring& sErrM
 void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileTreeItem>& data )
 {
 	const WCHAR* pszSecName = L"FileTree";
-	int nItemCount = (int)data.size();
+	int nItemCount = (data.size() > static_cast<size_t>(INT_MAX))
+		? INT_MAX
+		: static_cast<int>(data.size());
 	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", nItemCount );
-	if( nItemCount < 0 ){
-		nItemCount = 0;
-	}
 	int i = 0;
 	if( cProfile.IsReadingMode() ){
 		data.resize( nItemCount );

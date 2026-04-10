@@ -521,7 +521,7 @@ void CEditView::ISearchWordMake(void)
 			
 			/* 検索パターンのコンパイル */
 			const wchar_t* p = strMigemoWord.c_str();
-			m_sSearchPattern.SetPattern(this->GetHwnd(), p, (int)strMigemoWord.size(), m_sCurSearchOption, &m_CurRegexp);
+			m_sSearchPattern.SetPattern(this->GetHwnd(), p, strMigemoWord.size(), m_sCurSearchOption, &m_CurRegexp);
 		}
 		break;
 	default:

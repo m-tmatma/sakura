@@ -547,15 +547,14 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_SMARTINDENT );
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
-		int nSize = (int)m_SIndentArr.size();
-		for( int i = 0; i < nSize; ++i ){
+		for( size_t i = 0; i < m_SIndentArr.size(); ++i ){
 			if( m_SIndentArr[i].pszName == nullptr ){
-				ApiWrap::Combo_InsertString( hwndCombo, i, LS(m_SIndentArr[i].nNameId) );
+				ApiWrap::Combo_InsertString( hwndCombo, static_cast<int>(i), LS(m_SIndentArr[i].nNameId) );
 			}else{
-				ApiWrap::Combo_InsertString( hwndCombo, i, m_SIndentArr[i].pszName );
+				ApiWrap::Combo_InsertString( hwndCombo, static_cast<int>(i), m_SIndentArr[i].pszName );
 			}
 			if( m_SIndentArr[i].nMethod == m_Types.m_eSmartIndent ){	/* スマートインデント種別 */
-				nSelPos = i;
+				nSelPos = static_cast<int>(i);
 			}
 		}
 		ApiWrap::Combo_SetCurSel( hwndCombo, nSelPos );
@@ -586,19 +585,18 @@ void CPropTypesScreen::SetData( HWND hwndDlg )
 		HWND	hwndCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_OUTLINES );
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		int		nSelPos = 0;
-		int nSize = (int)m_OlmArr.size();
-		for( int i = 0; i < nSize; ++i ){
+		for( size_t i = 0; i < m_OlmArr.size(); ++i ){
 			if( m_OlmArr[i].pszName == nullptr ){
 				if( m_OlmArr[i].nNameId < STR2_OUTLINE_MAX ){
-					ApiWrap::Combo_InsertString( hwndCombo, i, pszOutlineNames[m_OlmArr[i].nNameId] );
+					ApiWrap::Combo_InsertString( hwndCombo, static_cast<int>(i), pszOutlineNames[m_OlmArr[i].nNameId] );
 				}else{
-					ApiWrap::Combo_InsertString( hwndCombo, i, LS(m_OlmArr[i].nNameId) );
+					ApiWrap::Combo_InsertString( hwndCombo, static_cast<int>(i), LS(m_OlmArr[i].nNameId) );
 				}
 			}else{
-				ApiWrap::Combo_InsertString( hwndCombo, i, m_OlmArr[i].pszName );
+				ApiWrap::Combo_InsertString( hwndCombo, static_cast<int>(i), m_OlmArr[i].pszName );
 			}
 			if( m_OlmArr[i].nMethod == m_Types.m_eDefaultOutline ){	/* アウトライン解析方法 */
-				nSelPos = i;
+				nSelPos = static_cast<int>(i);
 			}
 		}
 
@@ -814,8 +812,7 @@ void CPropTypesScreen::AddOutlineMethod(int nMethod, const WCHAR* pszName)
 
 void CPropTypesScreen::RemoveOutlineMethod(int nMethod, [[maybe_unused]] const WCHAR* szName)
 {
-	int nSize = (int)m_OlmArr.size();
-	for(int i = 0; i < nSize; i++ ){
+	for( size_t i = 0; i < m_OlmArr.size(); ++i ){
 		if( m_OlmArr[i].nMethod == (EOutlineType)nMethod ){
 			free( m_OlmArr[i].pszName );
 			m_OlmArr.erase( m_OlmArr.begin() + i );
@@ -839,8 +836,7 @@ void CPropTypesScreen::AddSIndentMethod(int nMethod, const WCHAR* pszName)
 
 void CPropTypesScreen::RemoveSIndentMethod(int nMethod, [[maybe_unused]] const WCHAR* szName)
 {
-	int nSize = (int)m_SIndentArr.size();
-	for(int i = 0; i < nSize; i++ ){
+	for( size_t i = 0; i < m_SIndentArr.size(); ++i ){
 		if( m_SIndentArr[i].nMethod == (ESmartIndentType)nMethod ){
 			free( m_SIndentArr[i].pszName );
 			m_SIndentArr.erase( m_SIndentArr.begin() + i );

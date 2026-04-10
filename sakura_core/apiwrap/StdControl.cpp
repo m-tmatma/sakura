@@ -195,7 +195,7 @@ namespace ApiWrap{
 		std::vector<HTREEITEM> tree;
 		HTREEITEM item = TreeView_GetRoot(hwndTree);
 		while( 0 < tree.size() || item != nullptr ){
-			while(item != nullptr && (int)tree.size() < nMaxDepth ){
+			while(item != nullptr && tree.size() < static_cast<size_t>(nMaxDepth) ){
 				// 先に展開してからGetChildしないと、ファイルツリーのサブアイテムが展開されない
 				TreeView_Expand(hwndTree, item, bExpand ? TVE_EXPAND : TVE_COLLAPSE);
 				tree.push_back(item);

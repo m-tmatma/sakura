@@ -158,7 +158,7 @@ int CDicMgr::HokanSearch(
 		}
 		if( 0 == nRet ){
 			vKouho.push_back( szLine );
-			if( 0 != nMaxKouho && nMaxKouho <= (int)vKouho.size() ){
+			if( nMaxKouho > 0 && static_cast<size_t>(nMaxKouho) <= vKouho.size() ){
 				break;
 			}
 		}

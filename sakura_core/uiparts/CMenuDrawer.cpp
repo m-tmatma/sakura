@@ -1372,13 +1372,13 @@ TBBUTTON CMenuDrawer::getButton( int nToolbarNo ) const
 int CMenuDrawer::Find( int nFuncID )
 {
 	int i;
-	int nItemNum = (int)m_menuItems.size();
-	for( i = 0; i < nItemNum; ++i ){
+	const size_t nItemNum = m_menuItems.size();
+	for( i = 0; i < static_cast<int>(nItemNum); ++i ){
 		if( nFuncID == m_menuItems[i].m_nFuncId ){
 			break;
 		}
 	}
-	if( i >= nItemNum ){
+	if( i >= static_cast<int>(nItemNum) ){
 		return -1;
 	}else{
 		return i;
@@ -1534,7 +1534,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 				// このウィンドウで未登録
 				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb,TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
-				for (i = (int)m_tbMyButton.size(); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
+				for (i = static_cast<int>(m_tbMyButton.size()); i < m_pShareData->m_PlugCmdIcon[iCmdNo]; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}
@@ -1556,7 +1556,7 @@ void CMenuDrawer::AddToolButton( int iBitmap, int iCommand )
 			if (m_tbMyButton.size() < (size_t)m_pShareData->m_maxTBNum) {
 				// 空きを詰め込む
 				SetTBBUTTONVal( &tbb, TOOLBAR_ICON_PLUGCOMMAND_DEFAULT-1, 0, 0, TBSTYLE_BUTTON, 0, 0 );
-				for (i = (int)m_tbMyButton.size(); i < m_pShareData->m_maxTBNum; i++) {
+				for (i = static_cast<int>(m_tbMyButton.size()); i < m_pShareData->m_maxTBNum; i++) {
 					m_tbMyButton.push_back( tbb );
 					m_nMyButtonNum++;
 				}

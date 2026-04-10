@@ -284,7 +284,7 @@ bool CDlgFileTree::GetDataTree(std::vector<SFileTreeItem>& data, HTREEITEM hItem
 		if( !TreeView_GetItem(hwndTree, &tvi) ){
 			return false;
 		}
-		if( 0 < nMaxCount && nMaxCount <= (int)data.size() ){
+		if( 0 < nMaxCount && static_cast<size_t>(nMaxCount) <= data.size() ){
 			return false;
 		}
 		data.push_back(m_fileTreeSetting.m_aItems[tvi.lParam]);

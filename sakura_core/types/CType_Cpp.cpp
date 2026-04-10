@@ -1284,8 +1284,8 @@ struct SCommentBlock{
 };
 static bool IsCommentBlock( std::vector<SCommentBlock>& arr, int pos )
 {
-	int size = (int)arr.size();
-	for(int i = 0; i < size; i++){
+	const size_t nBlocks = arr.size();
+	for(size_t i = 0; i < nBlocks; ++i){
 		if( arr[i].nFirst <= pos && pos <= arr[i].nLast ){
 			return true;
 		}
