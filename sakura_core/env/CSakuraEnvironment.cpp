@@ -721,8 +721,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 		{
 			const CMRUFolder cMRU;
 			std::vector<LPCWSTR> vMRU = cMRU.GetPathList();
-			int nCount = cMRU.Length();
-			for( int i = 0; i < nCount ; i++ ){
+			for( size_t i = 0; i < vMRU.size(); ++i ){
 				DWORD attr = GetFileAttributes( vMRU[i] );
 				if( ( attr != -1 ) && ( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
 					return vMRU[i];

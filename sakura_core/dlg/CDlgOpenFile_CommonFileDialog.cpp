@@ -559,9 +559,8 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 					if ( ApiWrap::Combo_GetCount( pData->m_hwndComboMRU ) == 0) {
 						/* 最近開いたファイル コンボボックス初期値設定 */
 						//	2003.06.22 Moca m_vMRU がNULLの場合を考慮する
-						int nSize = (int)pData->m_pcDlgOpenFile->m_vMRU.size();
-						for( i = 0; i < nSize; i++ ){
-							ApiWrap::Combo_AddString( pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_vMRU[i] );
+						for( size_t iMru = 0; iMru < pData->m_pcDlgOpenFile->m_vMRU.size(); ++iMru ){
+							ApiWrap::Combo_AddString( pData->m_hwndComboMRU, pData->m_pcDlgOpenFile->m_vMRU[iMru] );
 						}
 					}
 					CDialog::OnCbnDropDown( hwndCtl, true );
@@ -571,9 +570,8 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 					if ( ApiWrap::Combo_GetCount( pData->m_hwndComboOPENFOLDER ) == 0) {
 						/* 最近開いたフォルダー コンボボックス初期値設定 */
 						//	2003.06.22 Moca m_vOPENFOLDER がNULLの場合を考慮する
-						int nSize = (int)pData->m_pcDlgOpenFile->m_vOPENFOLDER.size();
-						for( i = 0; i < nSize; i++ ){
-							ApiWrap::Combo_AddString( pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_vOPENFOLDER[i] );
+						for( size_t iFolder = 0; iFolder < pData->m_pcDlgOpenFile->m_vOPENFOLDER.size(); ++iFolder ){
+							ApiWrap::Combo_AddString( pData->m_hwndComboOPENFOLDER, pData->m_pcDlgOpenFile->m_vOPENFOLDER[iFolder] );
 						}
 					}
 					CDialog::OnCbnDropDown( hwndCtl, true );
