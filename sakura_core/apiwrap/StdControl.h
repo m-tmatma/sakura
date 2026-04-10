@@ -84,9 +84,9 @@ namespace ApiWrap{
 		const int bufsize = length + 1;
 		
 		// ウィンドウタイトルを設定するのに必要なバッファを確保する
-		if (str.capacity() < bufsize)
+		if (str.capacity() < static_cast<size_t>(bufsize))
 		{
-			str.AllocStringBuffer(bufsize);
+			str.AllocStringBuffer(static_cast<size_t>(bufsize));
 		}
 
 		int actualCount = ::GetWindowText(hwnd, str.GetStringPtr(), static_cast<int>(str.capacity()));
@@ -103,7 +103,7 @@ namespace ApiWrap{
 				return false;
 			}
 		}
-		else if(actualCount >= str.capacity())
+		else if(static_cast<size_t>(actualCount) >= str.capacity())
 		{
 			// GetWindowText() の仕様上はありえないはず
 			return false;
@@ -186,7 +186,7 @@ namespace ApiWrap{
 		{
 			return false;
 		}
-		else if(str.capacity() <= actualCount)
+		else if(str.capacity() <= static_cast<size_t>(actualCount))
 		{
 			return false;
 		}

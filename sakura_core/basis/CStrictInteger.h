@@ -17,6 +17,7 @@
 
 #include "StdAfx.h"   // for ssize_t
 #include "primitive.h" // for Int
+#include <type_traits>
 
 //! 整数型、または、intにキャスト可能な型
 template<typename T>
@@ -170,11 +171,32 @@ private:
 	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator - (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return -rhs + static_cast<ssize_t>(lhs); } \
 	template <int N, bool B0, bool B1, bool B2, bool B3> inline CStrictInteger<N, B0, B1, B2, B3> operator * (TYPE lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs * static_cast<ssize_t>(lhs); }
 
+// Win32(MSVC) 等で ssize_t が int と同一型のとき、STRICTINT_LEFT_INT_CMP(int) と二重定義になるため別マクロとする。
+#define STRICTINT_LEFT_INT_CMP_SSIZE() \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline bool operator <  (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs >  static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline bool operator <= (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs >= static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline bool operator >  (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs <  static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline bool operator >= (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs <= static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline bool operator == (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs == static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline bool operator != (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return rhs != static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline CStrictInteger<N, B0, B1, B2, B3> operator + (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs + static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline CStrictInteger<N, B0, B1, B2, B3> operator - (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return -rhs + static_cast<ssize_t>(lhs); } \
+	template <int N, bool B0, bool B1, bool B2, bool B3> requires (!std::is_same_v<std::remove_cv_t<ssize_t>, int>) \
+	inline CStrictInteger<N, B0, B1, B2, B3> operator * (ssize_t lhs, const CStrictInteger<N, B0, B1, B2, B3>& rhs) noexcept { return  rhs * static_cast<ssize_t>(lhs); }
+
 STRICTINT_LEFT_INT_CMP(int)
 STRICTINT_LEFT_INT_CMP(short)
 STRICTINT_LEFT_INT_CMP(size_t)
 STRICTINT_LEFT_INT_CMP(LONG)
-STRICTINT_LEFT_INT_CMP(ssize_t)
+STRICTINT_LEFT_INT_CMP_SSIZE()
 
 // CStrictIntegerテンプレート型を検出するための型特性
 template<typename T>
