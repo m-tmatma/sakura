@@ -133,10 +133,9 @@ void CDlgProfileMgr::SetData( int nSelIndex )
 	ApiWrap::List_AddString( hwndList, strdef.c_str() );
 	CTextWidthCalc calc( hwndList );
 	calc.SetDefaultExtend( CTextWidthCalc::WIDTH_MARGIN_SCROLLBER );
-	int count = (int)settings.m_vProfList.size();
-	for(int i = 0; i < count; i++){
+	for( size_t i = 0; i < settings.m_vProfList.size(); i++){
 		std::wstring str = settings.m_vProfList[i];
-		if( settings.m_nDefaultIndex == i + 1 ){
+		if( settings.m_nDefaultIndex == static_cast<int>(i) + 1 ){
 			str += L"*";
 		}
 		ApiWrap::List_AddString( hwndList, str.c_str() );

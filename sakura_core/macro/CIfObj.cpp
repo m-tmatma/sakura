@@ -274,7 +274,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::Invoke(
 				[[maybe_unused]] EXCEPINFO FAR* pexcepinfo,
 				[[maybe_unused]] UINT FAR* puArgErr)
 {
-	if((unsigned)dispidMember < m_Methods.size())
+	if( dispidMember >= 0 && static_cast<size_t>(dispidMember) < m_Methods.size() )
 		return (this->* (m_Methods[dispidMember].Method))( m_Methods[dispidMember].ID, pdispparams, pvarResult, m_Owner->GetData() );
 	else
 		return E_UNEXPECTED;
