@@ -982,7 +982,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 			m_nCompBitmapWidth  = nTargetWidth + 20;
 			m_nCompBitmapHeight = nTargetHeight + 4;
 		}
-		::SetWindowOrgEx( hdc, lpdis->rcItem.left, lpdis->rcItem.top, nullptr );
+		// P2: ウィンドウ原点を GDI の座標範囲へ飽和
+		::SetWindowOrgEx( hdc, ClampIntToLongForGdi(Int(lpdis->rcItem.left)), ClampIntToLongForGdi(Int(lpdis->rcItem.top)), nullptr );
 	}else{
 		hdc = lpdis->hDC;
 	}

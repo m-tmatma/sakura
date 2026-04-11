@@ -30,13 +30,13 @@
 
 ### P2: 座標・API 境界
 
-- [ ] **ドキュメント座標（64bit）**と **Win32 の `POINT` / `LONG`（32bit）**の混在箇所を整理し、変換境界を明示する（`CMyPoint` 等）。（**メモ**: `CMyPoint.h` に `POINT` と論理座標系の使い分け・GDI 境界の説明を追加済み。**進捗**: `ClampIntToLongForGdi` を **`basis/Win32GdiClamp.h`** に集約。`CStrictPoint::GetPOINT` と **`TwoPointToRect`（`CMyPoint.h`）**の両方で `LONG` へ飽和してから `POINT`／`RECT` に渡す。呼び出し側の網羅的整理は継続。）
+- [x] **ドキュメント座標（64bit）**と **Win32 の `POINT` / `LONG`（32bit）**の混在箇所を整理し、変換境界を明示する（`CMyPoint` 等）。（**方針**: 論理座標は `Int` / `CLogicInt` / `CLayoutInt` で保持し、**GDI へ渡す直前**に **`ClampIntToLongForGdi`（`basis/Win32GdiClamp.h`）**で `LONG` に飽和する。**`CStrictPoint::GetPOINT`** と **`TwoPointToRect`（`CMyPoint.h`）** も同様。**主要経路**: `MoveToEx`/`LineTo`、`Rectangle`、`PolyPolyline` 用 `POINT`、`SetViewportOrgEx`（`CPrintPreview`）、`SetWindowOrgEx`（`CMenuDrawer` オフスクリーン作画）。**残存リスク**: 全 `BitBlt`/`PatBlt` の幅・高さ、未改修の個別 `RECT` 代入など。巨大ドキュメントでの手動確認は P4。）
 - [ ] ファイル I/O・クリップボード・外部コマンド等で **`DWORD` や 32bit 長前提**の箇所を洗い出し、2GB 超を扱う経路ではチャンク処理または 64bit API に切り替える。（**進捗**: `CFileLoad::FileOpen` のファイルサイズ取得を **`GetFileSizeEx`** に変更。`CClipboard::SetText` で **`GlobalAlloc` サイズの乗算・加算オーバーフロー**を検出して失敗させる。外部コマンド等は未整理。）
 
 #### P2 の続き（作業メモ）
 
 - **GDI 境界（論理座標 → `LONG`）**  
-  `ClampIntToLongForGdi`（`basis/Win32GdiClamp.h`）と `TwoPointToRect` / `CStrictPoint::GetPOINT` で飽和する経路は整理済み。**進捗**: `CGraphics::DrawRect` の `MoveToEx`/`LineTo` へ渡す座標を **`ClampIntToLongForGdi(Int(...))`** に。`CRuler` の `PolyPolyline` 用 `POINT` 配列も同様。`CEditView::CaretUnderLineON` のカーソル縦線・アンダーライン、`CTextDrawer` の桁縦線・ノート線・折り返し線・ブックマーク縦線の `MoveToEx`/`LineTo` も同様。**進捗（追記）**: `CMenuDrawer`（選択枠 `Rectangle`、区切り線・チェックマークの `MoveToEx`/`LineTo`）、`CPrintPreview`（用紙・マージン枠 `Rectangle`、行番号縦線）。**残り**: `SetViewportOrgEx` 等の原点移動、`PatBlt`/`BitBlt` の矩形サイズ、他ダイアログの直接 GDI。
+  `ClampIntToLongForGdi`（`basis/Win32GdiClamp.h`）と `TwoPointToRect` / `CStrictPoint::GetPOINT` で飽和する経路は整理済み。**進捗**: `CGraphics::DrawRect` の `MoveToEx`/`LineTo` へ渡す座標を **`ClampIntToLongForGdi(Int(...))`** に。`CRuler` の `PolyPolyline` 用 `POINT` 配列も同様。`CEditView::CaretUnderLineON` のカーソル縦線・アンダーライン、`CTextDrawer` の桁縦線・ノート線・折り返し線・ブックマーク縦線の `MoveToEx`/`LineTo` も同様。**進捗（追記）**: `CMenuDrawer`（選択枠 `Rectangle`、区切り線・チェックマーク、`SetWindowOrgEx`）、`CPrintPreview`（用紙・マージン枠 `Rectangle`、行番号縦線、**`SetViewportOrgEx` 設定時**の X/Y）。**残り**: `PatBlt`/`BitBlt` の矩形サイズや未改修の個別ダイアログ GDI。
 
 - **ファイルサイズ・列挙**  
   - `CFileLoad` は `GetFileSizeEx` と **`LONGLONG m_nFileSize`**。x64 では `GetLimitSize()` が実質上限なし（`ULLONG_MAX`）— **メモリ・UI・進捗表示**との整合は P4 と合わせて確認。  
@@ -100,11 +100,11 @@
 - **`CGrepEnumFileBase`**: ファイルサイズ型を `GrepEnumFileSizeBytes` として **`_WIN64` では `ULONGLONG`、Win32 では `DWORDLONG`**（いずれも 64bit）。`GetCount`/`GetFileName` を `const` に調整。
 - **`CGrepAgent::AddTail`**: 標準出力への `WriteFile` を **`std::numeric_limits<DWORD>::max()` バイト以下のチャンク**でループ（1 回の `DWORD` キャストで `GetRawLength()` が切り詰められないようにする）。
 - **`GlobalAlloc`**: `CClipboard` に続き、`CEditWnd`（タブ D&D）、`CEditView`（IME）、`CDropTarget::GetData`、`PostMyDropFiles`、`GetGlobalData` のコピー、`CDlgProperty` の `_DEBUG` 読み込み、`CDlgFuncList` のテンプレートサイズ 0 ガード等を整理。
-- **GDI**: `ClampIntToLongForGdi` を `CGraphics::DrawRect`、`CRuler`（`PolyPolyline`）、`CEditView::CaretUnderLineON`、`CTextDrawer`（桁線・ノート線・折り返し・ブックマーク）などに適用。**`Win32GdiClamp.h` は UTF-8 BOM 必須**（上記 CI）。
+- **GDI**: `ClampIntToLongForGdi` を `CGraphics::DrawRect`、`CRuler`（`PolyPolyline`）、`CEditView::CaretUnderLineON`、`CTextDrawer`（桁線・ノート線・折り返し・ブックマーク）、`CMenuDrawer`/`CPrintPreview`、`SetViewportOrgEx`/`SetWindowOrgEx`（設定時）などに適用。**`Win32GdiClamp.h` は UTF-8 BOM 必須**（上記 CI）。
 
 #### P2 残タスク（次の候補）
 
-- **GDI**: [x] `CMenuDrawer.cpp` / `CPrintPreview.cpp` の主要な `Rectangle` / `MoveToEx` / `LineTo` に **`ClampIntToLongForGdi`** を適用済み。**残り**: 他ファイルの `PolyPolyline`、プレビューの **`SetViewportOrgEx`**、メニュー **`BitBlt`** 引数の極端な座標など。
+- **GDI**: [x] `CMenuDrawer.cpp` / `CPrintPreview.cpp` の主要な `Rectangle` / `MoveToEx` / `LineTo`、および **`SetWindowOrgEx` / `SetViewportOrgEx`（設定時）** に **`ClampIntToLongForGdi`** を適用済み。**残り**: 他ファイルの `PolyPolyline`、メニュー **`BitBlt`** 引数の極端な座標・サイズなど。
 - **幅・高さ系**: `PatBlt` / `BitBlt` / `FillRect` 等で **矩形サイズ**（`rc.right - rc.left` 等）が極端に大きい場合のオーバーフローや GDI の実効範囲は、座標飽和とは別に要検討（P2/P4 境界）。
 - **外部コマンド**: `CEditView_ExecCmd` 等の **子プロセス出力の蓄積**が無制限に伸びる経路があれば、上限・ストリーミング・失敗時の扱いを検討（メモリ・応答性）。
 

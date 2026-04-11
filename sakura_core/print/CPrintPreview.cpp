@@ -198,10 +198,11 @@ LRESULT CPrintPreview::OnPaint(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 操作ウィンドウの下に物理座標原点を移動
 	POINT poViewPortOld;
+	// P2: ビューポート原点も GDI の int/LONG 範囲へ飽和（論理演算結果が極端に大きい場合）
 	::SetViewportOrgEx(
 		hdc,
-		((-1 * m_nPreviewHScrollPos) * m_nbmpCompatScale) / COMPAT_BMP_BASE, 
-		((nToolBarHeight + m_nPreviewVScrollPos) * m_nbmpCompatScale) / COMPAT_BMP_BASE,
+		ClampIntToLongForGdi(Int(((-1 * m_nPreviewHScrollPos) * m_nbmpCompatScale) / COMPAT_BMP_BASE)),
+		ClampIntToLongForGdi(Int(((nToolBarHeight + m_nPreviewVScrollPos) * m_nbmpCompatScale) / COMPAT_BMP_BASE)),
 		&poViewPortOld
 	);
 
