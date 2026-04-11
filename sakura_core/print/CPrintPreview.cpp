@@ -37,6 +37,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+#include "basis/Win32GdiClamp.h"
 
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
@@ -211,21 +212,22 @@ LRESULT CPrintPreview::OnPaint(
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 用紙の描画
 	int	nDirectY = -1;	//	Y座標の下をプラス方向にするため？
+	// P2: GDI 座標を LONG 範囲へ飽和
 	::Rectangle( hdc,
-		m_nPreview_ViewMarginLeft,
-		nDirectY * ( m_nPreview_ViewMarginTop ),
-		m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth + 1,
-		nDirectY * (m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight + 1 )
+		ClampIntToLongForGdi(Int(m_nPreview_ViewMarginLeft)),
+		ClampIntToLongForGdi(Int(nDirectY * ( m_nPreview_ViewMarginTop ))),
+		ClampIntToLongForGdi(Int(m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth + 1)),
+		ClampIntToLongForGdi(Int(nDirectY * (m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight + 1 )))
 	);
 
 	// マージン枠の表示
 	CGraphics gr(hdc);
 	gr.SetPen( RGB(128,128,128) ); // 2006.08.14 Moca 127を128に変更
 	::Rectangle( hdc,
-		m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX,
-		nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ),
-		m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth - m_pPrintSetting->m_nPrintMarginRX + 1,
-		nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY )
+		ClampIntToLongForGdi(Int(m_nPreview_ViewMarginLeft + m_pPrintSetting->m_nPrintMarginLX)),
+		ClampIntToLongForGdi(Int(nDirectY * ( m_nPreview_ViewMarginTop + m_pPrintSetting->m_nPrintMarginTY ))),
+		ClampIntToLongForGdi(Int(m_nPreview_ViewMarginLeft + m_nPreview_PaperAllWidth - m_pPrintSetting->m_nPrintMarginRX + 1)),
+		ClampIntToLongForGdi(Int(nDirectY * ( m_nPreview_ViewMarginTop + m_nPreview_PaperAllHeight - m_pPrintSetting->m_nPrintMarginBY )))
 	);
 	gr.ClearPen();
 
@@ -1550,12 +1552,12 @@ CColorStrategy* CPrintPreview::DrawPageText(
 				1 == m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_nLineTermType ){
 			// 縦線は本文と行番号の隙間1桁の中心に作画する(画面作画では、右詰め)
 			::MoveToEx( hdc,
-				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
-				nDirectY * nOffY,
+				ClampIntToLongForGdi(Int(nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ))),
+				ClampIntToLongForGdi(Int(nDirectY * nOffY)),
 				nullptr );
 			::LineTo( hdc,
-				nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ),
-				nDirectY * ( nOffY + nLineHeight * i )
+				ClampIntToLongForGdi(Int(nBasePosX - (m_pPrintSetting->m_nPrintFontWidth / 2 ))),
+				ClampIntToLongForGdi(Int(nDirectY * ( nOffY + nLineHeight * i )))
 			);
 		}
 	}

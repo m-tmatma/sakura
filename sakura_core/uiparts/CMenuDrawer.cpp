@@ -28,6 +28,7 @@
 #include "func/CKeyBind.h"
 #include "uiparts/CGraphics.h"
 #include "util/window.h"
+#include "basis/Win32GdiClamp.h"
 
 // メニューアイコンの背景をボタンの色にする
 #define DRAW_MENU_ICON_BACKGROUND_3DFACE
@@ -1008,7 +1009,12 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		BYTE valB = ((GetBValue(colHilight) * 4 + GetBValue(colMenu) * 6) / 10) | 0x18;
 		HBRUSH hBrush = ::CreateSolidBrush( RGB(valR, valG, valB) );
 		HBRUSH hOldBrush = (HBRUSH)::SelectObject( hdc, hBrush );
-		::Rectangle( hdc, rc1.left, rc1.top, rc1.right, rc1.bottom );
+		// P2: GDI 座標を LONG 範囲へ飽和
+		::Rectangle( hdc,
+			ClampIntToLongForGdi(Int(rc1.left)),
+			ClampIntToLongForGdi(Int(rc1.top)),
+			ClampIntToLongForGdi(Int(rc1.right)),
+			ClampIntToLongForGdi(Int(rc1.bottom)) );
 		::SelectObject( hdc, hOldPen );
 		::SelectObject( hdc, hOldBrush );
 		::DeleteObject( hPenBorder );
@@ -1059,8 +1065,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 		HPEN hPen = ::CreatePen( PS_SOLID, cxBorder, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.top, nullptr );
-		::LineTo(   hdc, lpdis->rcItem.left + nIndentLeft, lpdis->rcItem.bottom );
+		::MoveToEx( hdc, ClampIntToLongForGdi(Int(lpdis->rcItem.left + nIndentLeft)), ClampIntToLongForGdi(Int(lpdis->rcItem.top)), nullptr );
+		::LineTo(   hdc, ClampIntToLongForGdi(Int(lpdis->rcItem.left + nIndentLeft)), ClampIntToLongForGdi(Int(lpdis->rcItem.bottom)) );
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
 
@@ -1072,8 +1078,8 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		int nSepColor = (::GetSysColor(COLOR_3DSHADOW) != ::GetSysColor(COLOR_MENU) ? COLOR_3DSHADOW : COLOR_3DHIGHLIGHT);
 		HPEN hPen = ::CreatePen( PS_SOLID, 1, ::GetSysColor(nSepColor) );
 		HPEN hPenOld = (HPEN)::SelectObject( hdc, hPen );
-		::MoveToEx( hdc, lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge, y, nullptr );
-		::LineTo(   hdc, lpdis->rcItem.right - cxEdge, y );
+		::MoveToEx( hdc, ClampIntToLongForGdi(Int(lpdis->rcItem.left + (bMenuIconDraw ? nIndentLeft : cxEdge + cxBorder) + cxEdge)), ClampIntToLongForGdi(Int(y)), nullptr );
+		::LineTo(   hdc, ClampIntToLongForGdi(Int(lpdis->rcItem.right - cxEdge)), ClampIntToLongForGdi(Int(y)) );
 		::SelectObject( hdc, hPenOld );
 		::DeleteObject( hPen );
 		
@@ -1234,9 +1240,9 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				// 16dot幅しかないので 1.0倍から2.1倍までスケールする(10-23)
 				const int nScale = t_max(100, t_min(210, int((lpdis->rcItem.bottom - lpdis->rcItem.top - 2) * 100) / (16-2) ));
 				for( int nBold = 1; nBold <= (281*nScale)/nBASE; nBold++ ){
-					::MoveToEx( hdc, nX - (187*nScale)/nBASE, nY - (187*nScale)/nBASE, nullptr );
-					::LineTo(   hdc, nX -   (0*nScale)/nBASE, nY -   (0*nScale)/nBASE );
-					::LineTo(   hdc, nX + (468*nScale)/nBASE, nY - (468*nScale)/nBASE );
+					::MoveToEx( hdc, ClampIntToLongForGdi(Int(nX - (187*nScale)/nBASE)), ClampIntToLongForGdi(Int(nY - (187*nScale)/nBASE)), nullptr );
+					::LineTo(   hdc, ClampIntToLongForGdi(Int(nX -   (0*nScale)/nBASE)), ClampIntToLongForGdi(Int(nY -   (0*nScale)/nBASE)) );
+					::LineTo(   hdc, ClampIntToLongForGdi(Int(nX + (468*nScale)/nBASE)), ClampIntToLongForGdi(Int(nY - (468*nScale)/nBASE)) );
 					nY++;
 				}
 				if( hPen ){
