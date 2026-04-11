@@ -390,6 +390,10 @@ HWND CDlgFuncList::DoModeless(
 			// 言語切り替えでリソースがアンロードされていないか確認するためインスタンスを記憶する
 			m_lastRcInstance = hInstance2;
 		}
+		// P2: 空リソースや GlobalAlloc(0) の扱いを避ける
+		if( m_dwDlgTmpSize == 0 ){
+			return nullptr;
+		}
 		LPDLGTEMPLATE pDlgTemplate = (LPDLGTEMPLATE)::GlobalAlloc( GMEM_FIXED, m_dwDlgTmpSize );
 		if( !pDlgTemplate ) return nullptr;
 		::CopyMemory( pDlgTemplate, m_pDlgTemplate, m_dwDlgTmpSize );

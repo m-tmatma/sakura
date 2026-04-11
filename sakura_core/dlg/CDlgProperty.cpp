@@ -230,6 +230,7 @@ void CDlgProperty::SetData( void )
 	HGLOBAL					hgData;
 	char*					pBuf;
 	ssize_t					nBufLen;
+	size_t					cbAlloc;
 	CNativeW				ctext;
 	/* メモリ確保 & ファイル読み込み */
 	hgData = nullptr;
@@ -238,15 +239,27 @@ void CDlgProperty::SetData( void )
 		goto end_of_CodeTest;
 	}
 	nBufLen = in.GetLength();
+	// P2: GetLength が巨大ファイルで ssize_t に収まらない場合に負値になり得る
+	if( nBufLen < 0 ){
+		nBufLen = 0;
+	}
 	if( nBufLen > CheckKanjiCode_MAXREADLENGTH ){
 		nBufLen = CheckKanjiCode_MAXREADLENGTH;
 	}
-	hgData = ::GlobalAlloc( GHND, static_cast<SIZE_T>(nBufLen) + 1 );
+	// +1 はヌル終端; nBufLen は上で上限済みのため加算オーバーフローはしない
+	cbAlloc = static_cast<size_t>(nBufLen) + 1u;
+	hgData = ::GlobalAlloc( GHND, cbAlloc );
 	if( nullptr == hgData ){
 		in.Close();
 		goto end_of_CodeTest;
 	}
 	pBuf = static_cast<char*>(::GlobalLock(hgData));
+	if( nullptr == pBuf ){
+		::GlobalFree( hgData );
+		hgData = nullptr;
+		in.Close();
+		goto end_of_CodeTest;
+	}
 	in.Read( pBuf, static_cast<size_t>(nBufLen) );
 	in.Close();
 
