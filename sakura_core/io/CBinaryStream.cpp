@@ -6,6 +6,8 @@
 */
 #include "StdAfx.h"
 #include "CBinaryStream.h"
+#include <algorithm>
+#include <limits>
 
 CBinaryInputStream::CBinaryInputStream(LPCWSTR pszFilePath)
 : CStream(pszFilePath,L"rb")
@@ -23,9 +25,26 @@ ssize_t CBinaryInputStream::GetLength()
 }
 
 //! データを無変換で読み込む。戻り値は読み込んだバイト数。
+//! P2: 巨大バッファ要求時は `DWORD` 最大バイト以下に分割（`Write` と対称）。
 ssize_t CBinaryInputStream::Read(void* pBuffer, size_t nSizeInBytes)
 {
-	return static_cast<ssize_t>(fread(pBuffer,1,nSizeInBytes,GetFp()));
+	auto* p = static_cast<unsigned char*>(pBuffer);
+	ssize_t nTotal = 0;
+	constexpr size_t kMaxChunk = static_cast<size_t>(std::numeric_limits<DWORD>::max());
+	while (nSizeInBytes > 0) {
+		const size_t nChunk = (std::min)(nSizeInBytes, kMaxChunk);
+		const size_t nRet = fread(p, 1, nChunk, GetFp());
+		nTotal += static_cast<ssize_t>(nRet);
+		if (nRet == 0) {
+			break;
+		}
+		p += nRet;
+		nSizeInBytes -= nRet;
+		if (nRet < nChunk) {
+			break;
+		}
+	}
+	return nTotal;
 }
 
 CBinaryOutputStream::CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode)

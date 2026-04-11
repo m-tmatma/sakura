@@ -10,6 +10,8 @@
 #pragma once
 
 #include "StdAfx.h"
+#include <algorithm>
+#include <limits>
 
 class CFileAttribute;
 
@@ -82,11 +84,27 @@ public:
 	}
 
 	//! データを無変換で書き込む。戻り値は書き込んだバイト数。
+	//! P2: `fwrite` の第 3 引数は `size_t` だが、巨大バッファを1回で扱うと CRT／環境の差で問題になり得る。
+	//!     Win32 `WriteFile` 等と同様、`DWORD` 最大バイト以下に分割する。
 	LONGLONG Write(const void* pBuffer, size_t nSizeInBytes)
 	{
-		size_t nRet = ::fwrite(pBuffer, 1, nSizeInBytes, GetFp());
-		if(nRet!=nSizeInBytes && IsExceptionMode())throw CError_FileWrite();
-		return static_cast<LONGLONG>(nRet);
+		const auto* p = static_cast<const unsigned char*>(pBuffer);
+		LONGLONG nTotal = 0;
+		constexpr size_t kMaxChunk = static_cast<size_t>(std::numeric_limits<DWORD>::max());
+		while (nSizeInBytes > 0) {
+			const size_t nChunk = (std::min)(nSizeInBytes, kMaxChunk);
+			const size_t nRet = ::fwrite(p, 1, nChunk, GetFp());
+			nTotal += static_cast<LONGLONG>(nRet);
+			if (nRet != nChunk) {
+				if (IsExceptionMode()) {
+					throw CError_FileWrite();
+				}
+				break;
+			}
+			p += nChunk;
+			nSizeInBytes -= nChunk;
+		}
+		return nTotal;
 	}
 };
 #endif /* SAKURA_CSTREAM_0083EDD7_A671_4315_801D_41FED1A2E3DA_H_ */
