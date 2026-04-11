@@ -87,3 +87,29 @@
 - **`CMemory.OverMaxSize`**: 旧仕様「`INT_MAX` を超えると必ず失敗」は P0 後は成立しない（64bit プロセスでは `INT_MAX+1` バイトの確保が**あり得る**）。**`AllocBuffer` が拒否する最小の `nNewDataLen`** として `SIZE_MAX - sizeof(wchar_t) - 6` を使い、**`GetRawPtr() == nullptr`** を検証する。
 - **`CMemory.OverHeapMaxReq`**: **`_HEAP_MAXREQ` を `unsigned` に落として +1** する旧テストは x64 で意図と異なる。上記と同じ **加算オーバーフロー防止境界**で検証する。
 - 手元の XML 出力例: `.\tests1.exe --gtest_output=xml:tests1.exe-googletest-x64-Debug.xml`（作業ディレクトリは `x64\Debug` など `tests1.exe` がある場所）。
+
+#### CI・エンコーディング（`checkEncoding.py`）
+
+- **Check Encoding** ワークフロー（`.github/workflows/check-encoding.yml`）は `python checkEncoding.py` を実行する。`origin/master` と `HEAD` の **merge base からの差分**にある `.cpp`/`.h`/`.rc`/`.rc2` が対象（拡張子ごとに期待エンコーディングが異なる）。
+- `.cpp`/`.h` は **`UTF-8-SIG`（UTF-8 BOM）または `ascii`** のみ OK。BOM なし UTF-8 は `chardet` が `utf-8` と返し **NG** になる。
+- 新規ヘッダ（例: `basis/Win32GdiClamp.h`）を追加するときは **必ず BOM 付き UTF-8** でコミットする。Visual Studio では「**署名付き UTF-8** で保存」など。
+- `AGENTS.md` など一部パスは workflow の `paths-ignore` により **push/PR トリガから除外**されるが、`checkEncoding.py` 自体は差分にソースが含まれれば **本文のエンコーディングはチェックされる**（Markdown の除外はトリガ条件のみ）。
+
+#### P2 付随の実装メモ（追記）
+
+- **`CGrepEnumFileBase`**: ファイルサイズ型を `GrepEnumFileSizeBytes` として **`_WIN64` では `ULONGLONG`、Win32 では `DWORDLONG`**（いずれも 64bit）。`GetCount`/`GetFileName` を `const` に調整。
+- **`CGrepAgent::AddTail`**: 標準出力への `WriteFile` を **`std::numeric_limits<DWORD>::max()` バイト以下のチャンク**でループ（1 回の `DWORD` キャストで `GetRawLength()` が切り詰められないようにする）。
+- **`GlobalAlloc`**: `CClipboard` に続き、`CEditWnd`（タブ D&D）、`CEditView`（IME）、`CDropTarget::GetData`、`PostMyDropFiles`、`GetGlobalData` のコピー、`CDlgProperty` の `_DEBUG` 読み込み、`CDlgFuncList` のテンプレートサイズ 0 ガード等を整理。
+- **GDI**: `ClampIntToLongForGdi` を `CGraphics::DrawRect`、`CRuler`（`PolyPolyline`）、`CEditView::CaretUnderLineON`、`CTextDrawer`（桁線・ノート線・折り返し・ブックマーク）などに適用。**`Win32GdiClamp.h` は UTF-8 BOM 必須**（上記 CI）。
+
+#### P2 残タスク（次の候補）
+
+- **GDI**: `CMenuDrawer.cpp`、`CPrintPreview.cpp` など、まだ **`ClampIntToLongForGdi` 未適用**の `Rectangle` / `MoveToEx` / `LineTo` / `PolyPolyline` を洗い出して同パターンで統一する。
+- **幅・高さ系**: `PatBlt` / `BitBlt` / `FillRect` 等で **矩形サイズ**（`rc.right - rc.left` 等）が極端に大きい場合のオーバーフローや GDI の実効範囲は、座標飽和とは別に要検討（P2/P4 境界）。
+- **外部コマンド**: `CEditView_ExecCmd` 等の **子プロセス出力の蓄積**が無制限に伸びる経路があれば、上限・ストリーミング・失敗時の扱いを検討（メモリ・応答性）。
+
+#### ローカル検証の例
+
+- **ビルド**: `build-sln.bat x64 Debug`（または `Win32 Debug` / `x64 Release`）。ログは `msbuild-x64-Debug.log` など。
+- **単体テスト**: `x64\Debug\tests1.exe`（作業ディレクトリは `tests1.exe` と同じ）。短時間だけなら `--gtest_filter=-*WinMain*`（WinMain 連動 4 件を除外）。
+- **エンコーディング**: `python checkEncoding.py` は **`origin/master` が取得済み**で merge base が取れる前提（`fetch-depth: 0` は CI 側）。手元で全 `.cpp`/`.h` を総当たりする `checkEncoding.py all` は **`build\` 等の生成物まで拾う**ため、通常は差分モードか、対象ファイルを限定して使う。
