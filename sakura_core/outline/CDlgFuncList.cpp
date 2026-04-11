@@ -1559,7 +1559,7 @@ void CDlgFuncList::SetTreeFile()
 		}else{
 			::wcsncpy_s(szPath, pszFrom, _TRUNCATE);
 		}
-		while( item.m_nDepth + 1 < static_cast<int>(hParentTree.size()) ){
+		while( static_cast<size_t>(std::max(0, item.m_nDepth)) + 1 < hParentTree.size() ){
 			hParentTree.resize(hParentTree.size() - 1);
 		}
 		const WCHAR* pszLabel = szPath;

@@ -129,7 +129,7 @@ void CDlgFileTree::SetData()
 			::InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT), nMaxCount);
 		}
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
-		while( item.m_nDepth + 1 < static_cast<int>(hParentTree.size()) ){
+		while( static_cast<size_t>(std::max(0, item.m_nDepth)) + 1 < hParentTree.size() ){
 			hParentTree.resize(hParentTree.size() - 1);
 		}
 		TVINSERTSTRUCT tvis;
