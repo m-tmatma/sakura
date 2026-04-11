@@ -1,4 +1,4 @@
-/*! @file */
+﻿/*! @file */
 /*
 	Win32 GDI / `POINT` / `RECT`（`LONG`）へ渡す直前の論理座標クリップ（P2）。
 
