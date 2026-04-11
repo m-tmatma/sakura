@@ -890,7 +890,7 @@ int CGrepAgent::DoGrepTree(
 	int			i;
 	int			count;
 	LPCWSTR		lpFileName;
-	int			nWork = 0;
+	unsigned long long	nWork = 0;
 	int			nHitCountOld = -100;
 	bool		bOutputFolderName = false;
 	auto nBasePathLen = int(wcslen(pszBasePath));
@@ -987,7 +987,7 @@ int CGrepAgent::DoGrepTree(
 		if( pcViewDst->GetDrawSwitch() ){
 			if( L'\0' != pszKey[0] ){
 				// データ検索のときファイルの合計が最大10MBを超えたら表示
-				nWork += ( cGrepEnumFilterFiles.GetFileSizeLow( i ) + 1023 ) / 1024;
+				nWork += ( cGrepEnumFilterFiles.GetFileSizeBytes( i ) + 1023 ) / 1024;
 			}
 			if( 10000 < nWork ){
 				nHitCountOld = -100; // 即表示

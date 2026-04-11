@@ -33,6 +33,22 @@
 - [ ] **ドキュメント座標（64bit）**と **Win32 の `POINT` / `LONG`（32bit）**の混在箇所を整理し、変換境界を明示する（`CMyPoint` 等）。（**メモ**: `CMyPoint.h` に `POINT` と論理座標系の使い分け・GDI 境界の説明を追加済み。**進捗**: `ClampIntToLongForGdi` を **`basis/Win32GdiClamp.h`** に集約。`CStrictPoint::GetPOINT` と **`TwoPointToRect`（`CMyPoint.h`）**の両方で `LONG` へ飽和してから `POINT`／`RECT` に渡す。呼び出し側の網羅的整理は継続。）
 - [ ] ファイル I/O・クリップボード・外部コマンド等で **`DWORD` や 32bit 長前提**の箇所を洗い出し、2GB 超を扱う経路ではチャンク処理または 64bit API に切り替える。（**進捗**: `CFileLoad::FileOpen` のファイルサイズ取得を **`GetFileSizeEx`** に変更。`CClipboard::SetText` で **`GlobalAlloc` サイズの乗算・加算オーバーフロー**を検出して失敗させる。外部コマンド等は未整理。）
 
+#### P2 の続き（作業メモ）
+
+- **GDI 境界（論理座標 → `LONG`）**  
+  `ClampIntToLongForGdi`（`basis/Win32GdiClamp.h`）と `TwoPointToRect` / `CStrictPoint::GetPOINT` で飽和する経路は整理済み。**残り**は、`POINT` / `RECT` / `MoveToEx` / `LineTo` / スクロール範囲などへ **ドキュメント座標を直接渡している箇所**の洗い出し（`static_cast<LONG>` 単体で飽和なしの経路がないか）。
+
+- **ファイルサイズ・列挙**  
+  - `CFileLoad` は `GetFileSizeEx` と **`LONGLONG m_nFileSize`**。x64 では `GetLimitSize()` が実質上限なし（`ULLONG_MAX`）— **メモリ・UI・進捗表示**との整合は P4 と合わせて確認。  
+  - **`CGrepEnumFileBase`**: [x] `PairGrepEnumItem` の第 2 要素を **`ULONGLONG`**（`GrepFileSizeFromFindData` で `nFileSizeHigh`/`Low` を合成）。`GetFileSizeBytes` に改名。  
+  - **`CGrepAgent`**: `WriteFile` に渡す長さは `DWORD` にキャスト。通常はチャンク単位だが、**一括書き込みが 4GB 超**になり得る経路があれば分割が必要。
+
+- **クリップボード・D&D・その他 `GlobalAlloc`**  
+  `CClipboard::SetText` は乗算・加算オーバーフロー対策済み。**未点検の例**: `CEditWnd.cpp`（タブドラッグ等）、`CEditView.cpp`、`CDropTarget.cpp`、`CEditView_Mouse.cpp`、`util/os.cpp` の `GlobalAlloc` / `memcpy` サイズ。用途ごとに **上限・オーバーフロー**を確認。
+
+- **外部コマンド・パイプ**  
+  `CEditView_ExecCmd.cpp` / `CViewCommander_TagJump.cpp` の `ReadFile` は **約 5KiB チャンク**で `DWORD` 範囲内。**蓄積側**（出力バッファが無制限に伸びる経路）のメモリ方針は別途。
+
 ### P3: 厳格整数・ビルド設定
 
 - [ ] `USE_STRICT_INT` / `CStrictInteger` 利用時も **土台のバッファ型が 64bit であること**を前提に、デバッグビルドでの型チェックが意味を持つようにする。

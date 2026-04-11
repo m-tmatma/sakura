@@ -23,8 +23,24 @@
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
-typedef std::pair< LPWSTR, DWORD > PairGrepEnumItem;
+//! 列挙に保持するファイルサイズ（バイト）。32bit/64bit プロセスで型名を分ける（いずれも 64bit 幅）
+#if defined(_WIN64)
+using GrepEnumFileSizeBytes = ULONGLONG;
+#else
+using GrepEnumFileSizeBytes = DWORDLONG;
+#endif
+
+typedef std::pair< LPWSTR, GrepEnumFileSizeBytes > PairGrepEnumItem;
 typedef std::vector< PairGrepEnumItem > VPGrepEnumItem;
+
+//! WIN32_FIND_DATA のファイルサイズを 64bit でまとめる（4GB 超を正しく表現）
+inline GrepEnumFileSizeBytes GrepFileSizeFromFindData(const WIN32_FIND_DATA& wfd) noexcept
+{
+	ULARGE_INTEGER uli{};
+	uli.LowPart = wfd.nFileSizeLow;
+	uli.HighPart = wfd.nFileSizeHigh;
+	return static_cast<GrepEnumFileSizeBytes>(uli.QuadPart);
+}
 
 class CGrepEnumOptions {
 public:
@@ -80,16 +96,16 @@ public:
 		return FALSE;
 	}
 
-	int GetCount( void ){
+	int GetCount( void ) const {
 		return (int)m_vpItems.size();
 	}
 
-	LPCWSTR GetFileName( int i ){
+	LPCWSTR GetFileName( int i ) const {
 		if( i < 0 || i >= GetCount() ) return nullptr;
 		return m_vpItems[ i ].first;
 	}
 
-	DWORD GetFileSizeLow( int i ){
+	GrepEnumFileSizeBytes GetFileSizeBytes( int i ) const {
 		if( i < 0 || i >= GetCount() ) return 0;
 		return m_vpItems[ i ].second;
 	}
@@ -145,14 +161,12 @@ public:
 					if( IsValid( w32fd, lpName ) ){
 						if( pExceptItems && pExceptItems->IsExist( lpFullPath ) ){
 						}else{
-							// 注意: 4GBを超えるファイルではnFileSizeLowのみが保存される
-							// PairGrepEnumItemがDWORD型のため、4GB超のファイルサイズは切り詰められる
-							m_vpItems.emplace_back( lpName, w32fd.nFileSizeLow );
+							const GrepEnumFileSizeBytes nFileBytes = GrepFileSizeFromFindData( w32fd );
+							m_vpItems.emplace_back( lpName, nFileBytes );
 							found++; // 2011.11.19
 							if( pExceptItems && nKeyDirLen ){
 								// フォルダーを含んだパスなら検索済みとして除外指定に追加する
-								// 注意: 4GBを超えるファイルではnFileSizeLowのみが保存される
-								pExceptItems->m_vpItems.emplace_back( lpFullPath, w32fd.nFileSizeLow );
+								pExceptItems->m_vpItems.emplace_back( lpFullPath, nFileBytes );
 							}else{
 								delete [] lpFullPath;
 							}
