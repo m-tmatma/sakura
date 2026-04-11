@@ -11,6 +11,7 @@
 
 #include "StdAfx.h"
 #include "CGraphics.h"
+#include "basis/Win32GdiClamp.h"
 #include "util/std_macro.h"
 #include "apiwrap/StdApi.h"
 
@@ -429,9 +430,14 @@ void CGraphics::DrawRect(int x1, int y1, int x2, int y2)
 {
 	--x2;
 	--y2;
-	::MoveToEx(m_hdc, x1, y1, nullptr);
-	::LineTo(m_hdc, x2, y1);
-	::LineTo(m_hdc, x2, y2);
-	::LineTo(m_hdc, x1, y2);
-	::LineTo(m_hdc, x1, y1);
+	// P2: 論理座標を Win32 GDI の LONG 範囲へ（巨大ドキュメント・座標演算の飽和）
+	const LONG lx1 = ClampIntToLongForGdi(Int(x1));
+	const LONG ly1 = ClampIntToLongForGdi(Int(y1));
+	const LONG lx2 = ClampIntToLongForGdi(Int(x2));
+	const LONG ly2 = ClampIntToLongForGdi(Int(y2));
+	::MoveToEx(m_hdc, lx1, ly1, nullptr);
+	::LineTo(m_hdc, lx2, ly1);
+	::LineTo(m_hdc, lx2, ly2);
+	::LineTo(m_hdc, lx1, ly2);
+	::LineTo(m_hdc, lx1, ly1);
 }

@@ -11,6 +11,7 @@
 #include "doc/CEditDoc.h"
 #include "types/CTypeSupport.h"
 #include "util/window.h"
+#include "basis/Win32GdiClamp.h"
 
 CRuler::CRuler(const CEditView* pEditView, const CEditDoc* pEditDoc)
 : m_pEditView(pEditView)
@@ -168,30 +169,30 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 	apt.resize(nLinesToDraw * 2);
 	asz.resize(nLinesToDraw, 2);
 	// 下線 (ルーラーと本文の境界)
-	apt[0] = POINT{m_pEditView->GetTextArea().GetAreaLeft(), nY + 1};
-	apt[1] = POINT{nToX, nY + 1};
+	apt[0] = POINT{ ClampIntToLongForGdi(Int(m_pEditView->GetTextArea().GetAreaLeft())), ClampIntToLongForGdi(Int(nY + 1)) };
+	apt[1] = POINT{ ClampIntToLongForGdi(Int(nToX)), ClampIntToLongForGdi(Int(nY + 1)) };
 	size_t idx = 1;
 	while(i <= m_pEditView->GetTextArea().GetRightCol() + 1 && keta <= nMaxLineKetas)
 	{
-		apt[idx * 2 + 0] = POINT{nX, nY};
+		apt[idx * 2 + 0] = POINT{ ClampIntToLongForGdi(Int(nX)), ClampIntToLongForGdi(Int(nY)) };
 		//ルーラー終端の区切り(大)
 		if( keta == nMaxLineKetas ){
-			apt[idx * 2 + 1] = POINT{nX, 0};
+			apt[idx * 2 + 1] = POINT{ ClampIntToLongForGdi(Int(nX)), ClampIntToLongForGdi(Int(0)) };
 		}
 		//10目盛おきの区切り(大)と数字
 		else if( 0 == keta % 10 ){
 			wchar_t szColumn[32];
-			apt[idx * 2 + 1] = POINT{nX, 0};
+			apt[idx * 2 + 1] = POINT{ ClampIntToLongForGdi(Int(nX)), ClampIntToLongForGdi(Int(0)) };
 			::_itow_s(((Int)keta) / 10, szColumn, 10);
 			::TextOutW(gr, nX + 2 + 0, -1 + 0, PSZ_ARGS(szColumn));
 		}
 		//5目盛おきの区切り(中)
 		else if( 0 == keta % 5 ){
-			apt[idx * 2 + 1] = POINT{nX, nY - 6};
+			apt[idx * 2 + 1] = POINT{ ClampIntToLongForGdi(Int(nX)), ClampIntToLongForGdi(Int(nY - 6)) };
 		}
 		//毎目盛の区切り(小)
 		else{
-			apt[idx * 2 + 1] = POINT{nX, nY - 3};
+			apt[idx * 2 + 1] = POINT{ ClampIntToLongForGdi(Int(nX)), ClampIntToLongForGdi(Int(nY - 3)) };
 		}
 		++idx;
 		assert(idx <= nLinesToDraw);
