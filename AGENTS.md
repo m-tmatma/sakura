@@ -36,7 +36,7 @@
 #### P2 の続き（作業メモ）
 
 - **GDI 境界（論理座標 → `LONG`）**  
-  `ClampIntToLongForGdi`（`basis/Win32GdiClamp.h`）と `TwoPointToRect` / `CStrictPoint::GetPOINT` で飽和する経路は整理済み。**進捗**: `CGraphics::DrawRect` の `MoveToEx`/`LineTo` へ渡す座標を **`ClampIntToLongForGdi(Int(...))`** に。`CRuler` の `PolyPolyline` 用 `POINT` 配列も同様。**残り**: `CEditView` のカーソル縦線／アンダーラインの `MoveToEx`、`CTextDrawer` 等の直接 API 呼び出し。
+  `ClampIntToLongForGdi`（`basis/Win32GdiClamp.h`）と `TwoPointToRect` / `CStrictPoint::GetPOINT` で飽和する経路は整理済み。**進捗**: `CGraphics::DrawRect` の `MoveToEx`/`LineTo` へ渡す座標を **`ClampIntToLongForGdi(Int(...))`** に。`CRuler` の `PolyPolyline` 用 `POINT` 配列も同様。`CEditView::CaretUnderLineON` のカーソル縦線・アンダーライン、`CTextDrawer` の桁縦線・ノート線・折り返し線・ブックマーク縦線の `MoveToEx`/`LineTo` も同様。**残り**: `CMenuDrawer` / `CPrintPreview` 等の直接 GDI 呼び出し。
 
 - **ファイルサイズ・列挙**  
   - `CFileLoad` は `GetFileSizeEx` と **`LONGLONG m_nFileSize`**。x64 では `GetLimitSize()` が実質上限なし（`ULLONG_MAX`）— **メモリ・UI・進捗表示**との整合は P4 と合わせて確認。  

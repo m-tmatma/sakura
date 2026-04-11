@@ -19,6 +19,7 @@
 #include "charset/charcode.h"
 #include "doc/layout/CLayout.h"
 #include "apiwrap/StdApi.h"
+#include "basis/Win32GdiClamp.h"
 
 const CTextArea* CTextDrawer::GetTextArea() const
 {
@@ -239,22 +240,22 @@ void CTextDrawer::DispVerticalLines(
 					}
 					for( ; y < nBottom; y += 2 ){
 						if( nPosX < nPosXRight ){
-							::MoveToEx( gr, nPosX, y, nullptr );
-							::LineTo( gr, nPosX, y + 1 );
+							::MoveToEx( gr, ClampIntToLongForGdi(Int(nPosX)), ClampIntToLongForGdi(Int(y)), nullptr );
+							::LineTo( gr, ClampIntToLongForGdi(Int(nPosX)), ClampIntToLongForGdi(Int(y + 1)) );
 						}
 						if( bBold && nPosXLeft <= nPosXBold ){
-							::MoveToEx( gr, nPosXBold, y, nullptr );
-							::LineTo( gr, nPosXBold, y + 1 );
+							::MoveToEx( gr, ClampIntToLongForGdi(Int(nPosXBold)), ClampIntToLongForGdi(Int(y)), nullptr );
+							::LineTo( gr, ClampIntToLongForGdi(Int(nPosXBold)), ClampIntToLongForGdi(Int(y + 1)) );
 						}
 					}
 				}else{
 					if( nPosX < nPosXRight ){
-						::MoveToEx( gr, nPosX, nTop, nullptr );
-						::LineTo( gr, nPosX, nBottom );
+						::MoveToEx( gr, ClampIntToLongForGdi(Int(nPosX)), ClampIntToLongForGdi(Int(nTop)), nullptr );
+						::LineTo( gr, ClampIntToLongForGdi(Int(nPosX)), ClampIntToLongForGdi(Int(nBottom)) );
 					}
 					if( bBold && nPosXLeft <= nPosXBold ){
-						::MoveToEx( gr, nPosXBold, nTop, nullptr );
-						::LineTo( gr, nPosXBold, nBottom );
+						::MoveToEx( gr, ClampIntToLongForGdi(Int(nPosXBold)), ClampIntToLongForGdi(Int(nTop)), nullptr );
+						::LineTo( gr, ClampIntToLongForGdi(Int(nPosXBold)), ClampIntToLongForGdi(Int(nBottom)) );
 					}
 				}
 			}
@@ -290,8 +291,8 @@ void CTextDrawer::DispNoteLine(
 		int y = ((nTop - offset) / nLineHeight * nLineHeight) + offsetMod;
 		for( ; y < nBottom; y += nLineHeight ){
 			if( nTop <= y ){
-				::MoveToEx( gr, left, y, nullptr );
-				::LineTo( gr, right, y );
+				::MoveToEx( gr, ClampIntToLongForGdi(Int(left)), ClampIntToLongForGdi(Int(y)), nullptr );
+				::LineTo( gr, ClampIntToLongForGdi(Int(right)), ClampIntToLongForGdi(Int(y)) );
 			}
 		}
 	}
@@ -322,8 +323,8 @@ void CTextDrawer::DispWrapLine(
 		/// 折り返し記号の色のペンを設定
 		gr.PushPen(cWrapType.GetTextColor(), 0);
 
-		::MoveToEx( gr, nXPos, nTop, nullptr );
-		::LineTo( gr, nXPos, nBottom );
+		::MoveToEx( gr, ClampIntToLongForGdi(Int(nXPos)), ClampIntToLongForGdi(Int(nTop)), nullptr );
+		::LineTo( gr, ClampIntToLongForGdi(Int(nXPos)), ClampIntToLongForGdi(Int(nBottom)) );
 
 		gr.PopPen();
 	}
@@ -529,8 +530,8 @@ void CTextDrawer::DispLineNumber(
 		if(CBookmarkGetter(pCDocLine).IsBookmarked() && !cMarkType.IsDisp() )
 		{
 			gr.PushPen(cColorType.GetTextColor(),2);
-			::MoveToEx( gr, 1, y, nullptr );
-			::LineTo( gr, 1, y + nLineHeight );
+			::MoveToEx( gr, ClampIntToLongForGdi(Int(1)), ClampIntToLongForGdi(Int(y)), nullptr );
+			::LineTo( gr, ClampIntToLongForGdi(Int(1)), ClampIntToLongForGdi(Int(y + nLineHeight)) );
 			gr.PopPen();
 		}
 

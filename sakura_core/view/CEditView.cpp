@@ -43,6 +43,7 @@
 #include "util/os.h" //WM_MOUSEWHEEL,IMR_RECONVERTSTRING,WM_XBUTTON*,IMR_CONFIRMRECONVERTSTRING
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
+#include "basis/Win32GdiClamp.h"
 #include "apiwrap/StdApi.h"
 #include "config/system_constants.h"
 
@@ -2407,14 +2408,14 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 		{
 			CGraphics gr(hdc);
 			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sColorAttr.m_cTEXT );
-			::MoveToEx( gr, m_nOldCursorLineX, GetTextArea().GetAreaTop(), nullptr );
-			::LineTo(   gr, m_nOldCursorLineX, GetTextArea().GetAreaBottom() );
+			::MoveToEx( gr, ClampIntToLongForGdi(Int(m_nOldCursorLineX)), ClampIntToLongForGdi(Int(GetTextArea().GetAreaTop())), nullptr );
+			::LineTo(   gr, ClampIntToLongForGdi(Int(m_nOldCursorLineX)), ClampIntToLongForGdi(Int(GetTextArea().GetAreaBottom())) );
 			int nBoldX = m_nOldCursorLineX - 1;
 			// 「太字」のときは2dotの線にする。その際カーソルに掛からないように左側を太くする
 			if( m_pTypeData->m_ColorInfoArr[COLORIDX_CURSORVLINE].m_sFontAttr.m_bBoldFont &&
 				IsDrawCursorVLinePos(nBoldX) ){
-				::MoveToEx( gr, nBoldX, GetTextArea().GetAreaTop(), nullptr );
-				::LineTo(   gr, nBoldX, GetTextArea().GetAreaBottom() );
+				::MoveToEx( gr, ClampIntToLongForGdi(Int(nBoldX)), ClampIntToLongForGdi(Int(GetTextArea().GetAreaTop())), nullptr );
+				::LineTo(   gr, ClampIntToLongForGdi(Int(nBoldX)), ClampIntToLongForGdi(Int(GetTextArea().GetAreaBottom())) );
 				m_nOldCursorVLineWidth = 2;
 			}else{
 				m_nOldCursorVLineWidth = 1;
@@ -2451,14 +2452,14 @@ void CEditView::CaretUnderLineON( bool bDraw, bool bDrawPaint, bool DisalbeUnder
 			gr.SetPen( m_pTypeData->m_ColorInfoArr[COLORIDX_UNDERLINE].m_sColorAttr.m_cTEXT );
 			::MoveToEx(
 				gr,
-				GetTextArea().GetAreaLeft(),
-				nUnderLineY,
+				ClampIntToLongForGdi(Int(GetTextArea().GetAreaLeft())),
+				ClampIntToLongForGdi(Int(nUnderLineY)),
 				nullptr
 			);
 			::LineTo(
 				gr,
-				GetTextArea().GetAreaRight(),
-				nUnderLineY
+				ClampIntToLongForGdi(Int(GetTextArea().GetAreaRight())),
+				ClampIntToLongForGdi(Int(nUnderLineY))
 			);
 		}	// ReleaseDC の前に gr デストラクト
 		::ReleaseDC( GetHwnd(), hdc );
