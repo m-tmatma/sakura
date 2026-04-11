@@ -41,7 +41,7 @@
 - **ファイルサイズ・列挙**  
   - `CFileLoad` は `GetFileSizeEx` と **`LONGLONG m_nFileSize`**。x64 では `GetLimitSize()` が実質上限なし（`ULLONG_MAX`）— **メモリ・UI・進捗表示**との整合は P4 と合わせて確認。  
   - **`CGrepEnumFileBase`**: [x] `PairGrepEnumItem` の第 2 要素を **`ULONGLONG`**（`GrepFileSizeFromFindData` で `nFileSizeHigh`/`Low` を合成）。`GetFileSizeBytes` に改名。  
-  - **`CGrepAgent`**: `WriteFile` に渡す長さは `DWORD` にキャスト。通常はチャンク単位だが、**一括書き込みが 4GB 超**になり得る経路があれば分割が必要。
+  - **`CGrepAgent`**: [x] `AddTail` の標準出力 `WriteFile` は **`DWORD` 上限で分割**（`GetRawLength()` が 4GB 超でも縮小しない）。
 
 - **クリップボード・D&D・その他 `GlobalAlloc`**  
   `CClipboard::SetText` は乗算・加算オーバーフロー対策済み。**進捗**: `CEditWnd.cpp`（タブ D&D の `CF_UNICODETEXT`）でパス長×`wchar_t` の乗算オーバーフロー防止と `GlobalAlloc`/`GlobalLock` 失敗時の後始末。`CEditView.cpp`（`WM_IME_COMPOSITION`）で `DWORD` 加算オーバーフロー防止と `ImmReleaseContext`/`GlobalFree` の漏れを整理。`CDropTarget.cpp`（`CDataObject::GetData`）、`CEditView_Mouse.cpp`（`PostMyDropFiles`）、`util/os.cpp`（`GetGlobalData` のコピー）で `GlobalAlloc`/`GlobalLock` 失敗時の安全化。**進捗（追記）**: `CDlgProperty.cpp` の `_DEBUG` ブロック（`nBufLen` 負値のガード、`cbAlloc`＋`GlobalLock` 失敗時の解放）。`CDlgFuncList.cpp`（`SizeofResource` が 0 のときは `GlobalAlloc` しない）。

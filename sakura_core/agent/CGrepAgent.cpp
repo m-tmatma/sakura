@@ -36,6 +36,8 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+#include <algorithm>
+#include <limits>
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
@@ -262,8 +264,19 @@ void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAdd
 			std::unique_ptr<CCodeBase> pcCodeBase( CCodeFactory::CreateCodeBase(
 					pcEditView->GetDocument()->GetDocumentEncoding(), 0) );
 			pcCodeBase->UnicodeToCode( cmem, &cmemOut );
-			DWORD dwWrite = 0;
-			::WriteFile(out, cmemOut.GetRawPtr(), static_cast<DWORD>(cmemOut.GetRawLength()), &dwWrite, nullptr);
+			// P2: WriteFile の第 3 引数は DWORD。4GB 超のバッファは分割書き込み
+			const char* pOut = reinterpret_cast<const char*>(cmemOut.GetRawPtr());
+			size_t nRemain = cmemOut.GetRawLength();
+			const size_t kMaxChunk = static_cast<size_t>(std::numeric_limits<DWORD>::max());
+			while( nRemain > 0 ){
+				const DWORD nChunk = static_cast<DWORD>(std::min(nRemain, kMaxChunk));
+				DWORD dwWrite = 0;
+				if( !::WriteFile(out, pOut, nChunk, &dwWrite, nullptr) || dwWrite == 0 ){
+					break;
+				}
+				pOut += dwWrite;
+				nRemain -= dwWrite;
+			}
 		}
 	}else{
 		pcEditView->GetCommander().Command_ADDTAIL( cmem.GetStringPtr(), cmem.GetStringLength() );
