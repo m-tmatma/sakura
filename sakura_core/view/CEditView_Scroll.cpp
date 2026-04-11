@@ -31,6 +31,7 @@
 #include "types/CTypeSupport.h"
 #include <limits.h>
 #include "config/app_constants.h"
+#include "basis/Win32GdiClamp.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -541,12 +542,19 @@ void CEditView::ScrollDraw(CLayoutInt nScrollRowNum, CLayoutInt nScrollColNum, c
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
 		if( m_hbmpCompatBMP ){
 			// 互換BMPもスクロール処理のためにBitBltで移動させる
+			const long long dstX = static_cast<long long>(rcScroll.left) + static_cast<long long>(nScrollColPxWidth);
+			const long long dstY = static_cast<long long>(rcScroll.top)
+				+ static_cast<long long>(static_cast<Int>(nScrollRowNum)) * static_cast<long long>(GetTextMetrics().GetHankakuDy());
 			::BitBlt(
 				m_hdcCompatDC,
-				rcScroll.left + nScrollColPxWidth,
-				rcScroll.top  + (Int)nScrollRowNum * GetTextMetrics().GetHankakuDy(),
-				rcScroll.right - rcScroll.left, rcScroll.bottom - rcScroll.top,
-				m_hdcCompatDC, rcScroll.left, rcScroll.top, SRCCOPY
+				ClampIntExprForGdi(dstX),
+				ClampIntExprForGdi(dstY),
+				ClampRectWidthHeightForGdi(rcScroll.left, rcScroll.right),
+				ClampRectWidthHeightForGdi(rcScroll.top, rcScroll.bottom),
+				m_hdcCompatDC,
+				ClampIntToLongForGdi(Int(rcScroll.left)),
+				ClampIntToLongForGdi(Int(rcScroll.top)),
+				SRCCOPY
 			);
 		}
 

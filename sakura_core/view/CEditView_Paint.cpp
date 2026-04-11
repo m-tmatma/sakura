@@ -9,6 +9,7 @@
 #include "StdAfx.h"
 #include <vector>
 #include <limits.h>
+#include "basis/Win32GdiClamp.h"
 #pragma comment(lib, "Msimg32.lib")
 #include "view/CEditView_Paint.h"
 #include "view/CEditView.h"
@@ -597,13 +598,13 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 		&& m_hdcCompatDC && m_hbmpCompatBMP ){
 		::BitBlt(
 			gr,
-			pPs->rcPaint.left,
-			pPs->rcPaint.top,
-			pPs->rcPaint.right - pPs->rcPaint.left,
-			pPs->rcPaint.bottom - pPs->rcPaint.top,
+			ClampIntToLongForGdi(Int(pPs->rcPaint.left)),
+			ClampIntToLongForGdi(Int(pPs->rcPaint.top)),
+			ClampRectWidthHeightForGdi(pPs->rcPaint.left, pPs->rcPaint.right),
+			ClampRectWidthHeightForGdi(pPs->rcPaint.top, pPs->rcPaint.bottom),
 			m_hdcCompatDC,
-			pPs->rcPaint.left,
-			pPs->rcPaint.top,
+			ClampIntToLongForGdi(Int(pPs->rcPaint.left)),
+			ClampIntToLongForGdi(Int(pPs->rcPaint.top)),
 			SRCCOPY
 		);
 		if ( GetEditWnd().GetActivePane() == m_nMyIndex ){
@@ -837,13 +838,13 @@ void CEditView::OnPaint2( HDC _hdc, PAINTSTRUCT *pPs, BOOL bDrawFromComptibleBmp
 
 		::BitBlt(
 			hdcOld,
-			pPs->rcPaint.left,
-			pPs->rcPaint.top,
-			pPs->rcPaint.right - pPs->rcPaint.left,
-			pPs->rcPaint.bottom - pPs->rcPaint.top,
+			ClampIntToLongForGdi(Int(pPs->rcPaint.left)),
+			ClampIntToLongForGdi(Int(pPs->rcPaint.top)),
+			ClampRectWidthHeightForGdi(pPs->rcPaint.left, pPs->rcPaint.right),
+			ClampRectWidthHeightForGdi(pPs->rcPaint.top, pPs->rcPaint.bottom),
 			gr,
-			pPs->rcPaint.left,
-			pPs->rcPaint.top,
+			ClampIntToLongForGdi(Int(pPs->rcPaint.left)),
+			ClampIntToLongForGdi(Int(pPs->rcPaint.top)),
 			SRCCOPY
 		);
 	}
@@ -1381,8 +1382,8 @@ bool CEditView::CreateOrUpdateCompatibleBitmap( int cx, int cy )
 				HBITMAP hBitmapOld = (HBITMAP)::SelectObject( hdcTemp, hBitmapNew );
 				// 前の画面内容をコピーする
 				::BitBlt( hdcTemp, 0, 0,
-					t_min( nBmpWidthNew,m_nCompatBMPWidth ),
-					t_min( nBmpHeightNew, m_nCompatBMPHeight ),
+					ClampIntToLongForGdi(Int(t_min( nBmpWidthNew,m_nCompatBMPWidth ))),
+					ClampIntToLongForGdi(Int(t_min( nBmpHeightNew, m_nCompatBMPHeight ))),
 					m_hdcCompatDC, 0, 0, SRCCOPY );
 				::SelectObject( hdcTemp, hBitmapOld );
 				::SelectObject( m_hdcCompatDC, m_hbmpCompatBMPOld );

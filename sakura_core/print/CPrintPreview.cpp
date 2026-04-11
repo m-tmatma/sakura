@@ -293,29 +293,35 @@ LRESULT CPrintPreview::OnPaint(
 	if( 1 == (m_nbmpCompatScale / COMPAT_BMP_BASE) ){
 		::BitBlt(
 			hdcOld,
-			ps.rcPaint.left,
-			ps.rcPaint.top,
-			ps.rcPaint.right - ps.rcPaint.left,
-			ps.rcPaint.bottom - ps.rcPaint.top,
+			ClampIntToLongForGdi(Int(ps.rcPaint.left)),
+			ClampIntToLongForGdi(Int(ps.rcPaint.top)),
+			ClampRectWidthHeightForGdi(ps.rcPaint.left, ps.rcPaint.right),
+			ClampRectWidthHeightForGdi(ps.rcPaint.top, ps.rcPaint.bottom),
 			hdc,
-			ps.rcPaint.left,
-			ps.rcPaint.top,
+			ClampIntToLongForGdi(Int(ps.rcPaint.left)),
+			ClampIntToLongForGdi(Int(ps.rcPaint.top)),
 			SRCCOPY
 		);
 	}
 	else{
 		int stretchModeOld = SetStretchBltMode( hdcOld, STRETCH_HALFTONE );
+		const long long srcXL = (static_cast<long long>(ps.rcPaint.left) * m_nbmpCompatScale) / COMPAT_BMP_BASE;
+		const long long srcYL = (static_cast<long long>(ps.rcPaint.top) * m_nbmpCompatScale) / COMPAT_BMP_BASE;
+		const long long dstW = static_cast<long long>(ps.rcPaint.right) - static_cast<long long>(ps.rcPaint.left);
+		const long long dstH = static_cast<long long>(ps.rcPaint.bottom) - static_cast<long long>(ps.rcPaint.top);
+		const long long srcWL = (dstW * m_nbmpCompatScale) / COMPAT_BMP_BASE;
+		const long long srcHL = (dstH * m_nbmpCompatScale) / COMPAT_BMP_BASE;
 		::StretchBlt(
 			hdcOld,
-			ps.rcPaint.left,
-			ps.rcPaint.top,
-			ps.rcPaint.right - ps.rcPaint.left,
-			ps.rcPaint.bottom - ps.rcPaint.top,
+			ClampIntToLongForGdi(Int(ps.rcPaint.left)),
+			ClampIntToLongForGdi(Int(ps.rcPaint.top)),
+			ClampRectWidthHeightForGdi(ps.rcPaint.left, ps.rcPaint.right),
+			ClampRectWidthHeightForGdi(ps.rcPaint.top, ps.rcPaint.bottom),
 			hdc,
-			(ps.rcPaint.left * m_nbmpCompatScale) / COMPAT_BMP_BASE,
-			(ps.rcPaint.top * m_nbmpCompatScale) / COMPAT_BMP_BASE,
-			((ps.rcPaint.right - ps.rcPaint.left) * m_nbmpCompatScale) / COMPAT_BMP_BASE,
-			((ps.rcPaint.bottom - ps.rcPaint.top) * m_nbmpCompatScale) / COMPAT_BMP_BASE,
+			ClampIntExprForGdi(srcXL),
+			ClampIntExprForGdi(srcYL),
+			ClampIntExprForGdi(srcWL),
+			ClampIntExprForGdi(srcHL),
 			SRCCOPY
 		);
 		SetStretchBltMode( hdcOld, stretchModeOld );

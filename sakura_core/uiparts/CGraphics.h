@@ -17,6 +17,7 @@
 #include <cassert>
 #include <vector>
 #include "doc/CDocTypeSetting.h"
+#include "basis/Win32GdiClamp.h"
 
 /*!
  * @brief API関数FillRectの高速版(ブラシ用)
@@ -35,7 +36,13 @@ inline bool MyFillRect( const HDC hDC, const RECT &rc, const HBRUSH hBrush ) noe
 	HGDIOBJ hBrushOld = ::SelectObject( hDC, hBrush );
 	if ( !hBrushOld || hBrushOld == HGDI_ERROR ) return false;
 
-	auto retPatBlt = ::PatBlt( hDC, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATCOPY );
+	auto retPatBlt = ::PatBlt(
+		hDC,
+		ClampIntToLongForGdi(Int(rc.left)),
+		ClampIntToLongForGdi(Int(rc.top)),
+		ClampRectWidthHeightForGdi(rc.left, rc.right),
+		ClampRectWidthHeightForGdi(rc.top, rc.bottom),
+		PATCOPY);
 	::SelectObject( hDC, hBrushOld );
 
 	return retPatBlt != 0;

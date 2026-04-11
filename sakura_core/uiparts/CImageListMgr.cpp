@@ -18,6 +18,7 @@
 */
 #include "StdAfx.h"
 #include "CImageListMgr.h"
+#include "basis/Win32GdiClamp.h"
 
 #include <cmath>
 #include <array>
@@ -126,7 +127,10 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc)
 	}
 	HGDIOBJ hbmpSrcOld = SelectObject(hdcSrc, hbmpSrc);
 	HGDIOBJ hbmpDstOld = SelectObject(hdcDst, hdib);
-	BitBlt(hdcDst, 0, 0, bmp.bmWidth, bmp.bmHeight, hdcSrc, 0, 0, SRCCOPY);
+	::BitBlt(hdcDst, 0, 0,
+		ClampIntToLongForGdi(Int(bmp.bmWidth)),
+		ClampIntToLongForGdi(Int(bmp.bmHeight)),
+		hdcSrc, 0, 0, SRCCOPY);
 	SelectObject(hdcSrc, hbmpSrcOld);
 	SelectObject(hdcDst, hbmpDstOld);
 	DeleteDC(hdcSrc);
@@ -685,7 +689,10 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 		{
 			HBRUSH hBrush = ::CreateSolidBrush( clrTransparent );
 			HGDIOBJ hBrushOld = ::SelectObject( hdcWork, hBrush );
-			::PatBlt( hdcWork, 0, 0, cxSmIcon * cols, cySmIcon * rows, PATCOPY );
+			::PatBlt( hdcWork, 0, 0,
+				ClampIntExprForGdi(static_cast<long long>(cxSmIcon) * cols),
+				ClampIntExprForGdi(static_cast<long long>(cySmIcon) * rows),
+				PATCOPY );
 			::SelectObject( hdcWork, hBrushOld );
 			::DeleteObject( hBrush );
 		}
@@ -752,7 +759,10 @@ void CImageListMgr::Extend(bool bExtend)
 	HBITMAP hDestBmp = ::CreateCompatibleBitmap( hSrcDC, MAX_X * cx(), (curY + (bExtend ? 1 : 0)) * cy() );
 	HBITMAP hDestBmpOld = (HBITMAP)::SelectObject( hDestDC, hDestBmp );
 
-	::BitBlt( hDestDC, 0, 0, MAX_X * cx(), curY * cy(), hSrcDC, 0, 0, SRCCOPY );
+	::BitBlt( hDestDC, 0, 0,
+		ClampIntExprForGdi(static_cast<long long>(MAX_X) * cx()),
+		ClampIntExprForGdi(static_cast<long long>(curY) * cy()),
+		hSrcDC, 0, 0, SRCCOPY );
 
 	//拡張した部分は透過色で塗る
 	if( bExtend ){

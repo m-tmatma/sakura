@@ -1085,8 +1085,16 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		::DeleteObject( hPen );
 		
 		if( bBackSurface ){
-			::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
-				hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
+			// P2: BitBlt の座標・サイズを GDI の int/LONG 範囲へ飽和
+			::BitBlt( hdcOrg,
+				ClampIntToLongForGdi(Int(lpdis->rcItem.left)),
+				ClampIntToLongForGdi(Int(lpdis->rcItem.top)),
+				ClampIntToLongForGdi(Int(nTargetWidth)),
+				ClampIntToLongForGdi(Int(nTargetHeight)),
+				hdc,
+				ClampIntToLongForGdi(Int(lpdis->rcItem.left)),
+				ClampIntToLongForGdi(Int(lpdis->rcItem.top)),
+				SRCCOPY );
 		}
 		return; // セパレータ。作画終了
 	}
@@ -1259,10 +1267,20 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 				::DrawFrameControl( hdcMem, &rcCheck, DFC_MENU, DFCS_MENUCHECK );
 				COLORREF colTextOld = ::SetTextColor(hdc, RGB(0,0,0) );
 				COLORREF colBackOld = ::SetBkColor(hdc,   RGB(255,255,255) );
-				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCAND );
+				::BitBlt( hdc,
+					ClampIntToLongForGdi(Int(lpdis->rcItem.left + 2)),
+					ClampIntToLongForGdi(Int(lpdis->rcItem.top + 2)),
+					ClampIntToLongForGdi(Int(nCxCheck)),
+					ClampIntToLongForGdi(Int(nCyCheck)),
+					hdcMem, 0, 0, SRCAND );
 				::SetTextColor( hdc, textColor );
 				::SetBkColor( hdc, RGB(0,0,0) );
-				::BitBlt( hdc, lpdis->rcItem.left+2, lpdis->rcItem.top+2, nCxCheck, nCyCheck, hdcMem, 0, 0, SRCPAINT );
+				::BitBlt( hdc,
+					ClampIntToLongForGdi(Int(lpdis->rcItem.left + 2)),
+					ClampIntToLongForGdi(Int(lpdis->rcItem.top + 2)),
+					ClampIntToLongForGdi(Int(nCxCheck)),
+					ClampIntToLongForGdi(Int(nCyCheck)),
+					hdcMem, 0, 0, SRCPAINT );
 				::SetTextColor( hdc, colTextOld );
 				::SetBkColor( hdc, colBackOld );
 				::SelectObject( hdcMem, hOld );
@@ -1272,8 +1290,15 @@ void CMenuDrawer::DrawItem( DRAWITEMSTRUCT* lpdis )
 		}
 	}
 	if( bBackSurface ){
-		::BitBlt( hdcOrg, lpdis->rcItem.left, lpdis->rcItem.top, nTargetWidth, nTargetHeight,
-			hdc, lpdis->rcItem.left, lpdis->rcItem.top, SRCCOPY );
+		::BitBlt( hdcOrg,
+			ClampIntToLongForGdi(Int(lpdis->rcItem.left)),
+			ClampIntToLongForGdi(Int(lpdis->rcItem.top)),
+			ClampIntToLongForGdi(Int(nTargetWidth)),
+			ClampIntToLongForGdi(Int(nTargetHeight)),
+			hdc,
+			ClampIntToLongForGdi(Int(lpdis->rcItem.left)),
+			ClampIntToLongForGdi(Int(lpdis->rcItem.top)),
+			SRCCOPY );
 	}
 	return;
 }

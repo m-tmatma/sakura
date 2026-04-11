@@ -16,6 +16,7 @@
 */
 
 #include "StdAfx.h"
+#include "basis/Win32GdiClamp.h"
 #include "view/CCaret.h"
 #include "view/CEditView.h"
 #include "view/CTextArea.h"
@@ -1015,9 +1016,9 @@ void CCaret::CreateEditCaret( COLORREF crCaret, COLORREF crBack, int nWidth, int
 	HBRUSH hbrCaret = ::CreateSolidBrush( crCaret );
 	HBRUSH hbrBack = ::CreateSolidBrush( crBack );
 	HBRUSH hbrOld = (HBRUSH)::SelectObject( hdcMem, hbrCaret );
-	::PatBlt( hdcMem, 0, 0, nWidth, nHeight, PATCOPY );
+	::PatBlt( hdcMem, 0, 0, ClampIntToLongForGdi(Int(nWidth)), ClampIntToLongForGdi(Int(nHeight)), PATCOPY );
 	::SelectObject( hdcMem, hbrBack );
-	::PatBlt( hdcMem, 0, 0, nWidth, nHeight, PATINVERT );
+	::PatBlt( hdcMem, 0, 0, ClampIntToLongForGdi(Int(nWidth)), ClampIntToLongForGdi(Int(nHeight)), PATINVERT );
 	::SelectObject( hdcMem, hbrOld );
 	::SelectObject( hdcMem, hbmpOld );
 	::DeleteObject( hbrCaret );

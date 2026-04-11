@@ -20,6 +20,7 @@
 */
 
 #include "StdAfx.h"
+#include "basis/Win32GdiClamp.h"
 #include "dlg/CDlgAbout.h"
 #include "uiparts/HandCursor.h"
 #include "util/file.h"
@@ -466,7 +467,13 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			// ハイライト時背景描画
 			HBRUSH brush = ::CreateSolidBrush( RGB( 0xff, 0xff, 0 ) );
 			HGDIOBJ brushOld = ::SelectObject( hdc, brush );
-			::PatBlt( hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY );
+			::PatBlt(
+				hdc,
+				ClampIntToLongForGdi(Int(rc.left)),
+				ClampIntToLongForGdi(Int(rc.top)),
+				ClampRectWidthHeightForGdi(rc.left, rc.right),
+				ClampRectWidthHeightForGdi(rc.top, rc.bottom),
+				PATCOPY );
 			::SelectObject( hdc, brushOld );
 			::DeleteObject( brush );
 		}else{
@@ -475,7 +482,13 @@ LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 			HBRUSH hbrOld;
 			hbr = (HBRUSH)SendMessageAny( GetParent( hWnd ), WM_CTLCOLORSTATIC, wParam, (LPARAM)hWnd );
 			hbrOld = (HBRUSH)SelectObject( hdc, hbr );
-			::PatBlt( hdc, rc.left, rc.top, rc.right, rc.bottom, PATCOPY );
+			::PatBlt(
+				hdc,
+				ClampIntToLongForGdi(Int(rc.left)),
+				ClampIntToLongForGdi(Int(rc.top)),
+				ClampRectWidthHeightForGdi(rc.left, rc.right),
+				ClampRectWidthHeightForGdi(rc.top, rc.bottom),
+				PATCOPY );
 			SelectObject( hdc, hbrOld );
 		}
 		return (LRESULT)1;

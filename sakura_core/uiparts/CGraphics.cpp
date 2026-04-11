@@ -13,6 +13,7 @@
 #include "CGraphics.h"
 #include "basis/Win32GdiClamp.h"
 #include "util/std_macro.h"
+#include <algorithm>
 #include "apiwrap/StdApi.h"
 
 class CGDIStock
@@ -415,7 +416,18 @@ void CGraphics::DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast
 	HBRUSH hBrush = GetDropRectBrush();
 	HBRUSH hBrushOld = (HBRUSH)::SelectObject(hdc, hBrush);
 
-	::PatBlt(hdc, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, PATINVERT);
+	// P2: `PatBlt` の幅・高さは非負。RECT 差分のオーバーフロー回避のため long long で算出
+	const long long wll = static_cast<long long>(rc.right) - static_cast<long long>(rc.left);
+	const long long hll = static_cast<long long>(rc.bottom) - static_cast<long long>(rc.top);
+	const int wPat = static_cast<int>(std::clamp(wll, 0LL, static_cast<long long>(INT_MAX)));
+	const int hPat = static_cast<int>(std::clamp(hll, 0LL, static_cast<long long>(INT_MAX)));
+	::PatBlt(
+		hdc,
+		ClampIntToLongForGdi(Int(rc.left)),
+		ClampIntToLongForGdi(Int(rc.top)),
+		ClampIntToLongForGdi(Int(wPat)),
+		ClampIntToLongForGdi(Int(hPat)),
+		PATINVERT);
 
 	::SelectObject(hdc, hBrushOld);
 	::SelectClipRgn(hdc, nullptr);
