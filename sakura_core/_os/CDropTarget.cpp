@@ -263,8 +263,18 @@ STDMETHODIMP CDataObject::GetData( LPFORMATETC lpfe, LPSTGMEDIUM lpsm )
 		return DV_E_FORMATETC;
 
 	lpsm->tymed = TYMED_HGLOBAL;
-	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, m_pData[i].size );
-	memcpy_s( ::GlobalLock( lpsm->hGlobal ), m_pData[i].size, m_pData[i].data, m_pData[i].size );
+	const SIZE_T cb = m_pData[i].size;
+	lpsm->hGlobal = ::GlobalAlloc( GHND | GMEM_DDESHARE, cb );
+	if( lpsm->hGlobal == nullptr ){
+		return E_OUTOFMEMORY;
+	}
+	LPVOID pLock = ::GlobalLock( lpsm->hGlobal );
+	if( pLock == nullptr ){
+		::GlobalFree( lpsm->hGlobal );
+		lpsm->hGlobal = nullptr;
+		return E_OUTOFMEMORY;
+	}
+	memcpy_s( pLock, cb, m_pData[i].data, cb );
 	::GlobalUnlock( lpsm->hGlobal );
 	lpsm->pUnkForRelease = nullptr;
 

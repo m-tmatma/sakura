@@ -497,16 +497,24 @@ LRESULT CEditView::DispatchEvent(
 
 			// increase buffer size for NULL terminator,
 			//	maybe it is in Unicode
+			// P2: DWORD 加算オーバーフロー防止
+			if( dwSize > UINT_MAX - sizeof( WCHAR ) ){
+				ImmReleaseContext( hwnd, hIMC );
+				return 0;
+			}
 			dwSize += sizeof( WCHAR );
 
 			hstr = GlobalAlloc( GHND, dwSize );
 			if( hstr == nullptr ){
+				ImmReleaseContext( hwnd, hIMC );
 				return 0;
 //				 MyError( ERROR_GLOBALALLOC );
 			}
 
 			LPWSTR pszText = (LPWSTR)GlobalLock( hstr );
 			if( !pszText ){
+				GlobalFree( hstr );
+				ImmReleaseContext( hwnd, hIMC );
 				return 0;
 //				 MyError( ERROR_GLOBALLOCK );
 			}

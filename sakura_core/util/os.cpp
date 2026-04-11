@@ -228,9 +228,15 @@ HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 					// copy the bits
 					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
 					LPVOID lpDest = ::GlobalLock( hDest );
-					memcpy_raw( lpDest, lpSource, nSize );
+					if( lpSource != nullptr && lpDest != nullptr ){
+						memcpy_raw( lpDest, lpSource, nSize );
+					}
 					::GlobalUnlock( hDest );
 					::GlobalUnlock( stgMedium.hGlobal );
+					if( lpSource == nullptr || lpDest == nullptr ){
+						::GlobalFree( hDest );
+						hDest = nullptr;
+					}
 				}
 			}
 			::ReleaseStgMedium( &stgMedium );

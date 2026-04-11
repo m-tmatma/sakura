@@ -44,7 +44,7 @@
   - **`CGrepAgent`**: `WriteFile` に渡す長さは `DWORD` にキャスト。通常はチャンク単位だが、**一括書き込みが 4GB 超**になり得る経路があれば分割が必要。
 
 - **クリップボード・D&D・その他 `GlobalAlloc`**  
-  `CClipboard::SetText` は乗算・加算オーバーフロー対策済み。**未点検の例**: `CEditWnd.cpp`（タブドラッグ等）、`CEditView.cpp`、`CDropTarget.cpp`、`CEditView_Mouse.cpp`、`util/os.cpp` の `GlobalAlloc` / `memcpy` サイズ。用途ごとに **上限・オーバーフロー**を確認。
+  `CClipboard::SetText` は乗算・加算オーバーフロー対策済み。**進捗**: `CEditWnd.cpp`（タブ D&D の `CF_UNICODETEXT`）でパス長×`wchar_t` の乗算オーバーフロー防止と `GlobalAlloc`/`GlobalLock` 失敗時の後始末。`CEditView.cpp`（`WM_IME_COMPOSITION`）で `DWORD` 加算オーバーフロー防止と `ImmReleaseContext`/`GlobalFree` の漏れを整理。`CDropTarget.cpp`（`CDataObject::GetData`）、`CEditView_Mouse.cpp`（`PostMyDropFiles`）、`util/os.cpp`（`GetGlobalData` のコピー）で `GlobalAlloc`/`GlobalLock` 失敗時の安全化。**未整理**: `CDlgProperty.cpp`（`_DEBUG` ブロック）、`CDlgFuncList` のダイアログテンプレート等。
 
 - **外部コマンド・パイプ**  
   `CEditView_ExecCmd.cpp` / `CViewCommander_TagJump.cpp` の `ReadFile` は **約 5KiB チャンク**で `DWORD` 範囲内。**蓄積側**（出力バッファが無制限に伸びる経路）のメモリ方針は別途。

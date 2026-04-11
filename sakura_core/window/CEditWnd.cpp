@@ -3406,15 +3406,26 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 
 								STGMEDIUM M;
 								const wchar_t* pFilePath = GetDocument()->m_cDocFile.GetFilePath();
-								auto Len = int(wcslen(pFilePath));
+								const size_t cchPath = wcslen(pFilePath);
 								M.tymed          = TYMED_HGLOBAL;
 								M.pUnkForRelease = nullptr;
-								M.hGlobal        = GlobalAlloc(GMEM_MOVEABLE, (Len+1)*sizeof(wchar_t));
-								void* p = GlobalLock(M.hGlobal);
-								CopyMemory(p, pFilePath, (Len+1)*sizeof(wchar_t));
-								GlobalUnlock(M.hGlobal);
-
-								DataObject->SetData(&F, &M, TRUE);
+								M.hGlobal        = nullptr;
+								// P2: GlobalAlloc サイズの乗算オーバーフロー防止（極端に長いパス）
+								if( cchPath <= SIZE_MAX / sizeof(wchar_t) - 1u ){
+									const size_t cbAlloc = (cchPath + 1u) * sizeof(wchar_t);
+									M.hGlobal = GlobalAlloc(GMEM_MOVEABLE, cbAlloc);
+									if( M.hGlobal ){
+										void* p = GlobalLock(M.hGlobal);
+										if( p ){
+											CopyMemory(p, pFilePath, cbAlloc);
+											GlobalUnlock(M.hGlobal);
+											DataObject->SetData(&F, &M, TRUE);
+										}else{
+											GlobalFree(M.hGlobal);
+											M.hGlobal = nullptr;
+										}
+									}
+								}
 							}
 #endif
 							//移動は禁止

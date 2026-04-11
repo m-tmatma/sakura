@@ -2060,11 +2060,31 @@ STDMETHODIMP CEditView::PostMyDropFiles( LPDATAOBJECT pDataObject )
 	if( hData == nullptr )
 		return E_INVALIDARG;
 	LPVOID pData = ::GlobalLock( hData );
+	if( pData == nullptr ){
+		::GlobalFree( hData );
+		return E_OUTOFMEMORY;
+	}
 	SIZE_T nSize = ::GlobalSize( hData );
 
 	// ドロップデータをコピーしてあとで独自のドロップファイル処理を行う
 	HGLOBAL hDrop = ::GlobalAlloc( GHND | GMEM_DDESHARE, nSize );
-	memcpy_raw( ::GlobalLock( hDrop ), pData, nSize );
+	if( hDrop == nullptr ){
+		::GlobalUnlock( hData );
+		if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
+			::GlobalFree( hData );
+		}
+		return E_OUTOFMEMORY;
+	}
+	LPVOID pDrop = ::GlobalLock( hDrop );
+	if( pDrop == nullptr ){
+		::GlobalFree( hDrop );
+		::GlobalUnlock( hData );
+		if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
+			::GlobalFree( hData );
+		}
+		return E_OUTOFMEMORY;
+	}
+	memcpy_raw( pDrop, pData, nSize );
 	::GlobalUnlock( hDrop );
 	::PostMessageAny(
 		GetHwnd(),
