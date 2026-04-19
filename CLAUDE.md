@@ -107,6 +107,7 @@ Async/decoupled operations are implemented as `CDocListenerEx` subclasses in `sa
 |---|---|
 | `_main/` | Process startup, CCommandLine parsing |
 | `agent/` | Async doc operation agents (see above) |
+| `basis/` | Primitive type aliases (CLogicInt, CLayoutInt, Int), GDI clamping (Win32GdiClamp.h) |
 | `charset/` | All character encoding codecs |
 | `cmd/` | CViewCommander + undo/redo (COpe*) |
 | `doc/` | CEditDoc, CDocLineMgr, CLayoutMgr, CDocListener |
@@ -114,6 +115,7 @@ Async/decoupled operations are implemented as `CDocListenerEx` subclasses in `sa
 | `dlg/` | 50+ dialog classes |
 | `env/` | CDocTypeManager, CPropertyManager, profile/settings |
 | `extmodule/` | Wrappers for bregonig, cmigemo, ctags |
+| `func/` | EFunctionCode enum definitions (command identifiers) |
 | `io/` | Low-level file I/O (CBinaryStream etc.) |
 | `macro/` | Macro recording and WSH macro execution |
 | `outline/` | Code outline parsers per language |
@@ -122,6 +124,16 @@ Async/decoupled operations are implemented as `CDocListenerEx` subclasses in `sa
 | `uiparts/` | CGraphics, CMenuDrawer, icons, sounds |
 | `view/` | CEditView, rendering, caret, ruler, selection |
 | `window/` | CEditWnd, toolbar, statusbar, tabs, splitter |
+
+### Integer Type Conventions
+
+| Concept | Recommended type | Notes |
+|---|---|---|
+| Buffer byte length / capacity | `size_t` | Never cast to `int`; clamp only at Win32 API boundary |
+| String logical length / column index | `ssize_t` or `CLogicInt` | Use `CLogicInt`/`CLayoutInt` to distinguish unit |
+| General "large but unitless" integer | `Int` (`primitive.h`) | Alias for `ssize_t`; becomes `CLaxInteger` in strict-int builds |
+| Container index | `size_t` | Prefer `for (size_t i = 0; i < v.size(); ++i)` over `(int)v.size()` |
+| Win32 coordinate / pixel | `LONG` / `int` (as API requires) | Saturate via `ClampIntToLongForGdi` (`basis/Win32GdiClamp.h`) before GDI calls |
 
 ### External Dependencies (git submodules in `externals/`)
 
@@ -138,3 +150,6 @@ GitHub Actions (`.github/workflows/`):
 - `sonarscan.yml` — SonarQube static analysis
 
 Add `[ci skip]` or `[skip ci]` to a commit message to bypass CI runs.
+
+> **Encoding rule:** All `.cpp` and `.h` files must be **UTF-8 with BOM** (UTF-8-SIG) or ASCII.
+> BOM-less UTF-8 is rejected by `checkEncoding.py`. In Visual Studio, use "Save with encoding → UTF-8 with signature".
