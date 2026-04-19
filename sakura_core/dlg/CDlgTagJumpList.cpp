@@ -1388,7 +1388,7 @@ void CDlgTagJumpList::find_key_for_BinarySearch(
 	// 正確にはbyte数にてシークしているため中央のキーではない
 	fpos_t low_offset, high_offset, curr_offset;
 	low_offset = 0;
-	fseek(fp, 0, SEEK_END);
+	_fseeki64(fp, 0LL, SEEK_END);
 	fgetpos(fp, &high_offset);
 	curr_offset = low_offset + ((high_offset - low_offset) / 2);
 	fsetpos(fp, &curr_offset);

@@ -28,7 +28,7 @@ public:
 
 	static bool IsCppRawString(const CStringRef& cStr, ssize_t nPos);
 	static ssize_t Match_Quote( wchar_t wcQuote, ssize_t nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = nullptr );
-	static ssize_t Match_QuoteStr( const wchar_t* szQuote, int nQuoteLen, ssize_t nPos, const CStringRef& cLineStr, bool bEscape );
+	static ssize_t Match_QuoteStr( const wchar_t* szQuote, ssize_t nQuoteLen, ssize_t nPos, const CStringRef& cLineStr, bool bEscape );
 private:
 
 	wchar_t m_cQuote;

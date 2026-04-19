@@ -565,12 +565,12 @@ namespace{
 template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
 	CHAR_TYPE*			pBuffer,	//[in] 文字列バッファ(終端があること)
-	int					nLen,		//[in] 文字列の長さ
-	int*				pnOffset,	//[in,out] オフセット
+	ssize_t				nLen,		//[in] 文字列の長さ
+	ssize_t*			pnOffset,	//[in,out] オフセット
 	const CHAR_TYPE*	pDelimiter	//[in] 区切り文字
 )
 {
-	int i = *pnOffset;
+	ssize_t i = *pnOffset;
 	CHAR_TYPE* p;
 
 	do {
@@ -594,8 +594,8 @@ CHAR_TYPE* my_strtok(
 	return p;
 }
 //インスタンス化
-template ACHAR* my_strtok(ACHAR*,int,int*,const ACHAR*);
-template WCHAR* my_strtok(WCHAR*,int,int*,const WCHAR*);
+template ACHAR* my_strtok(ACHAR*,ssize_t,ssize_t*,const ACHAR*);
+template WCHAR* my_strtok(WCHAR*,ssize_t,ssize_t*,const WCHAR*);
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //

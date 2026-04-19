@@ -387,12 +387,12 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 					// Unicode で データを受け取る start 2008/6/8 Uchi
 					if( outputEncoding == CODE_UNICODE ){
 						wchar_t*	workw;
-						int			read_cntw;
+						DWORD		read_cntw;
 						bool		bCarry;
 						char		byteCarry = 0;
 						workw = (wchar_t*)work;
-						read_cntw = (int)read_cnt/sizeof(wchar_t);
-						if( read_cnt % (int)sizeof(wchar_t) ){
+						read_cntw = read_cnt / sizeof(wchar_t);
+						if( read_cnt % sizeof(wchar_t) ){
 							byteCarry = work[read_cnt-1];
 						}
 						if(read_cntw){
@@ -414,7 +414,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 								DEBUG_TRACE( L"ExecCmd: Carry last character [CR]\n" );
 							}
 						}
-						if( read_cnt % (int)sizeof(wchar_t) ){
+						if( read_cnt % sizeof(wchar_t) ){
 							// 高確率で0だと思うが1だと困る
 							DEBUG_TRACE( L"ExecCmd: Carry Unicode 1byte [%x]\n", byteCarry );
 							work[bufidx] = byteCarry;

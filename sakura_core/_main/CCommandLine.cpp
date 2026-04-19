@@ -246,7 +246,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	WCHAR	szPath[_MAX_PATH];
 	bool	bFind = false;				// ファイル名発見フラグ
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
-	int		nPos;
+	ssize_t	nPos;
 	int		i = 0;
 	if( pszCmdLineSrc[0] != L'-' ){
 		for( i = 0; i < int(std::size(szPath)); ++i ){
@@ -276,7 +276,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	CNativeW cmResponseFile = L"";
 	std::wstring strCmdLineWork{ pszCmdLineSrc };
 	LPWSTR pszCmdLineWork = std::data(strCmdLineWork);
-	int nCmdLineWorkLen = lstrlen( pszCmdLineWork );
+	ssize_t nCmdLineWorkLen = static_cast<ssize_t>( lstrlen( pszCmdLineWork ) );
 	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
 	while( pszToken != nullptr )
 	{

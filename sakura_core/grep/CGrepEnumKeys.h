@@ -158,10 +158,10 @@ public:
 		const WCHAR* WILDCARD_DELIMITER = L" ;,";	//リストの区切り
 
 		std::wstring strWildCard{ lpKeys };
-		auto nWildCardLen = int(strWildCard.length());
+		auto nWildCardLen = ssize_t(strWildCard.length());
 		auto pWildCard = std::data(strWildCard);
 
-		int nPos = 0;
+		ssize_t nPos = 0;
 		WCHAR*	token;
 		while (nullptr != (token = my_strtok<WCHAR>(pWildCard, nWildCardLen, &nPos, WILDCARD_DELIMITER))) {	//トークン毎に繰り返す。
 			// "を取り除いて左に詰める

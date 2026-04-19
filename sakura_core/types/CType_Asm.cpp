@@ -44,8 +44,8 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		const WCHAR* pLine;
 		CLogicInt nLineLen;
 		WCHAR* pTmpLine;
-		int length;
-		int offset;
+		ssize_t length;
+		ssize_t offset;
 #define MAX_ASM_TOKEN 2
 		WCHAR* token[MAX_ASM_TOKEN];
 		int j;
@@ -66,7 +66,7 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		p = wcschr( pTmpLine, L';' );
 		if( p ) *p = L'\0';
 
-		length = (int)wcslen( pTmpLine );
+		length = (ssize_t)wcslen( pTmpLine );
 		offset = 0;
 
 		//トークンに分割

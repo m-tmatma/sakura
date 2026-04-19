@@ -132,7 +132,7 @@ bool CColor_Quote::BeginColor(const CStringRef& cStr, ssize_t nPos)
 						}else{
 							m_tag.assign(L")\"", 2);
 						}
-						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<int>(m_tag.size()), i + 1, cStr, false );
+						m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<ssize_t>(m_tag.size()), i + 1, cStr, false );
 						m_nColorTypeIndex = 1;
 						return true;
 					}
@@ -214,7 +214,7 @@ bool CColor_Quote::EndColor(const CStringRef& cStr, ssize_t nPos)
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, m_nEscapeType );
 			break;
 		case 1:
-			m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<int>(m_tag.size()), nPos, cStr, false );
+			m_nCOMMENTEND = Match_QuoteStr( m_tag.c_str(), static_cast<ssize_t>(m_tag.size()), nPos, cStr, false );
 			break;
 		case 2:
 			m_nCOMMENTEND = Match_Quote( m_cQuote, nPos, cStr, STRING_LITERAL_PLSQL );
@@ -275,7 +275,7 @@ ssize_t CColor_Quote::Match_Quote( wchar_t wcQuote, ssize_t nPos, const CStringR
 	return cLineStr.GetLength() + 1; // 終端なしはLength + 1
 }
 
-ssize_t CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, int nQuoteLen, ssize_t nPos, const CStringRef& cLineStr, bool bEscape )
+ssize_t CColor_Quote::Match_QuoteStr( const wchar_t* pszQuote, ssize_t nQuoteLen, ssize_t nPos, const CStringRef& cLineStr, bool bEscape )
 {
 	int nCharChars;
 	ssize_t i;
