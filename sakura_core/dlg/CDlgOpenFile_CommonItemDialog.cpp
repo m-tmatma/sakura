@@ -730,7 +730,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 	cxx::com_pointer<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
 	hr = pFileSaveDialog->SetFolder(psiFolder); RETURN_IF_FAILED
-	WCHAR szFileName[_MAX_FNAME];
+	WCHAR szFileName[_MAX_PATH];
 	SplitPath_FolderAndFile(pszPath, nullptr, szFileName);
 	hr = pFileSaveDialog->SetFileName(szFileName); RETURN_IF_FAILED
 
