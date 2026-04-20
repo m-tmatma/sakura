@@ -122,6 +122,7 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cppa.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csearchagent.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-crunningtimer.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-clargefile.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-csharedata.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-czipfile.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-extmodules.cpp" />
