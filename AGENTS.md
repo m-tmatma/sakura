@@ -54,7 +54,7 @@
 
 ### P3: 厳格整数・ビルド設定
 
-- [ ] `USE_STRICT_INT` / `CStrictInteger` 利用時も **土台のバッファ型が 64bit であること**を前提に、デバッグビルドでの型チェックが意味を持つようにする。（**確認済み**: `CStrictInteger` 内部は `ssize_t` ベースで 64bit 安全。残タスクは厳格整数ビルド（`USE_STRICT_INT` 定義）での end-to-end コンパイル・テスト確認のみ。）
+- [x] `USE_STRICT_INT` / `CStrictInteger` 利用時も **土台のバッファ型が 64bit であること**を前提に、デバッグビルドでの型チェックが意味を持つようにする。（**確認済み**: `CStrictInteger` 内部は `ssize_t` ベースで 64bit 安全。**x64 Debug ビルド（`USE_STRICT_INT` 自動有効）でコンパイルエラーなし、`tests1.exe` 641 テスト全パス確認済み（2026-04-20）**。ビルド時に外部ライブラリ cmake スクリプト（Onigmo / bregonig / cmigemo / ctags）で `VsDevCmd.bat` 実行後に作業ディレクトリが変わる問題を発見・修正（各 cmake に `cd /d` 復帰を追加）。）
 
 ### P4: 検証
 

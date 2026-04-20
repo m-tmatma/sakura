@@ -54,7 +54,7 @@ add_custom_target(copy_cmigemo_source_files
 
 add_custom_command(
   OUTPUT "${CMIGEMO_GENERATED}"
-  COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${ARCH} && nmake -f compile/Make_mvc.mak DEFINES=-D_CRT_SECURE_NO_WARNINGS
+  COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${ARCH} && cd /d "${CMIGEMO_BUILD_DIR}" && nmake -f compile/Make_mvc.mak DEFINES=-D_CRT_SECURE_NO_WARNINGS
   WORKING_DIRECTORY "${CMIGEMO_BUILD_DIR}"
   DEPENDS copy_cmigemo_source_files
   COMMENT "Building migemo.dll"

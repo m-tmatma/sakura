@@ -46,7 +46,7 @@ if(CMD_VS_DEV)
 
   add_custom_command(
     OUTPUT "${ONIGMO_LIB}"
-    COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${ARCH} && build_nmake.cmd ARCH=${ARCH}
+    COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${ARCH} && "${ONIGMO_BUILD_DIR}\\build_nmake.cmd" ARCH=${ARCH}
     WORKING_DIRECTORY "${ONIGMO_BUILD_DIR}"
     DEPENDS copy_onigmo_source_files
     COMMENT "Building Onigmo Library"

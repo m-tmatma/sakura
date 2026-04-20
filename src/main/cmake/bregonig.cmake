@@ -56,7 +56,7 @@ if(CMAKE_GENERATOR MATCHES "^Visual Studio")
 
   add_custom_command(
     OUTPUT "${BREGONIG_GENERATED}"
-    COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${ARCH} && nmake ONIG_DIR=..\\..\\Onigmo TARGET_CPU=${ARCH}
+    COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${ARCH} && cd /d "${BREGONIG_BUILD_DIR}/src" && nmake ONIG_DIR=..\\..\\Onigmo TARGET_CPU=${ARCH}
     WORKING_DIRECTORY "${BREGONIG_BUILD_DIR}/src"
     DEPENDS
       copy_bregonig_source_files

@@ -55,7 +55,7 @@ if(CMAKE_GENERATOR MATCHES "^Visual Studio" AND NOT CMAKE_GENERATOR_PLATFORM STR
 
   add_custom_command(
     OUTPUT "${CTAGS_GENERATED}"
-    COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${HOST_ARCH} && nmake -f mk_mvc.mak
+    COMMAND call "${CMD_VS_DEV}" -host_arch=${HOST_ARCH} -arch=${HOST_ARCH} && cd /d "${CTAGS_BUILD_DIR}" && nmake -f mk_mvc.mak "PACKCC=${CTAGS_BUILD_DIR}\\packcc.exe"
     WORKING_DIRECTORY "${CTAGS_BUILD_DIR}"
     DEPENDS copy_ctags_source_files
     COMMENT "Building ctags"
