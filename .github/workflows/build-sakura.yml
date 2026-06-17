@@ -92,6 +92,8 @@ jobs:
     - name: Set up Python
       if: ${{ matrix.platform == 'x64' }}
       uses: actions/setup-python@v6
+      with:
+        python-version: '3.x'
 
     - name: Setup PR environment variables
       if: github.event_name == 'pull_request'
