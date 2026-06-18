@@ -60,6 +60,15 @@ jobs:
     - name: Set up Python
       if: ${{ matrix.platform == 'x64' }}
       uses: actions/setup-python@v6
+      with:
+        python-version: '3.x'
+
+    - name: Set PYTHONHOME
+      if: ${{ matrix.platform == 'x64' }}
+      run: |
+        $pythonDir = Split-Path (Get-Command python).Source -Parent
+        echo "PYTHONHOME=$pythonDir" >> $env:GITHUB_ENV
+      shell: pwsh
 
     - name: Setup PR environment variables
       if: github.event_name == 'pull_request'
