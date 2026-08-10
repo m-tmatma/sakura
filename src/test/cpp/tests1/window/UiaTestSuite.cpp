@@ -207,6 +207,16 @@ HWND WaitForWindow(
 )
 {
 	if (hWnd && ::IsWindow(hWnd) && ::IsWindowVisible(hWnd)) {
+		// タイムアウトの原因調査用に、強制クローズするウィンドウの情報を残す
+		WCHAR szClassName[256] = {};
+		::GetClassNameW(hWnd, szClassName, int(std::size(szClassName)));
+		const auto title = apiwrap::GetWindowTextW(hWnd);
+		std::clog << std::format(
+			"force closing blocking window. class: '{:s}', title: '{:s}'",
+			cxx::to_string(szClassName, CP_UTF8),
+			cxx::to_string(title.text, CP_UTF8)
+		) << std::endl;
+
 		if (window::IsDialog(hWnd, nullptr)) {
 			::EndDialog(hWnd, 0);
 		} else {
