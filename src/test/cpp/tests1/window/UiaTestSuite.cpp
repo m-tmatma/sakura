@@ -225,18 +225,30 @@ HWND WaitForWindow(
 			}
 		}
 
+		const auto ownerThreadId = ::GetWindowThreadProcessId(hWnd, nullptr);
+		const auto callerThreadId = ::GetCurrentThreadId();
+
 		std::clog << std::format(
-			"force closing blocking window. class: '{:s}', title: '{:s}', active page: '{:s}'",
+			"force closing blocking window. class: '{:s}', title: '{:s}', active page: '{:s}', owner thread: {}, caller thread: {}",
 			cxx::to_string(szClassName, CP_UTF8),
 			cxx::to_string(title.text, CP_UTF8),
-			cxx::to_string(activePageText, CP_UTF8)
+			cxx::to_string(activePageText, CP_UTF8),
+			ownerThreadId,
+			callerThreadId
 		) << std::endl;
 
-		if (window::IsDialog(hWnd, nullptr)) {
-			::EndDialog(hWnd, 0);
-		} else {
-			::DestroyWindow(hWnd);
-		}
+		const auto bIsDialog = window::IsDialog(hWnd, nullptr);
+		const auto bClosed = bIsDialog ? ::EndDialog(hWnd, 0) : ::DestroyWindow(hWnd);
+		const auto lastError = ::GetLastError();
+		const auto bStillExists = ::IsWindow(hWnd);
+
+		std::clog << std::format(
+			"{:s} returned {}, GetLastError()={}, window still exists: {:s}",
+			bIsDialog ? "EndDialog"s : "DestroyWindow"s,
+			bClosed ? "TRUE" : "FALSE",
+			lastError,
+			bStillExists ? "true"s : "false"s
+		) << std::endl;
 	}
 
 	return TRUE;
