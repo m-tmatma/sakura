@@ -53,17 +53,13 @@ file(TO_NATIVE_PATH "${OUTPUT_DIRECTORY}" OUTPUT_DIRECTORY_NATIVE)
 include(${CMAKE_SOURCE_DIR}/src/test/cmake/tests1.cmake)
 
 if(OpenCppCoverage_EXECUTABLE)
+  # 調査用: OpenCppCoverageの計測タイミングがTrayWndTest.ShowPropCommon001の
+  # 断続的なタイムアウト(comctl32内部でのブロック、#2603)の引き金になっているか
+  # 切り分けるため、一時的にOpenCppCoverage経由を無効化してtests1.exeを直接実行する。
   add_test(NAME CoverageTest
-    COMMAND ${OpenCppCoverage_EXECUTABLE}
-      --export_type cobertura:${CMAKE_SOURCE_DIR_NATIVE}\\tests1-coverage.xml
-      --modules ${OUTPUT_DIRECTORY_NATIVE}\\tests1.exe
-      --sources ${CMAKE_SOURCE_DIR_NATIVE}
-      --excluded_sources ${CMAKE_SOURCE_DIR_NATIVE}\\build
-      --working_dir ${OUTPUT_DIRECTORY_NATIVE}
-      --cover_children
-      --
-      $<TARGET_FILE:tests1>
+    COMMAND $<TARGET_FILE:tests1>
       --gtest_output=xml:${CMAKE_SOURCE_DIR}/tests1-googletest.xml
+    WORKING_DIRECTORY ${OUTPUT_DIRECTORY}
     CONFIGURATIONS Debug
   )
 endif()
