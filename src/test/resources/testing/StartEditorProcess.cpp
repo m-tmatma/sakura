@@ -48,8 +48,12 @@ void InitDbgSymbols(HANDLE process)
 
 void PrintStackTraceFromContext(CONTEXT& context)
 {
+	PrintStackTraceFromContext(context, ::GetCurrentThread());
+}
+
+void PrintStackTraceFromContext(CONTEXT& context, HANDLE thread)
+{
 	const auto process = ::GetCurrentProcess();
-	const auto thread  = ::GetCurrentThread();
 
 	// プロセスのシンボル ハンドラーを初期化します。
 	InitDbgSymbols(process);

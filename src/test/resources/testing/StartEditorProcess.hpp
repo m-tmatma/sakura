@@ -39,4 +39,18 @@ int StartEditorProcess(const std::wstring& commandLine);
  */
 LONG OnUnhandledException(EXCEPTION_POINTERS* ep);
 
+/*!
+ * @brief プロセスのシンボル ハンドラーを初期化する
+ */
+void InitDbgSymbols(HANDLE process);
+
+/*!
+ * @brief 指定スレッドのコンテキストからコールスタックを出力する
+ *
+ * @param context 対象スレッドのCONTEXT(呼び出し元がGetThreadContext等で取得したもの)
+ * @param thread 対象スレッドのハンドル(省略時は呼び出し元スレッド自身)
+ */
+void PrintStackTraceFromContext(CONTEXT& context, HANDLE thread);
+void PrintStackTraceFromContext(CONTEXT& context);
+
 }

@@ -237,6 +237,19 @@ HWND WaitForWindow(
 			callerThreadId
 		) << std::endl;
 
+		// 所有スレッドが本当にメッセージポンプを止めているのか、その時点のコールスタックを記録する
+		if (const HANDLE hOwnerThread = ::OpenThread(THREAD_ALL_ACCESS, FALSE, ownerThreadId)) {
+			if (::SuspendThread(hOwnerThread) != DWORD(-1)) {
+				CONTEXT ctx{ .ContextFlags = CONTEXT_FULL };
+				if (::GetThreadContext(hOwnerThread, &ctx)) {
+					std::clog << "stack trace of the blocked owner thread:" << std::endl;
+					testing::PrintStackTraceFromContext(ctx, hOwnerThread);
+				}
+				::ResumeThread(hOwnerThread);
+			}
+			::CloseHandle(hOwnerThread);
+		}
+
 		const auto bIsDialog = window::IsDialog(hWnd, nullptr);
 		const auto bClosed = bIsDialog ? ::EndDialog(hWnd, 0) : ::DestroyWindow(hWnd);
 		const auto lastError = ::GetLastError();
