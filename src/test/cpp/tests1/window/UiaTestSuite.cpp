@@ -7,6 +7,8 @@
 #include "pch.h"
 #include "window/UiaTestSuite.hpp"
 
+#include <CommCtrl.h>
+
 #include "config/system_constants.h"
 #include "cxx/load_string.hpp"
 #include "util/window.h"
@@ -211,10 +213,23 @@ HWND WaitForWindow(
 		WCHAR szClassName[256] = {};
 		::GetClassNameW(hWnd, szClassName, int(std::size(szClassName)));
 		const auto title = apiwrap::GetWindowTextW(hWnd);
+
+		// プロパティシートの場合は選択中のタブ名も残す
+		std::wstring activePageText;
+		if (const HWND hWndTab = ::FindWindowExW(hWnd, nullptr, WC_TABCONTROLW, nullptr)) {
+			const auto sel = int(::SendMessageW(hWndTab, TCM_GETCURSEL, 0, 0));
+			WCHAR szTabText[256] = {};
+			TCITEMW tcItem{ .mask = TCIF_TEXT, .pszText = szTabText, .cchTextMax = int(std::size(szTabText)) };
+			if (0 <= sel && ::SendMessageW(hWndTab, TCM_GETITEMW, sel, LPARAM(&tcItem))) {
+				activePageText = szTabText;
+			}
+		}
+
 		std::clog << std::format(
-			"force closing blocking window. class: '{:s}', title: '{:s}'",
+			"force closing blocking window. class: '{:s}', title: '{:s}', active page: '{:s}'",
 			cxx::to_string(szClassName, CP_UTF8),
-			cxx::to_string(title.text, CP_UTF8)
+			cxx::to_string(title.text, CP_UTF8),
+			cxx::to_string(activePageText, CP_UTF8)
 		) << std::endl;
 
 		if (window::IsDialog(hWnd, nullptr)) {
