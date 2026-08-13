@@ -256,15 +256,10 @@ EXTERN PyObject* (*PyLong_FromLong)(long);
 
 EXTERN PyObject* (*PyUnicode_AsUTF8String)(PyObject* unicode);
 EXTERN const char* (*PyUnicode_AsUTF8AndSize)(PyObject* unicode, Py_ssize_t* size);
-EXTERN const char* (*PyUnicode_AsUTF8)(PyObject* unicode);
 EXTERN PyObject* (*PyUnicode_FromWideChar)(const wchar_t* w, Py_ssize_t size);
 
 // Operating System Utilities
 EXTERN PyObject* (*PyOS_FSPath)(PyObject* path);
-EXTERN void (*PyOS_BeforeFork)();
-EXTERN void (*PyOS_AfterFork_Parent)();
-EXTERN void (*PyOS_AfterFork_Child)();
-EXTERN void (*PyOS_AfterFork)();
 EXTERN int (*PyOS_CheckStack)();
 using PyOS_sighandler_t = void (*)(int);
 EXTERN PyOS_sighandler_t(*PyOS_getsig)(int i);
@@ -338,7 +333,6 @@ EXTERN PyObject* (*PyEval_GetLocals)(void);
 EXTERN PyObject* (*PyEval_GetGlobals)(void);
 struct PyFrameObject;
 EXTERN PyFrameObject* (*PyEval_GetFrame)(void);
-EXTERN PyFrameObject* (*PyFrame_GetBack)(PyFrameObject* frame);
 struct PyCodeObject;
 EXTERN PyCodeObject* (*PyFrame_GetCode)(PyFrameObject* frame);
 EXTERN int (*PyFrame_GetLineNumber)(PyFrameObject* frame);
@@ -422,13 +416,6 @@ EXTERN int (*Py_Main)(int argc, wchar_t** argv);
 EXTERN int (*Py_BytesMain)(int argc, char** argv);
 EXTERN int (**PyOS_InputHook)(void);
 EXTERN PyObject* (*Py_CompileString)(const char* str, const char* filename, int start);
-struct PyCompilerFlags
-{
-	int cf_flags;
-	int cf_feature_version;
-};
-EXTERN int (*PyRun_SimpleStringFlags)(const char*, PyCompilerFlags*);
-#define PyRun_SimpleString(s) PyRun_SimpleStringFlags(s, NULL)
 EXTERN PyObject* (*PyEval_EvalCode)(PyObject* co, PyObject* globals, PyObject* locals);
 EXTERN PyObject* (*PyEval_EvalCodeEx)(PyObject* co, PyObject* globals, PyObject* locals, PyObject* const* args, int argcount, PyObject* const* kws, int kwcount, PyObject* const* defs, int defcount, PyObject* kwdefs, PyObject* closure);
 EXTERN PyObject* (*PyEval_EvalFrame)(PyFrameObject* f);
@@ -576,14 +563,9 @@ constexpr Symbol symbols[] = {
 
 	X(PyUnicode_AsUTF8String),
 	X(PyUnicode_AsUTF8AndSize),
-	X(PyUnicode_AsUTF8),
 	X(PyUnicode_FromWideChar),
 
 	X(PyOS_FSPath),
-	X(PyOS_BeforeFork),
-	X(PyOS_AfterFork_Parent),
-	X(PyOS_AfterFork_Child),
-	X(PyOS_AfterFork),
 	X(PyOS_CheckStack),
 	X(PyOS_getsig),
 	X(PyOS_setsig),
@@ -648,7 +630,6 @@ constexpr Symbol symbols[] = {
 	X(PyEval_GetLocals),
 	X(PyEval_GetGlobals),
 	X(PyEval_GetFrame),
-	X(PyFrame_GetBack),
 	X(PyFrame_GetCode),
 	X(PyFrame_GetLineNumber),
 	X(PyEval_GetFuncName),
@@ -724,7 +705,6 @@ constexpr Symbol symbols[] = {
 	X(Py_BytesMain),
 	X(PyOS_InputHook),
 	X(Py_CompileString),
-	X(PyRun_SimpleStringFlags),
 	X(PyEval_EvalCode),
 	X(PyEval_EvalCodeEx),
 	X(PyEval_EvalFrame),
