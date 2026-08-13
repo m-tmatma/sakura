@@ -970,13 +970,22 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 		const wchar_t* dllname = L"python3.dll";
 		std::wstring path = dllname;
 		auto dir = GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory.c_str();
+		bool bUseDllDirectory = false;
 		if (::PathIsDirectoryW(dir)) {
 			std::wstring path2 = std::format(L"{}/{}", dir, dllname);
 			if (IsFileExists(path2.c_str())) {
 				path = path2;
+				bUseDllDirectory = true;
 			}
 		}
+		if (bUseDllDirectory) {
+			// python3.dll が依存するDLL(python3xx.dll等)を指定フォルダーから検索できるようにする
+			::SetDllDirectoryW(dir);
+		}
 		s_hModule = LoadLibraryExedir(path.c_str());
+		if (bUseDllDirectory) {
+			::SetDllDirectoryW(L"");
+		}
 		if (!s_hModule) {
 			WCHAR* pMsg;
 			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
