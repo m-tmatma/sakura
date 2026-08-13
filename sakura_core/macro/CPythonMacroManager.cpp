@@ -1007,6 +1007,13 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 		for (size_t i = 0; i < _countof(symbols); ++i) {
 			auto& s = symbols[i];
 			auto sym = ::GetProcAddress(s_hModule, s.name);
+			if (!sym) {
+				// 使用中のpython3.dllがこの機能に必要なシンボルをエクスポートしていない
+				ErrorMessage(nullptr, L"python3.dll: GetProcAddress(\"%hs\") failed.", s.name);
+				::FreeLibrary(s_hModule);
+				s_hModule = nullptr;
+				return false;
+			}
 			*(void**)s.ptr = (void*)sym;
 		}
 	}
