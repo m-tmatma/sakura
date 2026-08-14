@@ -958,18 +958,22 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 				bUseDllDirectory = true;
 			}
 		}
-		if (bUseDllDirectory) {
-			// python3.dllが依存するDLL(python3xx.dll等)を指定フォルダーから検索できるようにする。
-			// python3.dllのAPIは実体(python3xx.dll)へのフォワーダーであり、python3xx.dllの解決は
-			// LoadLibrary時ではなくGetProcAddress時に遅延して行われるため、シンボル解決が終わるまで
-			// 検索パスを維持する必要がある。
-			::SetDllDirectoryW(dir);
-		}
+		// python3.dllが依存するDLL(python3xx.dll等)を指定フォルダーから検索できるようにする。
+		// python3.dllのAPIは実体(python3xx.dll)へのフォワーダーであり、python3xx.dllの解決は
+		// LoadLibrary時ではなくGetProcAddress時に遅延して行われるため、シンボル解決が終わるまで
+		// (このスコープを抜けるまで)検索パスを維持する必要がある。
+		struct DllDirectoryScope {
+			bool active;
+			DllDirectoryScope(bool active, const wchar_t* dir) : active(active) {
+				if (active) ::SetDllDirectoryW(dir);
+			}
+			~DllDirectoryScope() {
+				if (active) ::SetDllDirectoryW(L"");
+			}
+		} dllDirectoryScope(bUseDllDirectory, dir);
+
 		s_hModule = LoadLibraryExedir(path.c_str());
 		if (!s_hModule) {
-			if (bUseDllDirectory) {
-				::SetDllDirectoryW(L"");
-			}
 			WCHAR* pMsg;
 			::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
 				FORMAT_MESSAGE_IGNORE_INSERTS |
@@ -992,18 +996,11 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 			auto sym = ::GetProcAddress(s_hModule, s.name);
 			if (!sym) {
 				// 使用中のpython3.dllがこの機能に必要なシンボルをエクスポートしていない
-				if (bUseDllDirectory) {
-					::SetDllDirectoryW(L"");
-				}
 				ErrorMessage(nullptr, L"python3.dll: GetProcAddress(\"%hs\") failed.", s.name);
-				::FreeLibrary(s_hModule);
-				s_hModule = nullptr;
+				s_hModule = nullptr; // ResourceHolderのoperator=がFreeLibraryを呼ぶ
 				return false;
 			}
 			*(void**)s.ptr = (void*)sym;
-		}
-		if (bUseDllDirectory) {
-			::SetDllDirectoryW(L"");
 		}
 	}
 
