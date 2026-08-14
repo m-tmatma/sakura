@@ -207,6 +207,30 @@ HWND WaitForWindow(
 )
 {
 	if (hWnd && ::IsWindow(hWnd) && ::IsWindowVisible(hWnd)) {
+		// #2603 実験
+		//
+		// 共通設定プロパティシートを閉じたあと、comctl32 内部の
+		// PropertySheetW -> DestroyPropertySheetPage が GetMessage() で
+		// 次のメッセージを待ったまま停止することがある。
+		// この状態ではメインスレッドがメッセージポンプを一切回せないため、
+		// 別スレッドからの EndDialog は ERROR_TIMEOUT(1460) で失敗し、
+		// ウィンドウが残ったままになる。
+		//
+		// そこで強制クローズの前に、まずダミーメッセージを送って
+		// GetMessage() を返させ、破棄処理を再開させられるかを試す。
+		constexpr auto maxPokeCount = 50;
+		constexpr auto pokeIntervalMillis = 20;
+		for (auto i = 0; i < maxPokeCount; ++i) {
+			if (!::IsWindow(hWnd)) {
+				std::clog << "CloseBlockingWindowProc: WM_NULL " << i << " 回でウィンドウが閉じた" << std::endl;
+				return TRUE;
+			}
+			::PostMessageW(hWnd, WM_NULL, 0, 0);
+			::Sleep(pokeIntervalMillis);
+		}
+
+		std::clog << "CloseBlockingWindowProc: WM_NULL " << maxPokeCount << " 回でも閉じないため強制クローズする" << std::endl;
+
 		if (window::IsDialog(hWnd, nullptr)) {
 			::EndDialog(hWnd, 0);
 		} else {
@@ -310,7 +334,24 @@ void UiaTestSuite::SetUpUia()
 		std::mutex mutex;
 		std::condition_variable_any condition;
 		std::unique_lock lock(mutex);
-		condition.wait_for(lock, st, std::chrono::seconds(30), [] { return false; });
+
+		// #2603 実験
+		//
+		// 30秒を細かく刻んで待機し、その間ずっとテストスレッドへ
+		// ダミーメッセージを送り続ける。
+		// ハングの原因が「comctl32 が GetMessage() で待っているメッセージが
+		// 来ないこと」であるなら、メッセージを供給し続けることで
+		// そもそもハングが起きなくなるはずである。これを検証する。
+		constexpr auto pokeIntervalMillis = std::chrono::milliseconds(500);
+		const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(30);
+		while (!st.stop_requested() && std::chrono::steady_clock::now() < deadline) {
+			condition.wait_for(lock, st, pokeIntervalMillis, [] { return false; });
+
+			if (st.stop_requested()) break;
+
+			// ブロックしている GetMessage() を返させる
+			::PostThreadMessageW(testThreadId, WM_NULL, 0, 0);
+		}
 
 		if (st.stop_requested()) {
 			m_Timeout = false;	// タイムアウトは発生しなかった
@@ -318,6 +359,9 @@ void UiaTestSuite::SetUpUia()
 		}
 
 		m_StopSource.request_stop();
+
+		// 念のためスレッドキューにも投げてから列挙する
+		::PostThreadMessageW(testThreadId, WM_NULL, 0, 0);
 
 		// スレッドブロックしているウィンドウを列挙して閉じる
 		::EnumThreadWindows(testThreadId, CloseBlockingWindowProc, 0L);
